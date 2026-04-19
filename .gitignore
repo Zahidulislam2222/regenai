@@ -1,0 +1,59 @@
+# Secrets & env
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Node
+node_modules/
+.pnpm-store/
+dist/
+build/
+.next/
+.remix/
+.cache/
+.turbo/
+.output/
+
+# Hydrogen / Oxygen
+.shopify/
+.wrangler/
+.mf/
+.hydrogen/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*~
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Tests
+coverage/
+playwright-report/
+test-results/
+.nyc_output/
+
+# Storybook
+storybook-static/
+
+# Local-only confidential docs (scrubbed for public repo)
+docs/SOW.md
+docs/BRAND-BRIEF.md
+docs/BUILD-LOG.md
+docs/CI-SECRETS.md
+docs/RESUME.md
+
+# Runtime temp
+tmp/
+temp/
+*.tmp

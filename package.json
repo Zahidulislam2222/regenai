@@ -1,0 +1,35 @@
+{
+  "name": "regenai",
+  "private": true,
+  "version": "0.0.0",
+  "description": "RegenAI — four-layer Shopify Plus commerce platform (storefront + custom app + Shopify Functions + data/ML). Hydrogen on Oxygen, Remix on Cloudflare Workers, Rust/WASM functions, Supabase pgvector + BigQuery + dbt.",
+  "license": "MIT",
+  "author": "Zahidul Islam <muhammadzahidulislam2222@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Zahidulislam2222/regenai.git"
+  },
+  "engines": {
+    "node": ">=20.18.0",
+    "npm": ">=10.0.0"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm --workspace packages/storefront run dev",
+    "build": "npm --workspace packages/storefront run build",
+    "lint": "npm --workspaces --if-present run lint",
+    "typecheck": "npm --workspaces --if-present run typecheck",
+    "test": "npm --workspaces --if-present run test",
+    "storefront": "npm --workspace packages/storefront run",
+    "ui": "npm --workspace packages/ui run"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  },
+  "volta": {
+    "node": "20.18.0",
+    "npm": "10.9.0"
+  }
+}
