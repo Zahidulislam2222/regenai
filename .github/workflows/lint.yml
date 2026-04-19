@@ -26,11 +26,8 @@ jobs:
       - name: Install workspace deps
         run: npm ci
 
-      - name: ESLint (all workspaces)
+      - name: ESLint + Prettier (via Shopify eslint-plugin-prettier integration)
         run: npm run lint --workspaces --if-present
-
-      - name: Prettier format check
-        run: npx prettier --check "packages/**/*.{ts,tsx,js,jsx,json,md,css}"
 
       - name: TypeScript typecheck (all workspaces)
         run: npm run typecheck --workspaces --if-present
