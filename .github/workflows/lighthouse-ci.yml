@@ -20,8 +20,12 @@ jobs:
     steps:
       - name: Check required secrets
         id: check
+        # Lighthouse needs a real build to audit. We gate on
+        # OXYGEN_DEPLOYMENT_TOKEN (empty until D1.5's deferred interactive
+        # Hydrogen storefront creation completes) so the job doesn't trip
+        # on `shopify hydrogen build --codegen` requiring a linked storefront.
         run: |
-          if [ -z "${{ secrets.SHOPIFY_STORE }}" ]; then
+          if [ -z "${{ secrets.OXYGEN_DEPLOYMENT_TOKEN }}" ]; then
             echo "has-secrets=false" >> $GITHUB_OUTPUT
           else
             echo "has-secrets=true" >> $GITHUB_OUTPUT
@@ -56,4 +60,4 @@ jobs:
 
       - name: Skip notice
         if: steps.check.outputs.has-secrets == 'false'
-        run: echo "::notice::SHOPIFY_STORE secret missing — Lighthouse skipped"
+        run: echo "::notice::OXYGEN_DEPLOYMENT_TOKEN not yet set (Hydrogen storefront requires interactive Partners-admin creation per D1.5 carve-out) — Lighthouse skipped; activates D2+"
