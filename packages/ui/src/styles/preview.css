@@ -1,0 +1,58 @@
+/* Storybook preview — inlines the same brand tokens as storefront's tailwind.css @theme block,
+   so component stories render with the clinical-modern aesthetic without depending on the
+   storefront's build. */
+
+:root {
+  --color-bone: #F8F6F1;
+  --color-bone-muted: #EFEBE2;
+  --color-bone-subtle: #F4F0EA;
+  --color-primary: #1E3A5F;
+  --color-primary-hover: #2E5280;
+  --color-primary-active: #14284A;
+  --color-accent: #C87A4B;
+  --color-accent-hover: #D89768;
+  --color-sage: #7A8F6F;
+  --color-sage-hover: #8BA082;
+  --color-ink: #1A1A1A;
+  --color-muted: #5A5A5A;
+  --color-subtle: #8A8A8A;
+  --color-success: #2D7A4F;
+  --color-success-bg: #E8F5EC;
+  --color-warning: #C47E2A;
+  --color-warning-bg: #FCF1DC;
+  --color-error: #B23A3A;
+  --color-error-bg: #FCE5E5;
+  --color-info: #1E3A5F;
+  --color-info-bg: #E3EAF4;
+  --surface-page: #F8F6F1;
+  --surface-card: #FFFFFF;
+  --surface-elevated: #FFFFFF;
+  --color-overlay: rgba(26,26,26,0.45);
+  --color-border-default: #E5E0D5;
+  --color-border-strong: #C7BFAF;
+  --color-border-focus: #1E3A5F;
+  --color-border-error: #B23A3A;
+  --text-primary: #1A1A1A;
+  --text-secondary: #5A5A5A;
+  --text-subtle: #8A8A8A;
+  --text-inverse: #F8F6F1;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.06);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.06);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.06);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.15);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring-gentle: cubic-bezier(0.34, 1.12, 0.64, 1);
+  --ease-spring-bouncy: cubic-bezier(0.34, 1.56, 0.64, 1);
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--text-primary);
+  background: var(--surface-page);
+}
