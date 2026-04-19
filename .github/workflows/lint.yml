@@ -23,8 +23,11 @@ jobs:
           node-version-file: '.nvmrc'
           cache: 'npm'
 
-      - name: Install workspace deps
-        run: npm ci
+      - name: Install workspace deps (include optional for platform-specific binaries)
+        run: npm ci --include=optional
+
+      - name: Rebuild native modules for Linux (lightningcss, etc.)
+        run: npm rebuild --workspaces --if-present
 
       - name: ESLint + Prettier (via Shopify eslint-plugin-prettier integration)
         run: npm run lint --workspaces --if-present
