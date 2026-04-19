@@ -1,0 +1,55 @@
+name: Test — Accessibility (axe-core)
+
+on:
+  pull_request:
+  push:
+    branches: [main, staging]
+
+concurrency:
+  group: test-a11y-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  axe:
+    name: axe-core via Playwright
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SHOPIFY_STORE: ${{ secrets.SHOPIFY_STORE }}
+      SHOPIFY_STORE_PASSWORD: ${{ secrets.SHOPIFY_STORE_PASSWORD }}
+    steps:
+      - name: Check required secrets
+        id: check
+        run: |
+          if [ -z "${{ secrets.SHOPIFY_STORE }}" ]; then
+            echo "has-secrets=false" >> $GITHUB_OUTPUT
+          else
+            echo "has-secrets=true" >> $GITHUB_OUTPUT
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.check.outputs.has-secrets == 'true'
+
+      - name: Setup Node
+        if: steps.check.outputs.has-secrets == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install deps
+        if: steps.check.outputs.has-secrets == 'true'
+        run: npm ci
+
+      - name: Install Playwright
+        if: steps.check.outputs.has-secrets == 'true'
+        run: npx playwright install --with-deps chromium
+
+      - name: Run axe a11y suite
+        if: steps.check.outputs.has-secrets == 'true'
+        run: npm --workspace packages/storefront run test:a11y
+        continue-on-error: true  # activates once first a11y spec lands (Day 5+)
+
+      - name: Skip notice
+        if: steps.check.outputs.has-secrets == 'false'
+        run: echo "::notice::SHOPIFY_STORE secret not present — axe-core skipped"

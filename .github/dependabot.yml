@@ -1,0 +1,62 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      hydrogen:
+        patterns:
+          - '@shopify/*'
+      react:
+        patterns:
+          - 'react'
+          - 'react-dom'
+          - 'react-router'
+          - 'react-router-dom'
+      tailwind:
+        patterns:
+          - 'tailwindcss'
+          - '@tailwindcss/*'
+      radix:
+        patterns:
+          - '@radix-ui/*'
+      testing:
+        patterns:
+          - 'playwright'
+          - '@playwright/*'
+          - 'vitest'
+          - '@vitest/*'
+      linting:
+        patterns:
+          - 'eslint*'
+          - 'prettier*'
+          - 'typescript'
+      security:
+        patterns:
+          - 'gitleaks'
+      fonts:
+        patterns:
+          - '@fontsource*'
+
+  - package-ecosystem: npm
+    directory: /packages/storefront
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 2

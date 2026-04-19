@@ -1,0 +1,39 @@
+name: Security — DAST (OWASP ZAP)
+
+on:
+  push:
+    branches: [staging]
+  schedule:
+    - cron: '0 5 * * 3'  # Wednesdays 05:00 UTC
+  workflow_dispatch: {}
+
+jobs:
+  zap:
+    name: OWASP ZAP baseline against staging Oxygen preview
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      STAGING_URL: ${{ secrets.OXYGEN_STAGING_URL }}
+    steps:
+      - name: Check required secrets
+        id: check
+        run: |
+          if [ -z "${{ secrets.OXYGEN_STAGING_URL }}" ]; then
+            echo "has-secrets=false" >> $GITHUB_OUTPUT
+          else
+            echo "has-secrets=true" >> $GITHUB_OUTPUT
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.check.outputs.has-secrets == 'true'
+
+      - name: ZAP baseline scan
+        if: steps.check.outputs.has-secrets == 'true'
+        uses: zaproxy/action-baseline@v0.12.0
+        with:
+          target: ${{ env.STAGING_URL }}
+          cmd_options: '-a'
+
+      - name: Skip notice
+        if: steps.check.outputs.has-secrets == 'false'
+        run: echo "::notice::OXYGEN_STAGING_URL not yet set — DAST skipped. Populated post-first-staging-deploy (D1.5+)"

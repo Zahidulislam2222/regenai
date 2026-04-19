@@ -1,0 +1,41 @@
+name: Test — Unit + Component
+
+on:
+  pull_request:
+  push:
+    branches: [main, staging]
+
+concurrency:
+  group: test-unit-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  vitest:
+    name: Vitest (unit + component)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Vitest (all workspaces)
+        run: npm run test --workspaces --if-present -- --run --coverage
+        continue-on-error: true  # allowed to skip until first test file lands (Day 4+)
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: |
+            packages/**/coverage/
+          if-no-files-found: ignore
+          retention-days: 7

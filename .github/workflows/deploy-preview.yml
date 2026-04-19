@@ -1,0 +1,95 @@
+name: Deploy — Preview (Oxygen + CF Workers per PR)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: deploy-preview-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  oxygen-preview:
+    name: Oxygen preview
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      SHOPIFY_HYDROGEN_FLAG_SHOP: ${{ secrets.SHOPIFY_STORE }}
+    steps:
+      - name: Check required secrets
+        id: check
+        run: |
+          if [ -z "${{ secrets.OXYGEN_DEPLOYMENT_TOKEN }}" ]; then
+            echo "has-secrets=false" >> $GITHUB_OUTPUT
+          else
+            echo "has-secrets=true" >> $GITHUB_OUTPUT
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.check.outputs.has-secrets == 'true'
+
+      - name: Setup Node
+        if: steps.check.outputs.has-secrets == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install deps
+        if: steps.check.outputs.has-secrets == 'true'
+        run: npm ci
+
+      - name: Build + Deploy to Oxygen preview
+        if: steps.check.outputs.has-secrets == 'true'
+        run: |
+          cd packages/storefront
+          npx shopify hydrogen deploy \
+            --token ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN }} \
+            --environment preview \
+            --metadata-user "${{ github.actor }}" \
+            --metadata-version "pr-${{ github.event.pull_request.number }}"
+
+      - name: Skip notice
+        if: steps.check.outputs.has-secrets == 'false'
+        run: echo "::notice::OXYGEN_DEPLOYMENT_TOKEN not set (Hydrogen storefront still needs admin-UI creation step) — Oxygen preview deploy skipped"
+
+  workers-preview:
+    name: Cloudflare Workers preview (custom app, activates Day 15+)
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Check required secrets
+        id: check
+        run: |
+          if [ -z "${{ secrets.CLOUDFLARE_API_TOKEN }}" ] || [ ! -d packages/app ]; then
+            echo "has-secrets=false" >> $GITHUB_OUTPUT
+          else
+            echo "has-secrets=true" >> $GITHUB_OUTPUT
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.check.outputs.has-secrets == 'true'
+
+      - name: Setup Node
+        if: steps.check.outputs.has-secrets == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install deps
+        if: steps.check.outputs.has-secrets == 'true'
+        run: npm ci
+
+      - name: Deploy Worker preview
+        if: steps.check.outputs.has-secrets == 'true'
+        run: |
+          cd packages/app
+          npx wrangler deploy --env preview --name regenai-app-pr-${{ github.event.pull_request.number }}
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Skip notice
+        if: steps.check.outputs.has-secrets == 'false'
+        run: echo "::notice::Worker preview skipped — custom app (packages/app) not yet scaffolded (Day 15+)"

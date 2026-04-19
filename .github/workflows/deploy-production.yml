@@ -1,0 +1,86 @@
+name: Deploy — Production (main)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "deploy" to confirm production release'
+        required: true
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  confirm:
+    name: Gate — require explicit confirmation on manual trigger
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate confirmation input
+        run: |
+          if [ "${{ github.event.inputs.confirm }}" != "deploy" ]; then
+            echo "::error::Must type 'deploy' to confirm"
+            exit 1
+          fi
+
+  oxygen-production:
+    name: Oxygen production
+    needs: [confirm]
+    if: |
+      always() &&
+      (needs.confirm.result == 'success' || needs.confirm.result == 'skipped')
+    runs-on: ubuntu-latest
+    environment: production  # enforces required-reviewer via GH environment protection
+    timeout-minutes: 12
+    steps:
+      - name: Check required secrets
+        id: check
+        run: |
+          if [ -z "${{ secrets.OXYGEN_DEPLOYMENT_TOKEN }}" ]; then
+            echo "has-secrets=false" >> $GITHUB_OUTPUT
+          else
+            echo "has-secrets=true" >> $GITHUB_OUTPUT
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.check.outputs.has-secrets == 'true'
+
+      - name: Setup Node
+        if: steps.check.outputs.has-secrets == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install deps
+        if: steps.check.outputs.has-secrets == 'true'
+        run: npm ci
+
+      - name: Deploy storefront to Oxygen production
+        if: steps.check.outputs.has-secrets == 'true'
+        run: |
+          cd packages/storefront
+          npx shopify hydrogen deploy \
+            --token ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN }} \
+            --environment production \
+            --metadata-user "${{ github.actor }}" \
+            --metadata-version "${{ github.ref_name }}" \
+            --metadata-description "Commit ${{ github.sha }}"
+
+      - name: Deploy Worker to CF production (activates Day 15+)
+        if: steps.check.outputs.has-secrets == 'true' && env.CF_TOKEN != ''
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -d packages/app ]; then
+            cd packages/app && npx wrangler deploy --env production
+          fi
+
+      - name: Skip notice
+        if: steps.check.outputs.has-secrets == 'false'
+        run: echo "::notice::OXYGEN_DEPLOYMENT_TOKEN not set — production deploy skipped"

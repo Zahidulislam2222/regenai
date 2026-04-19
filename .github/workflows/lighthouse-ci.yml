@@ -1,0 +1,59 @@
+name: Lighthouse CI
+
+on:
+  pull_request:
+  push:
+    branches: [main, staging]
+
+concurrency:
+  group: lighthouse-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lighthouse:
+    name: Lighthouse CI (perf + a11y + seo + best-practices budgets)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SHOPIFY_STORE: ${{ secrets.SHOPIFY_STORE }}
+      SHOPIFY_STORE_PASSWORD: ${{ secrets.SHOPIFY_STORE_PASSWORD }}
+    steps:
+      - name: Check required secrets
+        id: check
+        run: |
+          if [ -z "${{ secrets.SHOPIFY_STORE }}" ]; then
+            echo "has-secrets=false" >> $GITHUB_OUTPUT
+          else
+            echo "has-secrets=true" >> $GITHUB_OUTPUT
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.check.outputs.has-secrets == 'true'
+
+      - name: Setup Node
+        if: steps.check.outputs.has-secrets == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install deps
+        if: steps.check.outputs.has-secrets == 'true'
+        run: npm ci
+
+      - name: Build storefront
+        if: steps.check.outputs.has-secrets == 'true'
+        run: npm --workspace packages/storefront run build
+
+      - name: Lighthouse CI
+        if: steps.check.outputs.has-secrets == 'true'
+        uses: treosh/lighthouse-ci-action@v11
+        with:
+          configPath: 'lighthouserc.json'
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+        continue-on-error: true  # pass threshold enforced once budget.json is tuned (D16)
+
+      - name: Skip notice
+        if: steps.check.outputs.has-secrets == 'false'
+        run: echo "::notice::SHOPIFY_STORE secret missing — Lighthouse skipped"

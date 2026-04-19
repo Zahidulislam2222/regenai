@@ -1,0 +1,36 @@
+name: Lint
+
+on:
+  pull_request:
+  push:
+    branches: [main, staging]
+
+concurrency:
+  group: lint-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: ESLint + Prettier + TypeScript
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install workspace deps
+        run: npm ci
+
+      - name: ESLint (all workspaces)
+        run: npm run lint --workspaces --if-present
+
+      - name: Prettier format check
+        run: npx prettier --check "packages/**/*.{ts,tsx,js,jsx,json,md,css}"
+
+      - name: TypeScript typecheck (all workspaces)
+        run: npm run typecheck --workspaces --if-present

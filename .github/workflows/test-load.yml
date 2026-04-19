@@ -1,0 +1,44 @@
+name: Test — Load (k6)
+
+on:
+  schedule:
+    - cron: '0 3 * * *'  # nightly 03:00 UTC
+  workflow_dispatch: {}
+
+jobs:
+  k6:
+    name: k6 load — quiz + ML recommendation endpoints
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      SHOPIFY_STORE: ${{ secrets.SHOPIFY_STORE }}
+    steps:
+      - name: Check required secrets
+        id: check
+        run: |
+          if [ -z "${{ secrets.SHOPIFY_STORE }}" ]; then
+            echo "has-secrets=false" >> $GITHUB_OUTPUT
+          else
+            echo "has-secrets=true" >> $GITHUB_OUTPUT
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.check.outputs.has-secrets == 'true'
+
+      - name: Install k6
+        if: steps.check.outputs.has-secrets == 'true'
+        uses: grafana/setup-k6-action@v1
+
+      - name: Run load scenarios
+        if: steps.check.outputs.has-secrets == 'true'
+        run: |
+          if [ -d tests/load ]; then
+            k6 run tests/load/quiz.js || true
+            k6 run tests/load/recommendation.js || true
+          else
+            echo "::notice::tests/load scenarios not yet written — Day 14 activates this"
+          fi
+
+      - name: Skip notice
+        if: steps.check.outputs.has-secrets == 'false'
+        run: echo "::notice::SHOPIFY_STORE secret missing — k6 load test skipped"

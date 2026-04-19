@@ -1,0 +1,53 @@
+name: Compliance — FDA + DSHEA + Contraindication Lint
+
+on:
+  pull_request:
+    paths:
+      - 'packages/storefront/app/routes/products.**'
+      - 'packages/storefront/app/components/pdp/**'
+      - 'packages/storefront/app/content/**'
+      - 'packages/app/**'
+  push:
+    branches: [main, staging]
+    paths:
+      - 'packages/storefront/app/routes/products.**'
+      - 'packages/storefront/app/components/pdp/**'
+      - 'packages/storefront/app/content/**'
+      - 'packages/app/**'
+
+concurrency:
+  group: compliance-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  claim-lint:
+    name: Compliance-as-code (FDA claim + DSHEA + contraindication)
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Run compliance linter
+        run: |
+          if [ -f scripts/compliance-lint.mjs ]; then
+            node scripts/compliance-lint.mjs
+          else
+            echo "::notice::scripts/compliance-lint.mjs not yet written — D41 activates this"
+          fi
+        continue-on-error: true
+
+      # Placeholder: D41 (Week 6 compliance pass) implements the actual
+      # linter checking for:
+      #  - unsupported medical claims outside allowlist
+      #  - missing DSHEA disclaimer on supplement PDP copy
+      #  - missing contraindication block on FDA class II device PDPs
+      #  - StudyReference metaobject linkage for any health claim

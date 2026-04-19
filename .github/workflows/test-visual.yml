@@ -1,0 +1,56 @@
+name: Test — Visual Regression (Percy)
+
+on:
+  pull_request:
+  push:
+    branches: [main, staging]
+
+concurrency:
+  group: test-visual-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  percy:
+    name: Percy snapshots
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
+      SHOPIFY_STORE: ${{ secrets.SHOPIFY_STORE }}
+      SHOPIFY_STORE_PASSWORD: ${{ secrets.SHOPIFY_STORE_PASSWORD }}
+    steps:
+      - name: Check required secrets
+        id: check
+        run: |
+          if [ -z "${{ secrets.PERCY_TOKEN }}" ] || [ -z "${{ secrets.SHOPIFY_STORE }}" ]; then
+            echo "has-secrets=false" >> $GITHUB_OUTPUT
+          else
+            echo "has-secrets=true" >> $GITHUB_OUTPUT
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.check.outputs.has-secrets == 'true'
+
+      - name: Setup Node
+        if: steps.check.outputs.has-secrets == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install deps
+        if: steps.check.outputs.has-secrets == 'true'
+        run: npm ci
+
+      - name: Install Playwright
+        if: steps.check.outputs.has-secrets == 'true'
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Percy visual diff
+        if: steps.check.outputs.has-secrets == 'true'
+        run: npm --workspace packages/storefront run test:visual
+        continue-on-error: true  # activates once first snapshot script lands (Day 5)
+
+      - name: Skip notice
+        if: steps.check.outputs.has-secrets == 'false'
+        run: echo "::notice::PERCY_TOKEN or SHOPIFY_STORE secret missing — Percy skipped"

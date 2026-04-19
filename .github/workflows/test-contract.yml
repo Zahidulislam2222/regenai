@@ -1,0 +1,57 @@
+name: Test — Contract (Storefront GraphQL schema)
+
+on:
+  pull_request:
+    paths:
+      - 'packages/storefront/app/lib/**'
+      - 'packages/storefront/app/routes/**'
+      - 'packages/storefront/storefrontapi.generated.d.ts'
+  schedule:
+    - cron: '0 6 * * 1'  # Mondays 06:00 UTC — catch Shopify schema drift
+
+jobs:
+  contract:
+    name: GraphQL schema contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      SHOPIFY_STORE: ${{ secrets.SHOPIFY_STORE }}
+    steps:
+      - name: Check required secrets
+        id: check
+        run: |
+          if [ -z "${{ secrets.SHOPIFY_STORE }}" ]; then
+            echo "has-secrets=false" >> $GITHUB_OUTPUT
+          else
+            echo "has-secrets=true" >> $GITHUB_OUTPUT
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.check.outputs.has-secrets == 'true'
+
+      - name: Setup Node
+        if: steps.check.outputs.has-secrets == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install deps
+        if: steps.check.outputs.has-secrets == 'true'
+        run: npm ci
+
+      - name: Run codegen
+        if: steps.check.outputs.has-secrets == 'true'
+        run: npm --workspace packages/storefront run codegen
+        continue-on-error: true
+
+      - name: Detect schema drift
+        if: steps.check.outputs.has-secrets == 'true'
+        run: |
+          if ! git diff --quiet packages/storefront/storefrontapi.generated.d.ts; then
+            echo "::warning::Storefront GraphQL schema drifted — regenerate + commit"
+          fi
+
+      - name: Skip notice
+        if: steps.check.outputs.has-secrets == 'false'
+        run: echo "::notice::SHOPIFY_STORE secret missing — contract test skipped"

@@ -1,0 +1,64 @@
+name: Deploy — Staging
+
+on:
+  push:
+    branches: [staging]
+
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: false
+
+jobs:
+  oxygen-staging:
+    name: Oxygen staging
+    runs-on: ubuntu-latest
+    environment: staging
+    timeout-minutes: 10
+    steps:
+      - name: Check required secrets
+        id: check
+        run: |
+          if [ -z "${{ secrets.OXYGEN_DEPLOYMENT_TOKEN }}" ]; then
+            echo "has-secrets=false" >> $GITHUB_OUTPUT
+          else
+            echo "has-secrets=true" >> $GITHUB_OUTPUT
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.check.outputs.has-secrets == 'true'
+
+      - name: Setup Node
+        if: steps.check.outputs.has-secrets == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install deps
+        if: steps.check.outputs.has-secrets == 'true'
+        run: npm ci
+
+      - name: Deploy storefront to Oxygen staging
+        if: steps.check.outputs.has-secrets == 'true'
+        run: |
+          cd packages/storefront
+          npx shopify hydrogen deploy \
+            --token ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN }} \
+            --environment staging \
+            --metadata-user "${{ github.actor }}" \
+            --metadata-version "${{ github.sha }}"
+
+      - name: Deploy Worker to CF staging (activates Day 15+)
+        if: steps.check.outputs.has-secrets == 'true' && env.CF_TOKEN != ''
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -d packages/app ]; then
+            cd packages/app && npx wrangler deploy --env staging
+          fi
+
+      - name: Skip notice
+        if: steps.check.outputs.has-secrets == 'false'
+        run: echo "::notice::OXYGEN_DEPLOYMENT_TOKEN not set — staging deploy skipped (interactive Hydrogen storefront creation pending)"
