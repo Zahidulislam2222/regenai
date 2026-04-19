@@ -32,6 +32,12 @@ export default [
       '**/*.generated.d.ts',
       '**/.react-router/',
       '**/packages/hydrogen/dist/',
+      // Test files use Vitest, not Jest — eslint-plugin-jest's version
+      // detection throws without a jest package. Vitest has its own checks.
+      'tests/**/*',
+      'playwright-report/**',
+      'test-results/**',
+      'coverage/**',
     ],
   },
   ...fixupConfigRules(
