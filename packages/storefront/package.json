@@ -10,7 +10,14 @@
     "preview": "shopify hydrogen preview --build",
     "lint": "eslint --no-error-on-unmatched-pattern .",
     "typecheck": "react-router typegen && tsc --noEmit",
-    "codegen": "shopify hydrogen codegen && react-router typegen"
+    "codegen": "shopify hydrogen codegen && react-router typegen",
+    "test": "vitest",
+    "test:unit": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:a11y": "playwright test tests/a11y",
+    "test:visual": "percy exec -- playwright test tests/visual",
+    "test:watch": "vitest"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {
@@ -44,10 +51,14 @@
     "web-vitals": "^5.2.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.2",
     "@eslint/compat": "^1.2.5",
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.18.0",
     "@graphql-codegen/cli": "5.0.2",
+    "@percy/cli": "^1.31.11",
+    "@percy/playwright": "^1.1.0",
+    "@playwright/test": "^1.59.1",
     "@react-router/dev": "7.12.0",
     "@react-router/fs-routes": "7.12.0",
     "@shopify/cli": "3.91.1",
@@ -56,12 +67,15 @@
     "@shopify/oxygen-workers-types": "^4.1.6",
     "@shopify/prettier-config": "^1.1.2",
     "@tailwindcss/vite": "^4.1.6",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@total-typescript/ts-reset": "^0.6.1",
     "@types/eslint": "^9.6.1",
     "@types/react": "^18.3.28",
     "@types/react-dom": "^18.3.7",
     "@typescript-eslint/eslint-plugin": "^8.21.0",
     "@typescript-eslint/parser": "^8.21.0",
+    "@vitest/coverage-v8": "^4.1.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "eslint": "^9.18.0",
@@ -75,11 +89,13 @@
     "eslint-plugin-react-hooks": "^5.1.0",
     "globals": "^15.14.0",
     "graphql-config": "^5.0.3",
+    "happy-dom": "^20.9.0",
     "prettier": "^3.4.2",
     "tailwind-merge": "^3.5.0",
     "typescript": "^5.9.2",
     "vite": "^6.4.2",
-    "vite-tsconfig-paths": "^4.3.1"
+    "vite-tsconfig-paths": "^4.3.1",
+    "vitest": "^4.1.4"
   },
   "engines": {
     "node": "^22 || ^24"
