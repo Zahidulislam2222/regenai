@@ -1,0 +1,34 @@
+query Input {
+  cart {
+    deliveryGroups {
+      id
+      deliveryOptions {
+        handle
+        title
+        code
+      }
+    }
+    lines {
+      quantity
+      merchandise {
+        ... on ProductVariant {
+          id
+          title
+          product {
+            id
+            title
+            fdaClass: metafield(namespace: "regenai", key: "fda_class") {
+              value
+            }
+            shipsWithSignature: metafield(namespace: "regenai", key: "ships_with_signature") {
+              value
+            }
+            contraindications: metafield(namespace: "regenai", key: "contraindications") {
+              value
+            }
+          }
+        }
+      }
+    }
+  }
+}

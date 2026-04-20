@@ -1,0 +1,16 @@
+api_version = "2026-01"
+
+[[extensions]]
+name = "delivery-customization"
+handle = "delivery-customization"
+type = "function"
+
+[[extensions.targeting]]
+target = "cart.delivery-options.transform.run"
+input_query = "src/input.graphql"
+export = "cart-delivery-options-transform"
+
+[extensions.build]
+command = "cargo build --release --target=wasm32-wasip1"
+path = "target/wasm32-wasip1/release/delivery_customization.wasm"
+watch = ["src/**/*.rs", "Cargo.toml", "../../Cargo.toml"]
