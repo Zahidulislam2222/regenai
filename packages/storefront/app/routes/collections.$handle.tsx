@@ -2,6 +2,7 @@ import {data, useLoaderData} from 'react-router';
 import {Analytics, getPaginationVariables} from '@shopify/hydrogen';
 import type {Route} from './+types/collections.$handle';
 import {Breadcrumbs} from '~/components/Breadcrumbs';
+import {BodyAreaSelector} from '~/components/BodyAreaSelector';
 import {PlpFilters} from '~/components/commerce/PlpFilters';
 import {PlpGrid, type PlpGridProps} from '~/components/commerce/PlpGrid';
 import {JsonLd, breadcrumbSchema} from '~/lib/seo/jsonld';
@@ -87,6 +88,9 @@ export default function CollectionRoute() {
             <p className="mt-3 max-w-3xl text-[var(--text-subtle)]">{collection.description}</p>
           ) : null}
         </header>
+        <div className="mb-8">
+          <BodyAreaSelector />
+        </div>
         <div className="grid gap-8 lg:grid-cols-[260px_1fr]">
           <aside className="lg:sticky lg:top-24 lg:self-start">
             <PlpFilters />
