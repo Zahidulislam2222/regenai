@@ -18,6 +18,7 @@ jobs:
       SHOPIFY_STORE: ${{ secrets.SHOPIFY_STORE }}
       SHOPIFY_STORE_PASSWORD: ${{ secrets.SHOPIFY_STORE_PASSWORD }}
       PREVIEW_URL: https://regenai-storefront-preview.regenai-workers.workers.dev
+      PLAYWRIGHT_TEST_DIR: tests/a11y
     steps:
       - name: Check required secrets
         id: check
@@ -49,7 +50,8 @@ jobs:
       - name: Run axe suite against live preview
         if: steps.check.outputs.has-secrets == 'true'
         working-directory: packages/storefront
-        run: npx playwright test tests/a11y
+        # PLAYWRIGHT_TEST_DIR env overrides testDir in playwright.config.ts
+        run: npx playwright test
 
       - name: Skip notice
         if: steps.check.outputs.has-secrets == 'false'

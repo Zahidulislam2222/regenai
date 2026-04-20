@@ -3,8 +3,13 @@ import {defineConfig, devices} from '@playwright/test';
 const PORT = 3000;
 const BASE_URL = process.env.PREVIEW_URL ?? `http://localhost:${PORT}`;
 
+// Allow CI / `test:a11y` / `test:visual` to override testDir without
+// maintaining a second config file. Default stays on tests/e2e so the
+// common `playwright test` invocation works locally.
+const TEST_DIR = process.env.PLAYWRIGHT_TEST_DIR ?? 'tests/e2e';
+
 export default defineConfig({
-  testDir: 'tests/e2e',
+  testDir: TEST_DIR,
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,

@@ -19,6 +19,7 @@ jobs:
       SHOPIFY_STORE: ${{ secrets.SHOPIFY_STORE }}
       SHOPIFY_STORE_PASSWORD: ${{ secrets.SHOPIFY_STORE_PASSWORD }}
       PREVIEW_URL: https://regenai-storefront-preview.regenai-workers.workers.dev
+      PLAYWRIGHT_TEST_DIR: tests/visual
     steps:
       - name: Check required secrets + visual specs
         id: check
@@ -57,7 +58,7 @@ jobs:
       - name: Run Percy visual diff against live preview
         if: steps.check.outputs.has-secrets == 'true'
         working-directory: packages/storefront
-        run: npx percy exec -- playwright test tests/visual
+        run: npx percy exec -- playwright test
 
       - name: Skip notice
         if: steps.check.outputs.has-secrets == 'false'
