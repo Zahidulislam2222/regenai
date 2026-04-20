@@ -8,9 +8,12 @@ concurrency:
   group: deploy-staging
   cancel-in-progress: false
 
+# Post-ADR-011 pivot: all deploys go to Cloudflare Workers (Oxygen blocked
+# on dev stores). Storefront uses tokens from the Headless sales channel.
+
 jobs:
-  oxygen-staging:
-    name: Oxygen staging
+  storefront-staging:
+    name: Storefront staging (CF Workers)
     runs-on: ubuntu-latest
     environment: staging
     timeout-minutes: 10
@@ -18,7 +21,7 @@ jobs:
       - name: Check required secrets
         id: check
         run: |
-          if [ -z "${{ secrets.OXYGEN_DEPLOYMENT_TOKEN }}" ]; then
+          if [ -z "${{ secrets.CLOUDFLARE_API_TOKEN }}" ] || [ -z "${{ secrets.SHOPIFY_STOREFRONT_PUBLIC_TOKEN }}" ]; then
             echo "has-secrets=false" >> $GITHUB_OUTPUT
           else
             echo "has-secrets=true" >> $GITHUB_OUTPUT
@@ -38,27 +41,42 @@ jobs:
         if: steps.check.outputs.has-secrets == 'true'
         run: npm ci
 
-      - name: Deploy storefront to Oxygen staging
+      - name: Build Hydrogen storefront
         if: steps.check.outputs.has-secrets == 'true'
-        run: |
-          cd packages/storefront
-          npx shopify hydrogen deploy \
-            --token ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN }} \
-            --environment staging \
-            --metadata-user "${{ github.actor }}" \
-            --metadata-version "${{ github.sha }}"
-
-      - name: Deploy Worker to CF staging (activates Day 15+)
-        if: steps.check.outputs.has-secrets == 'true' && env.CF_TOKEN != ''
+        working-directory: packages/storefront
+        run: npx shopify hydrogen build
         env:
-          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+          PUBLIC_STORE_DOMAIN: ${{ secrets.SHOPIFY_STORE }}
+          PUBLIC_STOREFRONT_API_TOKEN: ${{ secrets.SHOPIFY_STOREFRONT_PUBLIC_TOKEN }}
+          PUBLIC_STOREFRONT_ID: ${{ secrets.PUBLIC_STOREFRONT_ID }}
+
+      - name: Deploy to Cloudflare Workers (staging)
+        if: steps.check.outputs.has-secrets == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: packages/storefront
+          command: deploy --env staging
+        env:
+          SHOPIFY_STOREFRONT_API_TOKEN: ${{ secrets.SHOPIFY_STOREFRONT_PUBLIC_TOKEN }}
+          SHOPIFY_STOREFRONT_PRIVATE_TOKEN: ${{ secrets.SHOPIFY_STOREFRONT_PRIVATE_TOKEN }}
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+          SENTRY_STOREFRONT_DSN: ${{ secrets.SENTRY_STOREFRONT_DSN }}
+
+      - name: Deploy custom app (activates Day 15+)
+        if: steps.check.outputs.has-secrets == 'true'
         run: |
           if [ -d packages/app ]; then
             cd packages/app && npx wrangler deploy --env staging
+          else
+            echo "::notice::packages/app not present — app staging deploy skipped"
           fi
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Skip notice
         if: steps.check.outputs.has-secrets == 'false'
-        run: echo "::notice::OXYGEN_DEPLOYMENT_TOKEN not set — staging deploy skipped (interactive Hydrogen storefront creation pending)"
+        run: echo "::notice::Staging deploy skipped — needs CLOUDFLARE_API_TOKEN + SHOPIFY_STOREFRONT_PUBLIC_TOKEN (see ADR-011)"

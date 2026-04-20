@@ -20,12 +20,12 @@ jobs:
     steps:
       - name: Check required secrets
         id: check
-        # Lighthouse needs a real build to audit. We gate on
-        # OXYGEN_DEPLOYMENT_TOKEN (empty until D1.5's deferred interactive
-        # Hydrogen storefront creation completes) so the job doesn't trip
-        # on `shopify hydrogen build --codegen` requiring a linked storefront.
+        # Lighthouse needs a Hydrogen build. We gate on
+        # SHOPIFY_STOREFRONT_PUBLIC_TOKEN (empty until the Headless channel
+        # is installed on the dev store and the public token is synced into
+        # GH Secrets — see ADR-011).
         run: |
-          if [ -z "${{ secrets.OXYGEN_DEPLOYMENT_TOKEN }}" ]; then
+          if [ -z "${{ secrets.SHOPIFY_STOREFRONT_PUBLIC_TOKEN }}" ]; then
             echo "has-secrets=false" >> $GITHUB_OUTPUT
           else
             echo "has-secrets=true" >> $GITHUB_OUTPUT
@@ -47,7 +47,13 @@ jobs:
 
       - name: Build storefront
         if: steps.check.outputs.has-secrets == 'true'
-        run: npm --workspace packages/storefront run build
+        working-directory: packages/storefront
+        run: npx shopify hydrogen build
+        env:
+          SESSION_SECRET: ci-lighthouse-session-secret-placeholder-32-chars-min
+          PUBLIC_STORE_DOMAIN: ${{ secrets.SHOPIFY_STORE }}
+          PUBLIC_STOREFRONT_API_TOKEN: ${{ secrets.SHOPIFY_STOREFRONT_PUBLIC_TOKEN }}
+          PUBLIC_STOREFRONT_ID: ${{ secrets.PUBLIC_STOREFRONT_ID }}
 
       - name: Lighthouse CI
         if: steps.check.outputs.has-secrets == 'true'
@@ -56,8 +62,8 @@ jobs:
           configPath: 'lighthouserc.json'
           uploadArtifacts: true
           temporaryPublicStorage: true
-        continue-on-error: true  # pass threshold enforced once budget.json is tuned (D16)
+        continue-on-error: true  # hard budget enforcement lands at D16 once budget.json is tuned
 
       - name: Skip notice
         if: steps.check.outputs.has-secrets == 'false'
-        run: echo "::notice::OXYGEN_DEPLOYMENT_TOKEN not yet set (Hydrogen storefront requires interactive Partners-admin creation per D1.5 carve-out) — Lighthouse skipped; activates D2+"
+        run: echo "::notice::Lighthouse skipped — SHOPIFY_STOREFRONT_PUBLIC_TOKEN not yet provisioned. Install the Headless channel on the dev store (ADR-011) to activate."

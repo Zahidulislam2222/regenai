@@ -1,0 +1,65 @@
+#:schema node_modules/wrangler/config-schema.json
+#
+# Cloudflare Workers deployment config for the RegenAI Hydrogen storefront.
+#
+# Activated because Shopify's Oxygen / Hydrogen sales channel is gated
+# to production Plus subscriptions and unavailable on dev stores (even
+# with Plus-preview). ADR-004 + its 2026-04-20 supplement document the
+# policy and this fallback activation.
+#
+# Mini-Oxygen builds a Worker-compatible bundle at `dist/server/index.js`,
+# which we deploy unchanged to CF Workers. Static assets ship from
+# `dist/client/` via the Workers assets binding.
+
+name = "regenai-storefront"
+main = "dist/server/index.js"
+compatibility_date = "2026-04-01"
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+directory = "dist/client"
+binding = "ASSETS"
+
+[observability]
+enabled = true
+
+# Public envs (non-secret) — overridden per-environment at deploy time.
+# Secrets (SHOPIFY_*_TOKEN, SESSION_SECRET, SENTRY_STOREFRONT_DSN) are
+# injected via `wrangler secret put` or GH Actions, never committed here.
+[vars]
+PUBLIC_STORE_DOMAIN = "regenai.myshopify.com"
+PUBLIC_CHECKOUT_DOMAIN = "regenai.myshopify.com"
+NODE_ENV = "production"
+
+# ---------------------------------------------------------------------------
+# Environment: preview  (per-PR ephemeral deploys from deploy-preview.yml)
+# ---------------------------------------------------------------------------
+[env.preview]
+name = "regenai-storefront-preview"
+
+[env.preview.vars]
+PUBLIC_STORE_DOMAIN = "regenai.myshopify.com"
+PUBLIC_CHECKOUT_DOMAIN = "regenai.myshopify.com"
+NODE_ENV = "development"
+
+# ---------------------------------------------------------------------------
+# Environment: staging  (deploy-staging.yml on merge to `staging` branch)
+# ---------------------------------------------------------------------------
+[env.staging]
+name = "regenai-storefront-staging"
+
+[env.staging.vars]
+PUBLIC_STORE_DOMAIN = "regenai.myshopify.com"
+PUBLIC_CHECKOUT_DOMAIN = "regenai.myshopify.com"
+NODE_ENV = "staging"
+
+# ---------------------------------------------------------------------------
+# Environment: production  (deploy-production.yml on tagged releases to main)
+# ---------------------------------------------------------------------------
+[env.production]
+name = "regenai-storefront"
+
+[env.production.vars]
+PUBLIC_STORE_DOMAIN = "regenai.myshopify.com"
+PUBLIC_CHECKOUT_DOMAIN = "regenai.myshopify.com"
+NODE_ENV = "production"

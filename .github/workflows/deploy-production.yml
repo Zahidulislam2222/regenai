@@ -13,6 +13,9 @@ concurrency:
   group: deploy-production
   cancel-in-progress: false
 
+# Post-ADR-011 pivot: production storefront lives on Cloudflare Workers.
+# The `production` GH environment adds required-reviewer gate.
+
 jobs:
   confirm:
     name: Gate — require explicit confirmation on manual trigger
@@ -26,20 +29,20 @@ jobs:
             exit 1
           fi
 
-  oxygen-production:
-    name: Oxygen production
+  storefront-production:
+    name: Storefront production (CF Workers)
     needs: [confirm]
     if: |
       always() &&
       (needs.confirm.result == 'success' || needs.confirm.result == 'skipped')
     runs-on: ubuntu-latest
-    environment: production  # enforces required-reviewer via GH environment protection
+    environment: production
     timeout-minutes: 12
     steps:
       - name: Check required secrets
         id: check
         run: |
-          if [ -z "${{ secrets.OXYGEN_DEPLOYMENT_TOKEN }}" ]; then
+          if [ -z "${{ secrets.CLOUDFLARE_API_TOKEN }}" ] || [ -z "${{ secrets.SHOPIFY_STOREFRONT_PUBLIC_TOKEN }}" ]; then
             echo "has-secrets=false" >> $GITHUB_OUTPUT
           else
             echo "has-secrets=true" >> $GITHUB_OUTPUT
@@ -59,28 +62,42 @@ jobs:
         if: steps.check.outputs.has-secrets == 'true'
         run: npm ci
 
-      - name: Deploy storefront to Oxygen production
+      - name: Build Hydrogen storefront
         if: steps.check.outputs.has-secrets == 'true'
-        run: |
-          cd packages/storefront
-          npx shopify hydrogen deploy \
-            --token ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN }} \
-            --environment production \
-            --metadata-user "${{ github.actor }}" \
-            --metadata-version "${{ github.ref_name }}" \
-            --metadata-description "Commit ${{ github.sha }}"
-
-      - name: Deploy Worker to CF production (activates Day 15+)
-        if: steps.check.outputs.has-secrets == 'true' && env.CF_TOKEN != ''
+        working-directory: packages/storefront
+        run: npx shopify hydrogen build
         env:
-          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+          PUBLIC_STORE_DOMAIN: ${{ secrets.SHOPIFY_STORE }}
+          PUBLIC_STOREFRONT_API_TOKEN: ${{ secrets.SHOPIFY_STOREFRONT_PUBLIC_TOKEN }}
+          PUBLIC_STOREFRONT_ID: ${{ secrets.PUBLIC_STOREFRONT_ID }}
+
+      - name: Deploy to Cloudflare Workers (production)
+        if: steps.check.outputs.has-secrets == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: packages/storefront
+          command: deploy --env production
+        env:
+          SHOPIFY_STOREFRONT_API_TOKEN: ${{ secrets.SHOPIFY_STOREFRONT_PUBLIC_TOKEN }}
+          SHOPIFY_STOREFRONT_PRIVATE_TOKEN: ${{ secrets.SHOPIFY_STOREFRONT_PRIVATE_TOKEN }}
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+          SENTRY_STOREFRONT_DSN: ${{ secrets.SENTRY_STOREFRONT_DSN }}
+
+      - name: Deploy custom app (activates Day 15+)
+        if: steps.check.outputs.has-secrets == 'true'
         run: |
           if [ -d packages/app ]; then
             cd packages/app && npx wrangler deploy --env production
+          else
+            echo "::notice::packages/app not present — app production deploy skipped"
           fi
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Skip notice
         if: steps.check.outputs.has-secrets == 'false'
-        run: echo "::notice::OXYGEN_DEPLOYMENT_TOKEN not set — production deploy skipped"
+        run: echo "::notice::Production deploy skipped — needs CLOUDFLARE_API_TOKEN + SHOPIFY_STOREFRONT_PUBLIC_TOKEN (see ADR-011)"
