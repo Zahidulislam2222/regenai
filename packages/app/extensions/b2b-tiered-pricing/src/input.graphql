@@ -1,0 +1,46 @@
+query Input {
+  cart {
+    cost {
+      subtotalAmount {
+        amount
+        currencyCode
+      }
+    }
+    lines {
+      id
+      quantity
+      cost {
+        amountPerQuantity {
+          amount
+          currencyCode
+        }
+      }
+      merchandise {
+        ... on ProductVariant {
+          id
+          title
+          product {
+            id
+            title
+          }
+        }
+      }
+    }
+    buyerIdentity {
+      purchasingCompany {
+        company {
+          id
+          tier: metafield(namespace: "regenai", key: "tier") {
+            value
+          }
+        }
+        location {
+          id
+          locationTier: metafield(namespace: "regenai", key: "location_tier") {
+            value
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+api_version = "2026-01"
+
+[[extensions]]
+name = "b2b-tiered-pricing"
+handle = "b2b-tiered-pricing"
+type = "function"
+
+[[extensions.targeting]]
+target = "cart.transform.run"
+input_query = "src/input.graphql"
+export = "cart-transform"
+
+[extensions.build]
+command = "cargo build --release --target=wasm32-wasip1"
+path = "target/wasm32-wasip1/release/b2b_tiered_pricing.wasm"
+watch = ["src/**/*.rs", "Cargo.toml", "../../Cargo.toml"]
