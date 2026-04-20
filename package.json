@@ -23,7 +23,11 @@
     "typecheck": "npm --workspaces --if-present run typecheck",
     "test": "npm --workspaces --if-present run test",
     "storefront": "npm --workspace packages/storefront run",
-    "ui": "npm --workspace packages/ui run"
+    "ui": "npm --workspace packages/ui run",
+    "postinstall": "node -e \"try{require('child_process').execSync('npm rebuild lightningcss',{stdio:'inherit'})}catch(e){console.warn('[postinstall] npm rebuild lightningcss skipped:',e.message)}\""
+  },
+  "optionalDependencies": {
+    "lightningcss-linux-x64-gnu": "1.32.0"
   },
   "devDependencies": {
     "typescript": "^5.6.3"
