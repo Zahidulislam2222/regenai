@@ -17,11 +17,15 @@ jobs:
     env:
       SHOPIFY_STORE: ${{ secrets.SHOPIFY_STORE }}
       SHOPIFY_STORE_PASSWORD: ${{ secrets.SHOPIFY_STORE_PASSWORD }}
+      # Run the Playwright suite against the live Cloudflare Workers preview
+      # URL — matches the Lighthouse pattern. Avoids spinning a local dev
+      # server in CI (which fails on the Hydrogen-project-detection quirk).
+      PREVIEW_URL: https://regenai-storefront-preview.regenai-workers.workers.dev
     steps:
       - name: Check required secrets
         id: check
         run: |
-          if [ -z "${{ secrets.SHOPIFY_STORE }}" ]; then
+          if [ -z "${{ secrets.SHOPIFY_STORE }}" ] || [ -z "${{ secrets.SHOPIFY_STOREFRONT_PUBLIC_TOKEN }}" ]; then
             echo "has-secrets=false" >> $GITHUB_OUTPUT
           else
             echo "has-secrets=true" >> $GITHUB_OUTPUT
@@ -45,10 +49,10 @@ jobs:
         if: steps.check.outputs.has-secrets == 'true'
         run: npx playwright install --with-deps chromium
 
-      - name: Run Playwright
+      - name: Run Playwright against live preview URL
         if: steps.check.outputs.has-secrets == 'true'
-        run: npm --workspace packages/storefront run test:e2e
-        continue-on-error: true  # allowed to skip until first spec lands (Day 8+)
+        working-directory: packages/storefront
+        run: npx playwright test tests/e2e
 
       - name: Upload Playwright report
         if: always() && steps.check.outputs.has-secrets == 'true'
@@ -61,4 +65,4 @@ jobs:
 
       - name: Skip notice
         if: steps.check.outputs.has-secrets == 'false'
-        run: echo "::notice::SHOPIFY_STORE secret not present — Playwright skipped"
+        run: echo "::notice::E2E skipped — SHOPIFY_STORE or SHOPIFY_STOREFRONT_PUBLIC_TOKEN missing"

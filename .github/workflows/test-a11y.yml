@@ -17,11 +17,12 @@ jobs:
     env:
       SHOPIFY_STORE: ${{ secrets.SHOPIFY_STORE }}
       SHOPIFY_STORE_PASSWORD: ${{ secrets.SHOPIFY_STORE_PASSWORD }}
+      PREVIEW_URL: https://regenai-storefront-preview.regenai-workers.workers.dev
     steps:
       - name: Check required secrets
         id: check
         run: |
-          if [ -z "${{ secrets.SHOPIFY_STORE }}" ]; then
+          if [ -z "${{ secrets.SHOPIFY_STORE }}" ] || [ -z "${{ secrets.SHOPIFY_STOREFRONT_PUBLIC_TOKEN }}" ]; then
             echo "has-secrets=false" >> $GITHUB_OUTPUT
           else
             echo "has-secrets=true" >> $GITHUB_OUTPUT
@@ -45,11 +46,11 @@ jobs:
         if: steps.check.outputs.has-secrets == 'true'
         run: npx playwright install --with-deps chromium
 
-      - name: Run axe a11y suite
+      - name: Run axe suite against live preview
         if: steps.check.outputs.has-secrets == 'true'
-        run: npm --workspace packages/storefront run test:a11y
-        continue-on-error: true  # activates once first a11y spec lands (Day 5+)
+        working-directory: packages/storefront
+        run: npx playwright test tests/a11y
 
       - name: Skip notice
         if: steps.check.outputs.has-secrets == 'false'
-        run: echo "::notice::SHOPIFY_STORE secret not present — axe-core skipped"
+        run: echo "::notice::a11y skipped — SHOPIFY_STORE or SHOPIFY_STOREFRONT_PUBLIC_TOKEN missing"

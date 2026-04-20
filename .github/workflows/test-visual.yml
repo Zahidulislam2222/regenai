@@ -18,12 +18,20 @@ jobs:
       PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
       SHOPIFY_STORE: ${{ secrets.SHOPIFY_STORE }}
       SHOPIFY_STORE_PASSWORD: ${{ secrets.SHOPIFY_STORE_PASSWORD }}
+      PREVIEW_URL: https://regenai-storefront-preview.regenai-workers.workers.dev
     steps:
-      - name: Check required secrets
+      - name: Check required secrets + visual specs
         id: check
+        # Three-way gate: need PERCY_TOKEN + SHOPIFY_STORE + at least one
+        # spec under tests/visual/. Skips cleanly until all three land.
         run: |
-          if [ -z "${{ secrets.PERCY_TOKEN }}" ] || [ -z "${{ secrets.SHOPIFY_STORE }}" ]; then
+          HAS_SPECS=false
+          if [ -d packages/storefront/tests/visual ] && [ "$(find packages/storefront/tests/visual -name '*.spec.*' | wc -l)" -gt 0 ]; then
+            HAS_SPECS=true
+          fi
+          if [ -z "${{ secrets.PERCY_TOKEN }}" ] || [ -z "${{ secrets.SHOPIFY_STORE }}" ] || [ "$HAS_SPECS" = "false" ]; then
             echo "has-secrets=false" >> $GITHUB_OUTPUT
+            echo "reason-specs=$HAS_SPECS" >> $GITHUB_OUTPUT
           else
             echo "has-secrets=true" >> $GITHUB_OUTPUT
           fi
@@ -46,11 +54,11 @@ jobs:
         if: steps.check.outputs.has-secrets == 'true'
         run: npx playwright install --with-deps chromium
 
-      - name: Run Percy visual diff
+      - name: Run Percy visual diff against live preview
         if: steps.check.outputs.has-secrets == 'true'
-        run: npm --workspace packages/storefront run test:visual
-        continue-on-error: true  # activates once first snapshot script lands (Day 5)
+        working-directory: packages/storefront
+        run: npx percy exec -- playwright test tests/visual
 
       - name: Skip notice
         if: steps.check.outputs.has-secrets == 'false'
-        run: echo "::notice::PERCY_TOKEN or SHOPIFY_STORE secret missing — Percy skipped"
+        run: echo "::notice::Percy skipped — need PERCY_TOKEN + SHOPIFY_STORE + tests/visual/ specs. Activates when first visual spec lands."

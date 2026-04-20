@@ -26,16 +26,14 @@ jobs:
       - name: Install deps
         run: npm ci
 
-      - name: Vitest (all workspaces)
-        run: npm run test --workspaces --if-present -- --run --coverage
-        continue-on-error: true  # allowed to skip until first test file lands (Day 4+)
+      - name: Vitest — storefront
+        # Run the explicit test:unit script (non-watch, no coverage).
+        # Coverage-v8 dep isn't installed yet; re-enable when @vitest/coverage-v8
+        # is added (D16 test expansion).
+        run: npm --workspace packages/storefront run test:unit
 
-      - name: Upload coverage
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage
-          path: |
-            packages/**/coverage/
-          if-no-files-found: ignore
-          retention-days: 7
+      - name: Vitest — @regenai/ui
+        # UI workspace has no tests yet (components get Storybook-only
+        # coverage until D13 publish gate). --passWithNoTests lets the job
+        # pass cleanly; will tighten once ui specs land.
+        run: npm --workspace packages/ui run test -- --passWithNoTests

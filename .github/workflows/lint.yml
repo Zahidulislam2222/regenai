@@ -32,14 +32,11 @@ jobs:
       - name: ESLint + Prettier (via Shopify eslint-plugin-prettier integration)
         run: npm run lint --workspaces --if-present
 
-      - name: TypeScript typecheck (all workspaces)
-        # Use tsc --noEmit directly — skipping react-router typegen in CI
-        # avoids loading vite.config.ts which pulls lightningcss (platform-
-        # specific binary issue across Windows-lock / Linux-CI). Virtual
-        # types resolved via skipLibCheck in tsconfig; real type errors
-        # still caught.
-        run: |
-          cd packages/storefront
-          ./node_modules/.bin/tsc --noEmit --skipLibCheck || true
-          echo "::notice::typecheck continues with warnings only until lightningcss cross-platform lock is rebuilt (Day 4 chore)"
-        continue-on-error: true
+      - name: TypeScript typecheck (storefront)
+        # Uses the workspace's hoisted tsc via npx. skipLibCheck avoids
+        # noise from Hydrogen generated types; real type errors surface.
+        # Previous `|| true` masking removed now that the lightningcss
+        # cross-platform issue is resolved via root optionalDependencies
+        # + scripts/rebuild-native.mjs postinstall.
+        working-directory: packages/storefront
+        run: npx tsc --noEmit --skipLibCheck

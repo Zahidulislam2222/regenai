@@ -2,18 +2,16 @@
   "ci": {
     "collect": {
       "numberOfRuns": 3,
-      "startServerCommand": "npm --workspace packages/storefront run preview",
-      "startServerReadyPattern": "MiniOxygen is now running",
       "url": [
-        "http://localhost:3000/",
-        "http://localhost:3000/collections/all",
-        "http://localhost:3000/search?q=oil",
-        "http://localhost:3000/pages/styleguide"
+        "https://regenai-storefront-preview.regenai-workers.workers.dev/",
+        "https://regenai-storefront-preview.regenai-workers.workers.dev/collections/all",
+        "https://regenai-storefront-preview.regenai-workers.workers.dev/pages/styleguide"
       ],
       "settings": {
         "preset": "desktop",
         "throttlingMethod": "simulate",
-        "skipAudits": ["uses-http2"]
+        "skipAudits": ["uses-http2"],
+        "chromeFlags": "--no-sandbox --disable-dev-shm-usage"
       }
     },
     "assert": {
