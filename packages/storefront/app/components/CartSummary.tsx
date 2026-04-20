@@ -3,6 +3,8 @@ import type {CartLayout} from '~/components/CartMain';
 import {CartForm, Money, type OptimisticCart} from '@shopify/hydrogen';
 import {useEffect, useId, useRef, useState} from 'react';
 import {useFetcher} from 'react-router';
+import {FreeShipBar} from '~/components/FreeShipBar';
+import {GiftNoteField} from '~/components/GiftNoteField';
 
 type CartSummaryProps = {
   cart: OptimisticCart<CartApiQueryFragment | null>;
@@ -20,6 +22,9 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
 
   return (
     <div aria-labelledby={summaryId} className={className}>
+      <div className="mb-3">
+        <FreeShipBar cart={cart} />
+      </div>
       <h4 id={summaryId}>Totals</h4>
       <dl role="group" className="cart-subtotal">
         <dt>Subtotal</dt>
@@ -41,6 +46,7 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
         giftCardHeadingId={giftCardHeadingId}
         giftCardInputId={giftCardInputId}
       />
+      <GiftNoteField currentNote={cart?.note ?? ''} />
       <CartCheckoutActions checkoutUrl={cart?.checkoutUrl} />
     </div>
   );

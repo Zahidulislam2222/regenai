@@ -3,6 +3,7 @@ import {
   type ReactNode,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 import {useId} from 'react';
@@ -36,31 +37,77 @@ export function Aside({
   const {type: activeType, close} = useAside();
   const expanded = type === activeType;
   const id = useId();
+  const asideRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+
+  // Escape-to-close + focus-trap + body-scroll-lock + focus-restore.
   useEffect(() => {
+    if (!expanded) return;
     const abortController = new AbortController();
 
-    if (expanded) {
-      document.addEventListener(
-        'keydown',
-        function handler(event: KeyboardEvent) {
-          if (event.key === 'Escape') {
-            close();
-          }
-        },
-        {signal: abortController.signal},
-      );
-    }
-    return () => abortController.abort();
+    // Remember where focus was before opening so we can restore on close.
+    previousFocusRef.current = document.activeElement as HTMLElement | null;
+
+    // Lock body scroll while drawer is open — avoids background content
+    // scrolling when the user swipes / scrolls inside the aside.
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    // Move focus into the drawer on open (to the first focusable button).
+    const firstFocusable = asideRef.current?.querySelector<HTMLElement>(
+      'button, [href], input, textarea, select, [tabindex]:not([tabindex="-1"])',
+    );
+    firstFocusable?.focus({preventScroll: true});
+
+    document.addEventListener(
+      'keydown',
+      function handler(event: KeyboardEvent) {
+        if (event.key === 'Escape') {
+          close();
+          return;
+        }
+        if (event.key !== 'Tab' || !asideRef.current) return;
+        const focusables = Array.from(
+          asideRef.current.querySelectorAll<HTMLElement>(
+            'button, [href], input, textarea, select, [tabindex]:not([tabindex="-1"])',
+          ),
+        ).filter((el) => !el.hasAttribute('disabled'));
+        if (focusables.length === 0) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      },
+      {signal: abortController.signal},
+    );
+
+    return () => {
+      abortController.abort();
+      document.body.style.overflow = previousOverflow;
+      previousFocusRef.current?.focus?.({preventScroll: true});
+    };
   }, [close, expanded]);
 
   return (
     <div
+      ref={asideRef}
       aria-modal
       className={`overlay ${expanded ? 'expanded' : ''}`}
       role="dialog"
       aria-labelledby={id}
+      aria-hidden={!expanded}
     >
-      <button className="close-outside" onClick={close} />
+      <button
+        className="close-outside"
+        onClick={close}
+        aria-label="Close drawer backdrop"
+        tabIndex={-1}
+      />
       <aside>
         <header>
           <h3 id={id}>{heading}</h3>
