@@ -24,9 +24,13 @@
     "test": "npm --workspaces --if-present run test",
     "storefront": "npm --workspace packages/storefront run",
     "ui": "npm --workspace packages/ui run",
-    "postinstall": "node -e \"try{require('child_process').execSync('npm rebuild lightningcss',{stdio:'inherit'})}catch(e){console.warn('[postinstall] npm rebuild lightningcss skipped:',e.message)}\""
+    "postinstall": "node ./scripts/rebuild-native.mjs"
   },
   "optionalDependencies": {
+    "@ast-grep/napi-linux-x64-gnu": "0.33.0",
+    "@rollup/rollup-linux-x64-gnu": "4.60.2",
+    "@tailwindcss/oxide-linux-x64-gnu": "4.2.2",
+    "@unrs/resolver-binding-linux-x64-gnu": "1.11.1",
     "lightningcss-linux-x64-gnu": "1.32.0"
   },
   "devDependencies": {
