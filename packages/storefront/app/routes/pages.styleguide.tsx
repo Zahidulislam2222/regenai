@@ -45,7 +45,7 @@ export default function Styleguide() {
       <h1 className="text-4xl font-semibold tracking-tight">RegenAI — Style guide</h1>
       <p className="mt-2 max-w-prose text-[var(--text-secondary)]">
         Living component library. Every token, type, and component variant here is the source of truth referenced by
-        storefront + custom app + mobile. If it isn't here, it doesn't ship.
+        storefront + custom app + mobile. If it isn&rsquo;t here, it doesn&rsquo;t ship.
       </p>
 
       <section className="mt-12">

@@ -9,7 +9,6 @@ import {initSentry} from '~/lib/sentry.client';
 // ENV values bridged via a small <script id="env">...</script> in root.tsx
 // (D3.2 pattern — server loader sets the public envs into window.ENV).
 const clientEnv =
-  // @ts-expect-error — window.ENV is injected by Remix root loader
   (typeof window !== 'undefined' && window.ENV) || {};
 
 initSentry(clientEnv);

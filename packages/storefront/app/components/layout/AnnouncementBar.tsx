@@ -29,7 +29,9 @@ export function AnnouncementBar({message, campaignId, cta, tone = 'brand'}: Anno
   useEffect(() => {
     try {
       setDismissed(localStorage.getItem(STORAGE_KEY_PREFIX + campaignId) === '1');
-    } catch {}
+    } catch {
+      // localStorage unavailable (Safari private, quota) — non-critical
+    }
   }, [campaignId]);
 
   if (dismissed) return null;
@@ -38,7 +40,9 @@ export function AnnouncementBar({message, campaignId, cta, tone = 'brand'}: Anno
     setDismissed(true);
     try {
       localStorage.setItem(STORAGE_KEY_PREFIX + campaignId, '1');
-    } catch {}
+    } catch {
+      // localStorage unavailable (Safari private, quota) — non-critical
+    }
   };
 
   return (

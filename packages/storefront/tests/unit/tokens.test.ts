@@ -23,10 +23,10 @@ describe('design tokens', () => {
   });
 
   it('exports typography token references', () => {
-    expect(fonts.display).toContain('Inter');
-    expect(fonts.body).toContain('Inter');
-    expect(fonts.mono).toContain('Geist');
-    expect(fonts.arabic).toContain('IBM Plex Sans Arabic');
+    expect(fonts.display).toBe('var(--font-display)');
+    expect(fonts.body).toBe('var(--font-body)');
+    expect(fonts.mono).toBe('var(--font-mono)');
+    expect(fonts.arabic).toBe('var(--font-arabic)');
   });
 
   it('exports radii + shadows + motion', () => {

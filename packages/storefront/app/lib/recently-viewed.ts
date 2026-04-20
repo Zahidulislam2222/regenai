@@ -17,7 +17,7 @@ export function track(item: Omit<RecentlyViewedItem, 'addedAt'>) {
   if (typeof window === 'undefined') return;
   try {
     const raw = localStorage.getItem(KEY);
-    const list: RecentlyViewedItem[] = raw ? JSON.parse(raw) : [];
+    const list: RecentlyViewedItem[] = raw ? (JSON.parse(raw) as RecentlyViewedItem[]) : [];
     const filtered = list.filter((x) => x.handle !== item.handle);
     filtered.unshift({...item, addedAt: Date.now()});
     if (filtered.length > MAX) filtered.length = MAX;
@@ -41,5 +41,7 @@ export function clear() {
   if (typeof window === 'undefined') return;
   try {
     localStorage.removeItem(KEY);
-  } catch {}
+  } catch {
+    // Ignore disabled-storage errors.
+  }
 }

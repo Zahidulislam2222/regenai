@@ -63,6 +63,7 @@ export function Gallery({images}: GalleryProps) {
         ))}
       </ul>
 
+      {/* eslint-disable jsx-a11y/no-noninteractive-tabindex, jsx-a11y/no-noninteractive-element-interactions -- ARIA carousel pattern: role=group requires tabIndex+onKeyDown for arrow-key navigation */}
       <div
         ref={mainRef}
         tabIndex={0}
@@ -72,6 +73,7 @@ export function Gallery({images}: GalleryProps) {
         onKeyDown={onKey}
         className="relative aspect-square overflow-hidden rounded-lg bg-[var(--color-bone-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]"
       >
+        {/* eslint-enable jsx-a11y/no-noninteractive-tabindex, jsx-a11y/no-noninteractive-element-interactions */}
         {current.modelSrc ? (
           // 3D view slot — consumer adds <model-viewer> script tag in root
           // and the element here. Using dangerous html would bypass CSP; instead

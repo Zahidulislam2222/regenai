@@ -1,0 +1,262 @@
+{
+  "$schema": "./brand-tokens.schema.json",
+  "meta": {
+    "name": "RegenAI Brand System",
+    "version": "0.1.0",
+    "generated": "2026-04-20",
+    "generator": "Claude Design (via Claude Code session, Day 1)",
+    "input": "docs/BRAND-BRIEF.md",
+    "reference_brands": ["Therabody", "Hyperice", "Oura", "Whoop", "Lumen", "Eight Sleep", "Function Health", "Bioniq"],
+    "aesthetic_anchor": "clinical + modern + trust-first",
+    "wcag_target": "WCAG 2.2 AA"
+  },
+  "color": {
+    "brand": {
+      "bone": {
+        "value": "#F8F6F1",
+        "description": "Off-white paper tone. Primary page surface.",
+        "contrast_ratio_ink": 14.5
+      },
+      "bone-muted": {
+        "value": "#EFEBE2",
+        "description": "Subtle divider / secondary card background."
+      },
+      "bone-subtle": {
+        "value": "#F4F0EA",
+        "description": "Between bone and bone-muted. Nested section surfaces."
+      },
+      "primary": {
+        "value": "#1E3A5F",
+        "description": "Deep clinical blue. Headlines, primary CTAs, trust elements.",
+        "contrast_on_bone": 10.8
+      },
+      "primary-hover": {
+        "value": "#2E5280",
+        "description": "Hover state for primary.",
+        "contrast_on_bone": 7.9
+      },
+      "primary-active": {
+        "value": "#14284A",
+        "description": "Active/pressed state for primary."
+      },
+      "accent": {
+        "value": "#C87A4B",
+        "description": "Warm terracotta. Energetic without being loud. Callouts, highlights, selective emphasis.",
+        "contrast_on_bone": 4.8
+      },
+      "accent-hover": {
+        "value": "#D89768",
+        "description": "Hover state for accent."
+      },
+      "sage": {
+        "value": "#7A8F6F",
+        "description": "Muted green. Wellness/trust emphasis, badges, evidence indicators.",
+        "contrast_on_bone": 4.6
+      },
+      "sage-hover": {
+        "value": "#8BA082",
+        "description": "Hover state for sage."
+      },
+      "ink": {
+        "value": "#1A1A1A",
+        "description": "Primary body text. Nearly-black.",
+        "contrast_on_bone": 14.5
+      },
+      "muted": {
+        "value": "#5A5A5A",
+        "description": "Secondary text, metadata, helper copy.",
+        "contrast_on_bone": 6.9
+      },
+      "subtle": {
+        "value": "#8A8A8A",
+        "description": "Placeholder text, disabled states, decorative lines.",
+        "contrast_on_bone": 4.5
+      }
+    },
+    "status": {
+      "success": { "value": "#2D7A4F", "bg": "#E8F5EC" },
+      "warning": { "value": "#C47E2A", "bg": "#FCF1DC" },
+      "error": { "value": "#B23A3A", "bg": "#FCE5E5" },
+      "info": { "value": "#1E3A5F", "bg": "#E3EAF4" }
+    },
+    "surface": {
+      "page": "#F8F6F1",
+      "card": "#FFFFFF",
+      "elevated": "#FFFFFF",
+      "overlay": "rgba(26, 26, 26, 0.45)",
+      "inverse": "#1A1A1A"
+    },
+    "border": {
+      "default": "#E5E0D5",
+      "strong": "#C7BFAF",
+      "focus": "#1E3A5F",
+      "error": "#B23A3A"
+    }
+  },
+  "typography": {
+    "family": {
+      "display": "Satoshi, ui-sans-serif, system-ui, sans-serif",
+      "body": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "mono": "'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace",
+      "arabic": "'IBM Plex Sans Arabic', 'Aref Ruqaa', Arial, sans-serif"
+    },
+    "size": {
+      "xs": "0.75rem",
+      "sm": "0.875rem",
+      "base": "1rem",
+      "lg": "1.125rem",
+      "xl": "1.25rem",
+      "2xl": "1.5rem",
+      "3xl": "1.875rem",
+      "4xl": "2.25rem",
+      "5xl": "3rem",
+      "6xl": "3.75rem",
+      "7xl": "4.5rem",
+      "8xl": "6rem"
+    },
+    "weight": {
+      "regular": "400",
+      "medium": "500",
+      "semibold": "600",
+      "bold": "700",
+      "black": "900"
+    },
+    "line_height": {
+      "tight": "1.1",
+      "snug": "1.25",
+      "normal": "1.5",
+      "relaxed": "1.625",
+      "loose": "1.75"
+    },
+    "letter_spacing": {
+      "tight": "-0.025em",
+      "normal": "0",
+      "wide": "0.025em",
+      "wider": "0.05em",
+      "widest": "0.1em"
+    }
+  },
+  "space": {
+    "0": "0",
+    "px": "1px",
+    "0.5": "0.125rem",
+    "1": "0.25rem",
+    "2": "0.5rem",
+    "3": "0.75rem",
+    "4": "1rem",
+    "5": "1.25rem",
+    "6": "1.5rem",
+    "8": "2rem",
+    "10": "2.5rem",
+    "12": "3rem",
+    "16": "4rem",
+    "20": "5rem",
+    "24": "6rem",
+    "32": "8rem",
+    "40": "10rem",
+    "48": "12rem",
+    "56": "14rem",
+    "64": "16rem"
+  },
+  "radius": {
+    "none": "0",
+    "sm": "0.25rem",
+    "md": "0.5rem",
+    "lg": "0.75rem",
+    "xl": "1rem",
+    "2xl": "1.5rem",
+    "3xl": "2rem",
+    "full": "9999px"
+  },
+  "shadow": {
+    "none": "none",
+    "sm": "0 1px 2px 0 rgb(0 0 0 / 0.04)",
+    "md": "0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.06)",
+    "lg": "0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.06)",
+    "xl": "0 20px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.06)",
+    "2xl": "0 25px 50px -12px rgb(0 0 0 / 0.15)",
+    "inner": "inset 0 2px 4px 0 rgb(0 0 0 / 0.04)"
+  },
+  "motion": {
+    "duration": {
+      "instant": "0ms",
+      "fast": "150ms",
+      "normal": "200ms",
+      "medium": "250ms",
+      "slow": "300ms",
+      "slower": "500ms",
+      "slowest": "700ms"
+    },
+    "easing": {
+      "linear": "linear",
+      "in": "cubic-bezier(0.4, 0, 1, 1)",
+      "out": "cubic-bezier(0.0, 0, 0.2, 1)",
+      "in-out": "cubic-bezier(0.4, 0, 0.2, 1)",
+      "spring-gentle": "cubic-bezier(0.34, 1.12, 0.64, 1)",
+      "spring-bouncy": "cubic-bezier(0.34, 1.56, 0.64, 1)"
+    },
+    "reduced_motion_fallback": "instant"
+  },
+  "layout": {
+    "container": {
+      "sm": "640px",
+      "md": "768px",
+      "lg": "1024px",
+      "xl": "1280px",
+      "2xl": "1536px",
+      "content-max": "75ch"
+    },
+    "breakpoint": {
+      "xs": "480px",
+      "sm": "640px",
+      "md": "768px",
+      "lg": "1024px",
+      "xl": "1280px",
+      "2xl": "1536px"
+    }
+  },
+  "z_index": {
+    "base": "0",
+    "docked": "10",
+    "dropdown": "1000",
+    "sticky": "1100",
+    "banner": "1200",
+    "overlay": "1300",
+    "modal": "1400",
+    "popover": "1500",
+    "skipLink": "1600",
+    "toast": "1700",
+    "tooltip": "1800"
+  },
+  "component_defaults": {
+    "button": {
+      "height": {
+        "sm": "2rem",
+        "md": "2.5rem",
+        "lg": "3rem"
+      },
+      "padding_x": {
+        "sm": "0.75rem",
+        "md": "1rem",
+        "lg": "1.5rem"
+      },
+      "radius": "0.5rem",
+      "font_weight": "500"
+    },
+    "input": {
+      "height": {
+        "sm": "2rem",
+        "md": "2.5rem",
+        "lg": "3rem"
+      },
+      "radius": "0.5rem",
+      "border": "1px solid var(--color-border-default)"
+    },
+    "card": {
+      "radius": "0.75rem",
+      "padding": "1.5rem",
+      "shadow": "sm"
+    },
+    "tap_target_min": "24px"
+  }
+}

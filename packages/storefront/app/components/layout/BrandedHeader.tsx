@@ -152,6 +152,7 @@ function LocaleSwitcher({currentLocale}: {currentLocale: string}) {
 
 function MobileDrawer({onClose}: {onClose: () => void}) {
   return (
+    /* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/click-events-have-key-events -- drawer backdrop click-to-dismiss pattern */
     <div
       role="dialog"
       aria-modal="true"
@@ -159,6 +160,7 @@ function MobileDrawer({onClose}: {onClose: () => void}) {
       className="fixed inset-0 z-[var(--z-modal)] bg-[var(--color-overlay)] backdrop-blur-sm lg:hidden"
       onClick={onClose}
     >
+      {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events -- stop-propagation inner panel */}
       <div
         className="h-full w-3/4 max-w-xs bg-[var(--surface-elevated)] p-6 shadow-[var(--shadow-xl)]"
         onClick={(e) => e.stopPropagation()}

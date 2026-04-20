@@ -92,6 +92,13 @@ export async function loader(args: Route.LoaderArgs) {
       country: args.context.storefront.i18n.country,
       language: args.context.storefront.i18n.language,
     },
+    // Public env values bridged to window.ENV for client-side Sentry init.
+    // Never expose server-only secrets here.
+    publicEnv: {
+      SENTRY_STOREFRONT_DSN: env.SENTRY_STOREFRONT_DSN,
+      NODE_ENV: env.NODE_ENV,
+      PUBLIC_STORE_DOMAIN: env.PUBLIC_STORE_DOMAIN,
+    },
   };
 }
 
@@ -145,6 +152,8 @@ function loadDeferredData({context}: Route.LoaderArgs) {
 
 export function Layout({children}: {children?: React.ReactNode}) {
   const nonce = useNonce();
+  const data = useRouteLoaderData<RootLoader>('root');
+  const publicEnv = data?.publicEnv ?? {};
 
   return (
     <html lang="en" dir="ltr" className="theme-light">
@@ -168,6 +177,14 @@ export function Layout({children}: {children?: React.ReactNode}) {
           Skip to main content
         </a>
         {children}
+        {/* Public env bridge for client-side Sentry init (entry.client.tsx reads window.ENV). */}
+        <script
+          nonce={nonce}
+          id="env"
+          dangerouslySetInnerHTML={{
+            __html: `window.ENV = ${JSON.stringify(publicEnv)};`,
+          }}
+        />
         <ScrollRestoration nonce={nonce} />
         <Scripts nonce={nonce} />
       </body>
