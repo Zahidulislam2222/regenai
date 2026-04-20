@@ -1,0 +1,33 @@
+query Input {
+  cart {
+    lines {
+      id
+      quantity
+      merchandise {
+        ... on ProductVariant {
+          id
+          title
+          product {
+            id
+            title
+            handle
+            contraindications: metafield(namespace: "regenai", key: "contraindications") {
+              value
+            }
+            fdaClass: metafield(namespace: "regenai", key: "fda_class") {
+              value
+            }
+          }
+        }
+      }
+    }
+    buyerIdentity {
+      customer {
+        id
+        medicalFlags: metafield(namespace: "regenai", key: "medical_flags") {
+          value
+        }
+      }
+    }
+  }
+}

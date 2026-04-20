@@ -1,0 +1,13 @@
+[package]
+name = "regenai-extensions-shared"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+repository.workspace = true
+publish.workspace = true
+
+[lib]
+crate-type = ["rlib"]
+
+[dependencies]
+serde = { workspace = true }
