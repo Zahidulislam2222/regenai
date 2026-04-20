@@ -97,16 +97,36 @@ function SearchAside() {
           {({items, total, term, state, closeSearch}) => {
             const {articles, collections, pages, products, queries} = items;
 
+            const announcement =
+              state === 'loading' && term.current
+                ? `Searching for ${term.current}…`
+                : term.current
+                  ? total === 0
+                    ? `No results for ${term.current}`
+                    : `${total} result${total === 1 ? '' : 's'} for ${term.current}`
+                  : '';
+
             if (state === 'loading' && term.current) {
-              return <div>Loading...</div>;
+              return (
+                <>
+                  <div>Loading...</div>
+                  <p role="status" aria-live="polite" className="sr-only">{announcement}</p>
+                </>
+              );
             }
 
             if (!total) {
-              return <SearchResultsPredictive.Empty term={term} />;
+              return (
+                <>
+                  <SearchResultsPredictive.Empty term={term} />
+                  <p role="status" aria-live="polite" className="sr-only">{announcement}</p>
+                </>
+              );
             }
 
             return (
               <>
+                <p role="status" aria-live="polite" className="sr-only">{announcement}</p>
                 <SearchResultsPredictive.Queries
                   queries={queries}
                   queriesDatalistId={queriesDatalistId}

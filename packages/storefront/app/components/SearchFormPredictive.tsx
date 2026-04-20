@@ -6,6 +6,7 @@ import {
 } from 'react-router';
 import React, {useRef, useEffect} from 'react';
 import type {PredictiveSearchReturn} from '~/lib/search';
+import {useDebouncedCallback} from '~/lib/use-debounce';
 import {useAside} from './Aside';
 
 type SearchFormPredictiveChildren = (args: {
@@ -50,13 +51,19 @@ export function SearchFormPredictive({
     aside.close();
   }
 
-  /** Fetch search results based on the input value */
-  function fetchResults(event: React.ChangeEvent<HTMLInputElement>) {
-    void fetcher.submit(
-      {q: event.target.value || '', limit: 5, predictive: true},
-      {method: 'GET', action: SEARCH_ENDPOINT},
-    );
-  }
+  /** Fetch search results based on the input value, debounced 250ms per plan. */
+  const fetchResults = useDebouncedCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value ?? '';
+      // Skip empty fetches after debounce fires on a cleared input.
+      if (!value.trim()) return;
+      void fetcher.submit(
+        {q: value, limit: 5, predictive: true},
+        {method: 'GET', action: SEARCH_ENDPOINT},
+      );
+    },
+    250,
+  );
 
   // ensure the passed input has a type of search, because SearchResults
   // will select the element based on the input
