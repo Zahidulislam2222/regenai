@@ -57,9 +57,9 @@ export async function action({request, context}: ActionFunctionArgs) {
       break;
     }
     case CartForm.ACTIONS.BuyerIdentityUpdate:
-      result = await cart.updateBuyerIdentity({
-        ...(inputs.buyerIdentity as Parameters<typeof cart.updateBuyerIdentity>[0]),
-      });
+      result = await cart.updateBuyerIdentity(
+        inputs.buyerIdentity as Parameters<typeof cart.updateBuyerIdentity>[0],
+      );
       break;
     case CartForm.ACTIONS.AttributesUpdateInput:
       result = await cart.updateAttributes(

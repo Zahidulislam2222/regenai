@@ -32,11 +32,13 @@ jobs:
       - name: ESLint + Prettier (via Shopify eslint-plugin-prettier integration)
         run: npm run lint --workspaces --if-present
 
+      - name: Generate React Router types
+        # `./+types/*` modules + `virtual:react-router/server-build` come
+        # from `react-router typegen`. lightningcss cross-platform fix
+        # unblocks this in CI (it was deferred in D3.5).
+        working-directory: packages/storefront
+        run: npx react-router typegen
+
       - name: TypeScript typecheck (storefront)
-        # Uses the workspace's hoisted tsc via npx. skipLibCheck avoids
-        # noise from Hydrogen generated types; real type errors surface.
-        # Previous `|| true` masking removed now that the lightningcss
-        # cross-platform issue is resolved via root optionalDependencies
-        # + scripts/rebuild-native.mjs postinstall.
         working-directory: packages/storefront
         run: npx tsc --noEmit --skipLibCheck
