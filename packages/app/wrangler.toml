@@ -1,0 +1,79 @@
+#:schema node_modules/wrangler/config-schema.json
+#
+# @regenai/app — custom merchant Remix app on Cloudflare Workers + D1.
+# Handles clinician-review workflow, protocol engine, FDA claim audit,
+# subscription management, B2B portal. Full scope in PROJECT_PLAN §2
+# "Layer 2 — Custom Shopify App".
+#
+# ADR-021 (Day 15) documents the Cloudflare Workers + D1 choice vs
+# Fly.io / Railway.
+
+name = "regenai-app"
+main = "server.ts"
+compatibility_date = "2026-04-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "regenai-app"
+database_id = "PLACEHOLDER_UNTIL_WRANGLER_D1_CREATE"
+migrations_dir = "migrations"
+
+[[kv_namespaces]]
+binding = "SESSIONS"
+id = "PLACEHOLDER_UNTIL_WRANGLER_KV_CREATE"
+
+[vars]
+SHOPIFY_APP_URL = "https://regenai-app.regenai-workers.workers.dev"
+SHOPIFY_API_SCOPES = "read_products,write_products,read_orders,read_customers,read_content,write_content,read_metaobjects,write_metaobjects,read_files,write_files,write_companies,write_markets,read_discounts,write_discounts"
+
+# -----------------------------------------------------------------------
+# Environment overrides — Workers + D1 + KV are all namespaced per env.
+# -----------------------------------------------------------------------
+[env.preview]
+name = "regenai-app-preview"
+
+[[env.preview.d1_databases]]
+binding = "DB"
+database_name = "regenai-app-preview"
+database_id = "PLACEHOLDER"
+migrations_dir = "migrations"
+
+[[env.preview.kv_namespaces]]
+binding = "SESSIONS"
+id = "PLACEHOLDER"
+
+[env.preview.vars]
+SHOPIFY_APP_URL = "https://regenai-app-preview.regenai-workers.workers.dev"
+
+[env.staging]
+name = "regenai-app-staging"
+
+[[env.staging.d1_databases]]
+binding = "DB"
+database_name = "regenai-app-staging"
+database_id = "PLACEHOLDER"
+migrations_dir = "migrations"
+
+[[env.staging.kv_namespaces]]
+binding = "SESSIONS"
+id = "PLACEHOLDER"
+
+[env.staging.vars]
+SHOPIFY_APP_URL = "https://regenai-app-staging.regenai-workers.workers.dev"
+
+[env.production]
+name = "regenai-app"
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "regenai-app"
+database_id = "PLACEHOLDER"
+migrations_dir = "migrations"
+
+[[env.production.kv_namespaces]]
+binding = "SESSIONS"
+id = "PLACEHOLDER"
+
+[env.production.vars]
+SHOPIFY_APP_URL = "https://regenai-app.regenai-workers.workers.dev"

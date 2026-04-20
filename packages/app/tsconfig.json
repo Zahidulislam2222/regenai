@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "jsx": "react-jsx",
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "target": "ES2022",
+    "strict": true,
+    "allowImportingTsExtensions": true,
+    "baseUrl": ".",
+    "rootDirs": [".", "./.react-router/types"],
+    "paths": {
+      "~/*": ["./app/*"]
+    },
+    "noEmit": true,
+    "module": "ESNext",
+    "types": ["@cloudflare/workers-types", "vite/client"],
+    "skipLibCheck": true
+  },
+  "include": ["env.d.ts", "**/*.ts", "**/*.tsx", ".react-router/types/**/*"]
+}

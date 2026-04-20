@@ -1,0 +1,33 @@
+{
+  "name": "@regenai/app",
+  "private": true,
+  "version": "0.1.0",
+  "description": "RegenAI custom merchant app — Remix on Cloudflare Workers + D1. Clinician review workflow, protocol engine, FDA claim audit.",
+  "type": "module",
+  "scripts": {
+    "build": "react-router build",
+    "dev": "wrangler dev --local",
+    "typecheck": "tsc --noEmit",
+    "deploy": "npm run build && wrangler deploy",
+    "migrate:local": "wrangler d1 migrations apply DB --local",
+    "migrate:remote": "wrangler d1 migrations apply DB --remote"
+  },
+  "dependencies": {
+    "@react-router/cloudflare": "^7.9.4",
+    "@remix-run/cloudflare": "^2.15.0",
+    "@shopify/polaris": "^14.0.0",
+    "@shopify/polaris-icons": "^11.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router": "^7.9.4"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250927.0",
+    "@react-router/dev": "^7.9.4",
+    "typescript": "^5.9.3",
+    "wrangler": "^4.79.0"
+  },
+  "engines": {
+    "node": "^22 || ^24"
+  }
+}
