@@ -12,11 +12,7 @@ interface Env {
   SENTRY_APP_DSN?: string;
 }
 
-declare module 'react-router' {
-  interface AppLoadContext {
-    env: Env;
-    executionCtx: ExecutionContext;
-  }
-}
+// AppLoadContext is declared in server.ts using the canonical
+// cloudflare/templates shape: `{ cloudflare: { env, ctx } }`.
 
 export {};

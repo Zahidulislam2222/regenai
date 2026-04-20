@@ -9,71 +9,81 @@
 # Fly.io / Railway.
 
 name = "regenai-app"
-main = "server.ts"
+main = "./workers/app.ts"
 compatibility_date = "2026-04-01"
 compatibility_flags = ["nodejs_compat"]
+
+# Phase-1 simplification — one D1 + one KV shared across all envs.
+# Split to per-env databases at the D15.6+ re-provision when real
+# staging data needs isolation from production.
 
 [[d1_databases]]
 binding = "DB"
 database_name = "regenai-app"
-database_id = "PLACEHOLDER_UNTIL_WRANGLER_D1_CREATE"
+database_id = "aa1f0764-b931-4e70-88a4-a035e9439982"
 migrations_dir = "migrations"
 
 [[kv_namespaces]]
 binding = "SESSIONS"
-id = "PLACEHOLDER_UNTIL_WRANGLER_KV_CREATE"
+id = "d7d1a294a8674750b65ad1076cfb7595"
 
 [vars]
 SHOPIFY_APP_URL = "https://regenai-app.regenai-workers.workers.dev"
 SHOPIFY_API_SCOPES = "read_products,write_products,read_orders,read_customers,read_content,write_content,read_metaobjects,write_metaobjects,read_files,write_files,write_companies,write_markets,read_discounts,write_discounts"
 
 # -----------------------------------------------------------------------
-# Environment overrides — Workers + D1 + KV are all namespaced per env.
+# Preview environment — ephemeral per-PR deploys.
 # -----------------------------------------------------------------------
 [env.preview]
 name = "regenai-app-preview"
 
 [[env.preview.d1_databases]]
 binding = "DB"
-database_name = "regenai-app-preview"
-database_id = "PLACEHOLDER"
+database_name = "regenai-app"
+database_id = "aa1f0764-b931-4e70-88a4-a035e9439982"
 migrations_dir = "migrations"
 
 [[env.preview.kv_namespaces]]
 binding = "SESSIONS"
-id = "PLACEHOLDER"
+id = "d7d1a294a8674750b65ad1076cfb7595"
 
 [env.preview.vars]
 SHOPIFY_APP_URL = "https://regenai-app-preview.regenai-workers.workers.dev"
 
+# -----------------------------------------------------------------------
+# Staging environment.
+# -----------------------------------------------------------------------
 [env.staging]
 name = "regenai-app-staging"
 
 [[env.staging.d1_databases]]
 binding = "DB"
-database_name = "regenai-app-staging"
-database_id = "PLACEHOLDER"
+database_name = "regenai-app"
+database_id = "aa1f0764-b931-4e70-88a4-a035e9439982"
 migrations_dir = "migrations"
 
 [[env.staging.kv_namespaces]]
 binding = "SESSIONS"
-id = "PLACEHOLDER"
+id = "d7d1a294a8674750b65ad1076cfb7595"
 
 [env.staging.vars]
 SHOPIFY_APP_URL = "https://regenai-app-staging.regenai-workers.workers.dev"
 
+# -----------------------------------------------------------------------
+# Production environment.
+# -----------------------------------------------------------------------
 [env.production]
 name = "regenai-app"
 
 [[env.production.d1_databases]]
 binding = "DB"
 database_name = "regenai-app"
-database_id = "PLACEHOLDER"
+database_id = "aa1f0764-b931-4e70-88a4-a035e9439982"
 migrations_dir = "migrations"
 
 [[env.production.kv_namespaces]]
 binding = "SESSIONS"
-id = "PLACEHOLDER"
+id = "d7d1a294a8674750b65ad1076cfb7595"
 
 [env.production.vars]
 SHOPIFY_APP_URL = "https://regenai-app.regenai-workers.workers.dev"

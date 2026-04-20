@@ -10,7 +10,7 @@ import {
  * offline access token, stores token in D1, redirects to the admin UI.
  */
 export async function loader({request, context}: LoaderFunctionArgs) {
-  const env = context.env;
+  const env = context.cloudflare.env;
   const url = new URL(request.url);
   const shop = url.searchParams.get('shop');
   const code = url.searchParams.get('code');

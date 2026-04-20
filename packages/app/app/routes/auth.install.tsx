@@ -8,7 +8,7 @@ import {buildInstallUrl, isValidShopDomain} from '~/lib/shopify';
  * token, stores token in D1.
  */
 export async function loader({request, context}: LoaderFunctionArgs) {
-  const env = context.env;
+  const env = context.cloudflare.env;
   const url = new URL(request.url);
   const shop = url.searchParams.get('shop');
 

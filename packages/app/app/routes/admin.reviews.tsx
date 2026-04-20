@@ -40,7 +40,7 @@ interface ReviewRow {
 }
 
 export async function loader({context}: LoaderFunctionArgs) {
-  const env = context.env;
+  const env = context.cloudflare.env;
   let rows: ReviewRow[] = [];
   let error: string | null = null;
 
