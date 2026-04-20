@@ -1,0 +1,43 @@
+query Input {
+  cart {
+    cost {
+      subtotalAmount {
+        amount
+      }
+      totalAmount {
+        amount
+      }
+    }
+    discountCodes {
+      code
+      applicable
+    }
+    buyerIdentity {
+      purchasingCompany {
+        company {
+          id
+          tier: metafield(namespace: "regenai", key: "tier") {
+            value
+          }
+        }
+      }
+      customer {
+        id
+        orderCount: numberOfOrders
+      }
+    }
+    lines {
+      quantity
+      sellingPlanAllocation {
+        sellingPlan {
+          id
+        }
+      }
+      cost {
+        amountPerQuantity {
+          amount
+        }
+      }
+    }
+  }
+}

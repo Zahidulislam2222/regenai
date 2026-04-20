@@ -1,0 +1,16 @@
+api_version = "2026-01"
+
+[[extensions]]
+name = "discount-stacking"
+handle = "discount-stacking"
+type = "function"
+
+[[extensions.targeting]]
+target = "cart.checkout.validation.run"
+input_query = "src/input.graphql"
+export = "cart-checkout-validation"
+
+[extensions.build]
+command = "cargo build --release --target=wasm32-wasip1"
+path = "target/wasm32-wasip1/release/discount_stacking.wasm"
+watch = ["src/**/*.rs", "Cargo.toml", "../../Cargo.toml"]
