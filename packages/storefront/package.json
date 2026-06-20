@@ -37,7 +37,7 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@sentry/node": "^10.49.0",
     "@sentry/react": "^10.49.0",
-    "@shopify/hydrogen": "2026.4.0",
+    "@shopify/hydrogen": "2026.4.1",
     "framer-motion": "^12.38.0",
     "graphql": "^16.10.0",
     "graphql-tag": "^2.12.6",
