@@ -173,6 +173,10 @@ const PREDICTIVE_SEARCH_QUERY = `#graphql
         trackingParameters
         featuredImage { url altText width height }
         priceRange { minVariantPrice { amount currencyCode } }
+        selectedOrFirstAvailableVariant {
+          price { amount currencyCode }
+          image { url altText width height }
+        }
       }
       collections {
         id
@@ -192,6 +196,7 @@ const PREDICTIVE_SEARCH_QUERY = `#graphql
         title
         handle
         trackingParameters
+        blog { handle }
         image { url altText }
       }
       queries {

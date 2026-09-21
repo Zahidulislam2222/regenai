@@ -1,1422 +1,440 @@
-# RegenAI — Master Build Plan (v2 Phase-3 depth, end-to-end)
+# RegenAI — master build and completion plan
 
-**Project:** RegenAI — regulated-niche wellness DTC, built as a four-layer Shopify commerce platform
-**Positioning:** Staff/principal-tier portfolio project. Beats Kindred Grove on every measurable axis. Demonstrates headless storefront + custom Shopify app + Shopify Functions + real data/ML pipeline + compliance-as-code, all shipped end-to-end across Phase 1 + Phase 2 + Phase 3.
-**Target timeline:** 105 days of focused build (Phase 1: 45 days, Phase 2: 30 days, Phase 3: 30 days).
-**Budget ceiling:** $0 infrastructure cost. No paid SaaS tier triggers until real customer volume. No Shopify Plus paid plan (uses Partner Plus Dev Store). No custom domain or business registration during build.
-**Quality bar:** CTO / agency reviewer spends 60 seconds and thinks *"This person runs a Shopify Plus agency practice."*
+Updated: 2026-09-21. Status: **STOPPED at owner request; preserve unfinished B05 runtime and B06 Hydrogen migration.** B06a selected-design preview has earlier passing evidence; latest integration changes have not passed the full gates. Resume only on owner instruction. See [build status](docs/BUILD-STATUS.md) and private recovery checkpoint. No completion, production readiness, traffic capacity, uptime or legal certification is claimed.
 
----
+## 1. Delivery contract and definition of completion
 
-## 1. Brand concept
+RegenAI remains a **Shopify headless-commerce project**, using Hydrogen for the customer storefront. The visual React/Vite preview is a design milestone, not the finished Shopify storefront. Preserve the current bone/blue design, original Blender product assets, Three.js inspection and accessible shopping flow while connecting real Shopify data.
 
-**Name:** RegenAI
-**One-liner:** *"Science-backed recovery. AI-guided wellness. From injury to everyday resilience — products and protocols built with clinical input and real ML."*
-**Mission:** Give every person access to clinically credible, AI-personalized regeneration tools — across physio, sleep, mental wellness, nutrition, and longevity — that used to require a clinic, a specialist, or a $5k device.
-**Values:** Evidence, Regeneration, Accessibility, Personalization, Transparency.
-**Voice:** Confident, clinical, accessible. Not lifestyle-first. Evidence-first.
-**Reference brands:** Therabody, Hyperice, Oura, Whoop, Lumen, Eight Sleep, Bioniq, Elvie, Apollo Neuro, Function Health.
-**Visual direction:** Clean clinical base (white / bone) + primary trust blue + energetic accent (warm orange or sage green). Type: modern geometric sans (Inter / Satoshi). No heritage serifs.
+### Owner scope clarification — client-facing portfolio demo
+The owner confirmed RegenAI is a demo that must look like a real business for client review. Deliver polished realistic UX and genuine sandbox commerce/admin behavior; visibly disclose demo/test checkout and synthetic product/review data where relevant. Do not present generated products as proven medical devices, fabricate endorsements, or imply legal certification. Production engineering controls and scale evidence remain in scope. Actual sales, real payment processing, merchant-specific legal signoff, verified product conformity and paid scale provisioning are launch prerequisites, not silently claimed complete. No capability is automatically deferred; resolve feature scope and evidence individually.
 
----
+Three separately reported milestones prevent partial work being called the whole project:
 
-## 2. Product catalog — three phases
-
-### Phase 1 catalog (Year 1 launch: physiotherapy & recovery, 10–12 launch SKUs → 25 by month 6)
-
-1. Smart posture corrector + paired BLE sensor
-2. Adjustable back brace
-3. Rehab resistance-band kit (5 tensions)
-4. Percussion massage gun (3 heads)
-5. TENS/EMS dual-mode unit (FDA class II, clearance referenced)
-6. Foam roller + mobility set
-7. Kinesiology tape 3-pack (subscription candidate)
-8. Cold/heat compression wrap
-9. Recovery tracker (HRV + SpO2 + sleep, BLE + app-paired)
-10. Smart scale with body composition
-11. Wearable pain-relief device
-12. "Reset Kit" bundle — posture corrector + tape + compression wrap + 8-week protocol
-
-### Phase 2 catalog (Year 2 expansion: sleep + mental + stress + smart fitness + meditation, +40 SKUs → ~50 active)
-
-*Sleep:* sleep-stage tracker ring, weighted blanket set, smart sleep mask (light therapy + sunrise), white-noise device + sleep-sound library, smart pillow with HRV sensor.
-
-*Mental wellness:* vagus-nerve stimulator, HRV biofeedback trainer, mood-tracking wearable, stress-detection watchband.
-
-*Stress relief:* breathwork trainer device, portable cold-immersion tub, app-controlled aromatherapy diffuser.
-
-*Smart fitness:* strain band, continuous temperature ring, smart gym bag (accelerometer-based rep counter).
-
-*Meditation:* neurofeedback headband, tactile meditation device, guided-meditation companion (bundled with mobile app).
-
-### Phase 3 catalog (Year 3+ full wellness: nutrition + AI monitoring + home gym + women's health + anti-aging, +100+ SKUs → ~150 active)
-
-*Nutrition & supplements (DSHEA-compliant):* magnesium glycinate, omega-3, collagen, ashwagandha, creatine, vitamin D, zinc, L-theanine, personalized stacks (subscription), protein blends, greens powders, electrolytes.
-
-*AI health monitoring:* continuous glucose monitors (non-diabetic wellness, partner-sourced), HRV / temperature / blood-oxygen smart rings, at-home biomarker test kits (partner: Function Health / InsideTracker), smart cuff BP monitor.
-
-*Home gym smart equipment:* smart mirror, connected resistance cables, smart cycling bike, AI-coach camera pods.
-
-*Women's health:* pelvic-floor trainer, menstrual tracker + cup, postpartum recovery kits, PCOS-targeted supplement stack, menopause relief.
-
-*Anti-aging / longevity:* red-light therapy panels, NAD+ precursor supplements, biological-age testing partnership, DSHEA-compliant peptide-support supplements, collagen-regeneration devices (microcurrent, radio-frequency).
-
----
-
-## 3. Positioning
-
-**Hero messaging (do NOT lead with medical device claims):**
-Above fold: *"Recover. Regenerate. Reset. Science-backed tools for everyday wellness."*
-Trust signals: Clinician-reviewed • AI-personalized • Research-referenced • Third-party tested • Contraindication-aware.
-
-**Target audiences (6 segments across 3 phases):**
-1. Physiotherapy patients (home recovery)
-2. Athletes & fitness enthusiasts (recovery tooling)
-3. Office workers (back/posture/ergonomics)
-4. Chronic pain / elderly (ongoing management)
-5. Clinics & PTs (B2B bulk orders)
-6. Phase 2/3 expansions: sleep seekers, stress-management cohort, longevity enthusiasts, women's-health cohort
-
-**Competitive reference brands:** Therabody, Hyperice, Oura, Whoop, Lumen, Eight Sleep, Bioniq, Elvie, Apollo Neuro, Function Health, Tonal.
-
----
-
-## 4. Tech stack — 100% free-tier path
-
-### Core architecture (four layers)
-
-| Layer | What lives here | Tech | Cost |
-|---|---|---|---|
-| **Storefront** | Public UI, PDP, cart, search, quiz, B2B portal | **Hydrogen (React + Remix + TS)** on Oxygen | Free — OSS + existing Cloudflare account |
-| **Custom Shopify App** | Clinician review workflow, protocol engine, FDA claim audit, device sync | **Remix app on Cloudflare Workers + D1** (reused existing Cloudflare account) | Free tier — 100k req/day + 5 GB D1 |
-| **Shopify Functions** | Cart validation, B2B pricing, delivery, discounts | **Rust + WASM** (or JS) | Free (runs on Shopify infra) |
-| **Data & ML** | Event warehouse, embeddings, recommendations | **RudderStack self-hosted → BigQuery free tier → dbt Core → pgvector on Supabase free tier** | Free |
-
-### Hosting
-
-| Need | Service | Cost |
+| Milestone | Required outcome | Current state |
 |---|---|---|
-| Shopify storefront | **Partner Plus Development Store** (full Plus features, free forever for dev) | $0 |
-| Hydrogen | **Oxygen** (free on Partner dev stores) | $0 |
-| Custom Remix app | **Cloudflare Workers + D1** (reused existing Cloudflare account — 100k req/day + 5 GB D1 free) | $0 |
-| Edge personalization | **Cloudflare Workers** (same account) | $0 |
-| Docs micro-site | **Cloudflare Pages free tier** | $0 |
-| Case study site | **Cloudflare Pages free tier** | $0 |
-| Community (Phase 2) | **Supabase free tier** (500 MB DB, 50k MAU) | $0 |
-| Data warehouse | **BigQuery free tier** (10 GB + 1 TB queries/mo) | $0 |
-| Vector DB | **pgvector on Supabase** | $0 |
+| M1 Local design review | F01–F12 frontend criteria; working review URL; original assets and fixture shopping flow | Implemented/tested; owner's final visual acceptance not recorded |
+| M2 Integrated Shopify project | Reproducible Hydrogen build; real dev-store browse/cart/test checkout/accounts; authorized merchant app; verified eligible Functions; required release gates | Not complete |
+| M3 Full selected platform and release | M2 plus selected commercial/recommendation tasks, applicable P controls, S01–S06 scale-readiness proof, measured deployment, backup/restore, rollback, documentation and owner release review; S07 capacity tests separately gated | Not complete |
 
-### Observability (all free tiers)
+The plan includes all established project layers. Capability-gated work stays **blocked or awaiting owner scope decision**, never silently marked done. Owner-approved deferrals must be named in the final scope ledger; completing M2 alone must not be reported as finishing every historical feature proposal.
 
-| Need | Service | Free tier |
+Current authorization: the owner has now instructed full supervised implementation, with Luna low as implementer and frequent recoverable project records. Local Docker/Kubernetes configuration is authorized. Supervisor updates `memory/implementation-checkpoint.md` before and after bounded tasks and during long operations. Preserve existing dirty work. Paid actions, concrete deployment approval, external communications and locked public-document updates retain their separate gates.
+
+## 2. Evidence baseline — facts, not assumptions
+
+This section combines same-session source inspection with previously saved test evidence. Historical test results must be rerun when their inputs change.
+
+| Area | Verified evidence | Consequence |
 |---|---|---|
-| Error tracking | **Sentry** (reused `zahidul-islam-71` org) | 5k errors/mo, 4 projects scoped |
-| RUM | **Sentry Performance** + **Web Vitals** via Hydrogen analytics | Built-in |
-| Tracing | **OpenTelemetry** via Sentry distributed tracing (single vendor, one trace ID across layers) | Included in Sentry |
-| Logs | **Cloudflare Workers Logs** (Workers + D1 custom app logs) + Sentry breadcrumbs | Free in CF |
-| Synthetic checks | **Cloudflare Worker cron** hitting checkout + quiz + PDP every 10 min + failing via Sentry alert | Free in CF |
-| Uptime | **UptimeRobot** free | 50 monitors |
+| Local UI | `docs/FRONTEND-REVIEW.md`: 34 unit tests, preview type/lint/build, Chrome flows, seven axe states; original sources retained | Preserve and integrate; do not rebuild the design from scratch |
+| Shopify storefront | `packages/storefront`: Hydrogen 2026.4, React 18, React Router 7, real legacy route/loaders plus separate preview | Port views into route modules; do not put a nested BrowserRouter inside Hydrogen |
+| Runtime | `server.ts`, `app/lib/context.ts`, `vite.config.ts` use Worker fetch/context, global caches, waitUntil and mini-Oxygen | A Node/VPS server adapter and runtime proof are required |
+| Build gates | B02 root/direct storefront and app/UI builds, type checks and 34 tests passed; B04 focused 14 tests pass; clean Linux install passed, latest app flag/account-field fixes pass Windows root typecheck and app build; clean Linux rerun active | Fresh candidate verification precedes runtime integration |
+| Dependencies | First targeted repair installed; root audit 69→63, critical 1→0; valid dependency tree; install-script policy verification ongoing | Remaining 45 high findings require repair/reachability review; no force-upgrade or blanket script approval |
+| App auth | `auth.callback.tsx` stores access_token directly; no encryption call despite SQL comment; state uses KV get/delete | Add tested token protection and atomic replay defense; do not assert encryption exists |
+| Admin data | `admin.reviews.tsx` loader queries pending rows without explicit authenticated shop predicate | Stop release until route authentication and tenant isolation are proven |
+| Environment data | `packages/app/wrangler.toml` repeats D1/KV resources across preview/staging/production | Never test destructive migrations against shared bindings; isolate environments |
+| Functions | Four extension crates + shared crate in `packages/app/Cargo.toml`; schemas/config use older pinned versions | Revalidate schemas, exports, WASM and activation; historic test count is not current proof |
+| CI | Fixed remote preview URLs; some continue-on-error or successful skips | Candidate-revision checks must replace misleading green results before release |
+| Existing hosting | Earlier native inventory found storefront/app production and preview Workers; snapshots private | Preserve until deliberate, verified cutover; do not delete old resources |
+| Shared server/domain | Shared infrastructure records describe an existing Contabo Docker/Caddy VPS and Cloudflare-managed domain | Reuse candidate; live capacity, host availability and billing not rechecked this planning session |
+| Store capabilities | Historical Plus-development-store references and Oxygen access denial in ADR-011 | Requery current shop/channel/scopes/feature eligibility; do not infer current plan from old ADR |
 
-### Testing (all free)
+Historical ADR-011 includes an incorrect broad implication that Oxygen always requires production Plus; current official documentation does not support that blanket claim. Keep the historical denial evidence, but use current store eligibility checks. Historical ADR-021 describes KV as suitable for one-time OAuth state; KV get/delete is not atomic. Preserve history and record superseding decisions before implementation.
 
-| Need | Service | Free |
-|---|---|---|
-| E2E | **Playwright** | OSS |
-| Unit + component | **Vitest** | OSS |
-| Component stories | **Storybook** (deployed to GitHub Pages from the repo) | OSS |
-| Visual regression | **Percy** — reused from Kindred Grove account (token `web_e510a3a1…`) | Free tier (5k snapshots/mo) |
-| Load | **k6** | OSS |
-| A11y | **axe-core via Playwright + Storybook a11y addon** | OSS |
-| Contract | **GraphQL Code Generator + Vitest** | OSS |
+## 3. Target architecture and hosting decision
 
-### Security (all free)
+**Intended storefront target:** existing Contabo VPS, Docker Compose, Node runtime adapted for installed Hydrogen, Caddy reverse proxy and Cloudflare DNS/proxy. Exact hostname/port are configuration, assigned only after inventory. The proposed project subdomain is recorded privately. No second domain purchase is planned.
 
-| Need | Service |
-|---|---|
-| SAST | **CodeQL** (free on public repos) |
-| DAST | **OWASP ZAP** (OSS) |
-| SBOM | **Syft** + **CycloneDX** (OSS) |
-| Secret scanning | **gitleaks** (OSS) |
-| Signed commits | **gitsign (Sigstore)** (OSS) |
-| Dependency audit | **Dependabot** (free on GitHub) |
-| Container/image scanning | **Trivy** (OSS) |
-
-### Feature flags & A/B
-
-**Phase 1: localStorage-backed flag system** (same pattern as Kindred Grove — zero-signup, URL-override, exposure analytics event). Covers the Phase 1 demo.
-
-**Phase 2 (Day 42+): Statsig free tier** (1M events/mo) — real A/B infrastructure + exposure logging + warehouse-connected. **Statsig signup deferred until Phase 2** (not blocker for Phase 1).
-
-### CMS
-
-**Sanity free tier** (3 users, 10k documents, 1M API calls/mo) — for 200+ clinical articles, editorial team ergonomics.
-
-### Email & transactional
-
-**Resend free tier** (3k emails/mo) + **Klaviyo free tier** (≤250 contacts) for marketing.
-
-### AI tooling — the Anderson Collaborative skill tags
-
-| Tool | Role | Cost |
-|---|---|---|
-| Claude Code (Max plan) | Primary dev agent | Already have |
-| Shopify Dev MCP | Shopify-specific knowledge | Free |
-| **Cursor Pro** | Secondary dev pair — logged in AI-WORKFLOW | $20/mo (tool sub, excluded per user) |
-| **GitHub Copilot** | Inline React component generation | Free tier (2k completions/mo) |
-| **Codex (ChatGPT)** | Schema queries, refactor spikes | Free tier or Plus (excluded per user) |
-| Claude Design | Brand system + component prototyping | Already have |
-
-### Design & visual stack
-
-| Layer | Tool | Role | Cost |
-|---|---|---|---|
-| **Brand generation** | **Claude Design** | Day 1 generates full brand system: color tokens, type pair, spacing scale, motion, radii, shadow scale. Export → Tailwind config + `@regenai/ui` tokens. | Free (Max plan) |
-| **Component primitives** | **shadcn/ui** | Radix-based accessible primitives (Dialog, Dropdown, Tabs, Accordion, Toast, Popover, Select, etc.). Copy-own-the-code pattern — not a dependency. | Free (OSS) |
-| **Styling engine** | **Tailwind CSS** | Design tokens + utility classes. Custom plugin for brand tokens. | Free (OSS) |
-| **Complex one-offs** | **v0 by Vercel** | Interactive hero, body-area SVG selector, quiz flow, PDP galleries — when Claude Design + hand-code is slower | Free tier |
-| **Micro-interactions** | **Framer Motion** | Page transitions, card hover, drawer slide, scroll-triggered reveals. Respects `prefers-reduced-motion`. | Free (OSS) |
-| **Icon system** | **Lucide** | React-native, tree-shakeable, 1,400+ icons | Free (OSS) |
-| **Typography loading** | **Fontsource** | Self-hosted Inter + Satoshi (no Google Fonts CDN — privacy + perf) | Free (OSS) |
-| **Storybook** | Component docs + preview | Static build deployed to GitHub Pages (free) | Free |
-| **Percy** | Visual regression on page-level + key component pages | 5k snapshots/mo — reused from KG account | Free tier |
-
-### Visual direction (proposed — validate via Claude Design session Day 1)
-
-**Color tokens (initial proposal):**
-- `--color-bone` — off-white base `#F8F6F1`
-- `--color-primary` — deep clinical blue `#1E3A5F`
-- `--color-primary-hover` — lighter blue `#2E5280`
-- `--color-accent` — warm terracotta `#C87A4B` (energetic, not loud)
-- `--color-sage` — muted green `#7A8F6F` (for wellness/trust-layer emphasis)
-- `--color-ink` — charcoal text `#1A1A1A`
-- `--color-muted` — secondary text `#5A5A5A`
-- `--color-success` `#2D7A4F` / `--color-warning` `#C47E2A` / `--color-error` `#B23A3A` / `--color-info` `#1E3A5F`
-- All contrast-verified ≥ 4.5:1 on bone background (WCAG 2.2 AA)
-
-**Type pair:**
-- Display: **Satoshi** (modern geometric sans) — headings, hero, product titles
-- Body: **Inter** (highly readable, ubiquitous) — prose, UI, forms
-- Mono: **Geist Mono** — code, serial numbers, protocol step counters
-- Arabic fallback: **IBM Plex Sans Arabic** (under `[dir="rtl"]`)
-
-**Spacing / radii / motion:**
-- Base spacing unit: 4px (Tailwind default scale)
-- Radii scale: 4 / 8 / 12 / 16 / 9999 (friendly, not playful)
-- Motion base: 150ms ease-out default; 250ms for drawers; respect `prefers-reduced-motion`
-- Shadow scale: 4 elevation levels (subtle, layered, no heavy drop-shadows)
-
-**Reference vibe:** Therabody × Oura × Lumen — clinical, confident, product-photography-forward, evidence-first. NOT lifestyle-fluffy, NOT playful-consumer.
-
-**Total infrastructure monthly cost: $0.** All tool subscriptions are personal AI subs, excluded per user direction.
-
----
-
-## 5. Pages / routes scope — 48 templates across 3 phases
-
-### Phase 1 — 22 templates
-1. Home
-2. Collection (PLP) with body-area + condition filters
-3. PDP — gallery, variant picker, subscription, clinical protocol, FAQ, contraindications, study references
-4. Cart drawer + full cart page
-5. Predictive search
-6. **Body-area interactive selector** (SVG Web Component)
-7. **Recovery quiz** (multi-step Web Component)
-8. Protocol detail page (metaobject-driven)
-9. Clinician bio pages (metaobject-driven)
-10. Clinical content library (Sanity-powered)
-11. Article / blog template
-12. B2B clinic portal (bulk order, net-30, approval chain)
-13. B2B company / location / price-list pages
-14. Affiliate partner dashboard
-15. Appointment / consult scheduling
-16. Device-pairing flow
-17. Subscription management
-18. Customer account (login, register, dashboard, orders, addresses, password reset, activation)
-19. Gift / bundle collection
-20. Checkout (with 6 extensions + payment customization Function)
-21. Styleguide (pulled from `@regenai/ui` Storybook)
-22. 404 + policies + Shopify-native policy pages
-
-### Phase 2 — +10 templates
-23. Sleep dashboard (sleep-stage + HRV history)
-24. Mental wellness hub
-25. Mobile device-pairing (multi-device BLE flow)
-26. Community home
-27. Community thread detail
-28. Cohort page (insomnia, anxiety, athletic recovery, chronic pain)
-29. Subscription billing history
-30. Protocol tracker (8-week adherence)
-31. Push notification preferences
-32. Cross-device sync status
-
-### Phase 3 — +16 templates
-33. Telehealth consult entry (Ro / Hims-partner integration)
-34. Biomarker dashboard
-35. Supplement stack builder (personalized)
-36. Women's health hub
-37. Postpartum recovery track
-38. PCOS / menopause track
-39. Longevity protocol builder
-40. Biological-age results
-41. Retail locator (Shopify POS)
-42. White-label partner admin (multi-tenant SaaS)
-43. Smart gym pairing + telemetry
-44. Cohort outcomes dashboard
-45. Anti-aging product hub
-46. Peptide / supplement safety reference
-47. Lab-result upload + interpretation
-48. International market selector
-
----
-
-## 6. Custom features
-
-### Phase 1 features
-- Build Your Recovery Quiz (multi-step → customer metafield → protocol recommendation via ML)
-- Custom subscription engine (Selling Plans + Subscription Contracts, not Recharge)
-- Body-area storytelling (metaobject-driven interactive SVG)
-- Wholesale / B2B inquiry → Admin API draft order + human approval routing
-- Predictive search (GraphQL, debounced, cross-type: products + protocols + articles)
-- Cart drawer with free-ship bar + upsell
-- Quick view modal
-- Gift flow (note + scheduled delivery)
-- Recently viewed (localStorage)
-- Low-stock urgency (FDA class II handling for restricted devices)
-- Exit-intent email capture
-- **Feature flag system** — Statsig-backed, not localStorage
-- **WebBluetooth posture-sensor pairing demo** on PDP
-- **Symptom → protocol AI engine** (real pgvector embeddings + Claude API)
-- **Contraindication cart validator** (Shopify Function, Rust/WASM — blocks pacemaker + TENS combination at checkout)
-- **Clinician approval workflow** — custom app routes any PDP health-claim edit to clinician review before merge
-- **Protocol adherence tracker** (8-week, push notifications via custom app)
-- **Full B2B Plus setup** — companies, locations, price lists, net-30, approval chains, tax-exempt
-- **Shopify Markets** — 5 markets (US, CA, UK, EU, AU) with market-specific catalogs (FDA vs CE segmentation)
-
-### Phase 2 features
-- React Native / Expo mobile app (iOS + Android)
-- Multi-device BLE pairing (posture + sleep + HRV)
-- Apple HealthKit + Google Fit OAuth integration
-- Push notification engine (OneSignal)
-- Community platform (threads, posts, moderation)
-- OpenAI Moderation API + human-review queue
-- Crisis flagging (suicide/self-harm detection policy)
-- Cross-vertical ML v2 (cohort recommendations: bought posture sensor → suggest stress protocol)
-- Sleep-stage ingestion pipeline
-- Mental-wellness content library (200+ articles)
-- Cohort segmentation dashboard
-
-### Phase 3 features
-- Telehealth partner integration (scope-of-practice mapping)
-- Biomarker lab result ingestion (Quest / Labcorp / InsideTracker / Function Health)
-- Personalized supplement stack builder (ML v3 causal inference)
-- Supplement subscription cadence engine (custom, not Recharge / Stay.ai)
-- Smart gym IoT pipeline (device registration, firmware OTA, telemetry)
-- Multi-tenant B2B SaaS admin (clinics license recommendation engine as white-label)
-- Physical retail integration (Shopify POS)
-- International 3PL routing (mocked multi-3PL ADR)
-- Women's health data residency (state-by-state routing post-Dobbs)
-- Age gating (hardware-backed session + cookie for restricted products)
-- Clinical-claim review workflow (pharmacist + clinician dual-sign for biomarker-linked products)
-
----
-
-## 7. Data architecture
-
-### Metaobjects — 24 total across phases
-
-**Phase 1 (10):**
-- `BodyArea` (neck, shoulders, back, knees, hips, ankles, wrists, core) + icon + SVG mask coords
-- `Condition` (posture, chronic pain, sports recovery, sleep, stress, arthritis, injury-recovery)
-- `Protocol` (multi-step treatment, linked products, duration, video)
-- `Clinician` (name, credentials, photo, bio, linked products)
-- `Certification` (FDA cleared, ISO, CE, research-backed, third-party tested)
-- `StudyReference` (PMID, journal, year, study design, linked claim)
-- `DeviceModel` (SKU, BLE profile, firmware version, pairing instructions)
-- `DeliveryZone` (tax rules, market, 3PL routing)
-- `SubscriptionPlan` (cadence, discount, cancel policy)
-- `AffiliatePartner` (tier, commission rate, payout method)
-
-**Phase 2 additions (6):**
-- `SleepArchetype` (insomniac, light sleeper, shift worker, athlete, postpartum)
-- `MentalWellnessTrack` (anxiety, depression, burnout, sleep-anxiety)
-- `Cohort` (segmentation attributes)
-- `CommunityChannel` (name, moderators, rules, cohort-linked)
-- `PushCampaign` (trigger, cadence, content ref)
-- `MobileDevice` (platform, app version, pairing state)
-
-**Phase 3 additions (8):**
-- `BiomarkerPanel` (lab partner, biomarkers tested, reference ranges)
-- `SupplementStack` (ingredients, doses, timing, contraindications)
-- `TelehealthPartner` (scope, states licensed, integration endpoint)
-- `WomensHealthTopic` (with data-residency constraints)
-- `LongevityProtocol` (peptide-free, DSHEA-compliant)
-- `RetailLocation` (address, staff, inventory sync policy)
-- `WhiteLabelTenant` (branding config, isolation policy, SLA tier)
-- `AgeGate` (products requiring 18+ / 21+ / clinician-verified access)
-
-### Product metafields
-
-- `body_areas` (list → BodyArea)
-- `conditions` (list → Condition)
-- `evidence_level` (A/B/C/D)
-- `fda_class` (class I/II/III/N-A)
-- `clinician_review` (→ Clinician)
-- `linked_protocol` (→ Protocol)
-- `contraindications` (rich text)
-- `ingredients` (rich text with allergen flags)
-- `third_party_test_results` (file attachment)
-- `shipping_restrictions` (per-market rules)
-
----
-
-## 8. Professional layer (quality bar)
-
-### Performance — Lighthouse 95+ across all four
-- Hydrogen SSR + streaming, React Server Components
-- Route-level caching (s-maxage + stale-while-revalidate)
-- Image optimization (Hydrogen `Image` component + AVIF/WebP)
-- Edge-rendered above-fold (Cloudflare Workers)
-- Font preload + subset
-- Code splitting per route
-- Lighthouse CI with tight budgets in `budget.json`
-- Target: LCP <1.8s, CLS <0.05, INP <150ms
-
-### Accessibility — WCAG 2.2 AA (not 2.1)
-- Semantic HTML + landmarks + skip links
-- ARIA labels + live regions
-- Keyboard navigation + visible focus
-- Color contrast ≥ 4.5:1 (tokens enforced)
-- Target-size ≥ 24px (2.2 criterion)
-- Focus-appearance criterion
-- Dragging-movements criterion
-- Screen reader tested (VoiceOver + NVDA + JAWS)
-- axe-core via Playwright in CI on every PR
-- Storybook a11y addon on every component
-- Manual keyboard walkthrough on every major flow
-
-### SEO
-- JSON-LD schemas × 10: Product, Organization, FAQ, Breadcrumb, Review, AggregateRating, Article, Recipe, HowTo, MedicalWebPage, Service, LocalBusiness, VideoObject
-- Meta + Open Graph + Twitter cards per route
-- Sitemap + robots.txt
-- Canonical URLs
-- `hreflang` for 5 locales
-- Rich Results test clean across all schemas
-
-### Internationalization
-- 5 locales: EN (default), ES (US Spanish), FR (EU), DE (EU), AR (MENA, RTL)
-- Multi-currency: USD + CAD + GBP + EUR + AUD
-- `hreflang` correctly set per locale + market
-- RTL CSS for Arabic (logical properties throughout)
-- CLDR-correct plurals
-- Market-specific catalogs (FDA vs CE-marked SKUs segmented via Markets)
-
-### Security
-- CSP via Remix `headers()` export (cleaner than `<meta>`)
-- All user input `| escape` / React auto-escaped + sanitized at form boundary
-- Rate limiting on all public forms (Cloudflare Worker middleware + custom app throttle)
-- No secrets in repo (gitleaks + CodeQL + signed commits)
-- Dependabot weekly
-- SBOM generated per build (CycloneDX)
-- SLSA provenance on releases
-- OWASP ZAP DAST in CI
-- Signed commits via gitsign
-
-### Observability
-- **OpenTelemetry end-to-end** — one trace ID spans browser → Hydrogen loader → custom app → Shopify GraphQL → Function execution
-- **SLOs defined in YAML**: checkout success 99.5%, search p95 <300ms, LCP p75 <2s
-- **Error budgets** — deploy blocked if weekly burn > 50%
-- **Sentry** for errors (browser + Hydrogen + Remix app + mobile in Phase 2)
-- **Sentry Performance + Web Vitals** for RUM (single-vendor with errors + tracing)
-- **Cloudflare Worker cron** synthetic checks every 10 min on checkout + quiz + PDP + ML endpoint → Sentry alert on failure
-- **Shopify customer events** (add_to_cart, begin_checkout, purchase) via Hydrogen analytics
-- **Custom events**: quiz_complete, body_area_selected, protocol_started, b2b_inquiry, device_paired, protocol_adherence, supplement_stack_built, biomarker_uploaded, clinician_review_submitted
-
-### Testing
-- **Playwright E2E** — 10 golden-path tests covering all critical flows
-- **Vitest unit + component** tests — ≥70% coverage on `app/` and `@regenai/ui`
-- **Storybook** for component docs + **Percy** visual regression on page + key-component routes (per PR)
-- **Percy** visual regression on every storefront PR
-- **k6** load tests on quiz + ML recommendation endpoint
-- **Contract tests** against Storefront GraphQL schema (generated types)
-- **Chaos tests** — flaky-network simulation
-- **theme-check** n/a (no Liquid); replaced by ESLint + TypeScript + Prettier
-
-### AI workflow (differentiator)
-- **Shopify Dev MCP** connected to Claude Code
-- **Cursor** for React component spikes (logged in AI-WORKFLOW.md)
-- **GitHub Copilot** for inline React generation (logged)
-- **Codex (ChatGPT)** for schema queries and refactor spikes (logged)
-- Every AI-assisted commit labeled with trailer
-- `AI-WORKFLOW.md` — prompts library, velocity log, before/after per tool
-- `AI_GOVERNANCE.md` — multi-assistant honest framing, tool-by-tool scope, human review boundary
-- Case study site draws from real prompt + velocity evidence, not claims
-
-### Compliance-as-code
-- **FDA claim lint** — CI checks PRs touching product copy; flags unsupported claims via regex + LLM-assisted review; merge blocked unless `StudyReference` metaobject linked
-- **DSHEA disclaimer validator** — every supplement product page must embed DSHEA disclaimer snippet; CI asserts presence
-- **Contraindication CI check** — every TENS/EMS / peptide / biomarker-linked product page must render contraindication block
-- **Age-gate enforcement test** — Playwright asserts 18+ / 21+ products blocked without verified session
-- **Data-residency routing check** — women's-health content routes verify state-based data-minimization policy
-- WCAG 2.2 AA enforced via axe
-- GDPR + CCPA compliance surface (cookie consent, DSAR endpoint, data-export on account page)
-- HIPAA-ready event pipeline — PHI-tagged fields in Segment schema, encryption-at-rest on Snowflake-tier data, audit log retention
-
----
-
-## 9. CI/CD + branching strategy
-
-### Branches
-```
-main (production-ready, always deployable)
-  ├── staging (pre-prod QA)
-  │   └── dev/<feature> (feature branches)
+```mermaid
+flowchart LR
+  Browser[Customer browser] --> CF[Cloudflare DNS and proxy]
+  CF --> Caddy[Existing VPS Caddy]
+  Caddy --> H[Hydrogen SSR container]
+  H --> S[Shopify Storefront API]
+  H --> A[Shopify Customer Account API]
+  Browser --> Checkout[Shopify hosted checkout]
+  Checkout --> Functions[Shopify Functions]
+  Merchant[Authenticated merchant] --> App[Merchant app: existing Workers target]
+  App --> DB[Isolated app persistence]
+  App --> Admin[Shopify Admin API]
 ```
 
-### Environments
-- `dev` — Oxygen preview URL per PR + custom-app Cloudflare Workers preview deployment per PR (via Wrangler `--env preview`)
-- `staging` — full stack deployed on merge to `staging`
-- `production` — full stack deployed on merge to `main` (manual approval required via GH environment gate)
+Responsibilities:
 
-### GitHub Actions workflows — 15 total
+- **Shopify:** commerce source of truth: products/variants, inventory, orders, checkout and Function execution. Self-hosting does not remove Shopify account/plan requirements.
+- **Hydrogen on VPS:** customer UI, SSR, server loaders/actions, secure sessions and storefront caching. The Vite fixture harness is local-only design tooling.
+- **Cloudflare:** DNS/proxy; per-route caching/security configuration must preserve cart, account, OAuth and webhook behavior. A custom domain alone does not require moving commerce off Shopify.
+- **Caddy/Compose:** host routing, origin HTTPS, bounded containers, health/restart behavior; preserve shared services.
+- **Merchant app:** recommended initial target remains existing Workers/D1 architecture to avoid an unrequested database migration. First fix isolation/auth. If the owner wants the app on VPS too, supervisor writes a persistence migration decision and restore/parity proof before changing adapters. Do not treat D1 as a local Node database.
+- **Functions:** built locally and released through Shopify app tooling; never installed as a substitute checkout on the VPS.
+- **Recommendations:** deterministic baseline first; evaluated optional AI behind server settings. No public model credential.
 
-1. `lint.yml` — ESLint + Prettier + TypeScript
-2. `test-unit.yml` — Vitest unit + component + coverage report
-3. `test-e2e.yml` — Playwright E2E on PR
-4. `test-a11y.yml` — axe-core via Playwright
-5. `test-visual.yml` — Percy storefront + component-page snapshots
-6. `test-contract.yml` — Storefront GraphQL schema contract
-7. `test-load.yml` — k6 on quiz + ML endpoint (scheduled nightly)
-8. `lighthouse-ci.yml` — performance budget enforcement
-9. `sast.yml` — CodeQL on push
-10. `dast.yml` — OWASP ZAP on staging deploy
-11. `sbom.yml` — Syft + CycloneDX on release
-12. `secret-scan.yml` — gitleaks on PR + schedule
-13. `compliance-lint.yml` — FDA claim + DSHEA + contraindication lint
-14. `deploy-preview.yml` — Oxygen preview URL + Cloudflare Workers ephemeral app per PR
-15. `deploy-staging.yml` — push to `staging` branch
-16. `deploy-production.yml` — push to `main` + manual approval + error-budget gate (deploy blocked if Sentry SLO burn >50%)
+Self-hosting is supported, but the official guide carries a post-2025-05 compatibility warning. For installed Hydrogen 2026.4, supervisor must inspect installed exports/types and React Router templates. A local production-mode container spike proves request/context/session/cache/streaming behavior before the VPS decision becomes an implemented architecture. Do not remove Oxygen/Workers packages blindly or upgrade to a preview architecture merely because documentation is newer. [R1–R3]
 
-*Total: 16 files. Count says "15 total" historically — kept at 16 because production deploy is split across a reusable workflow. CI-workflow count in this plan is reported as **16 green** in final deliverables.*
+If the spike cannot pass, supervisor reports the specific blocker and compares the existing Workers path; no silent hosting substitution. Document any approved target change in a new ADR and this plan.
 
-### Branch protection (main)
-- Require PR + 1 approval (self-review OK for solo)
-- Require all CI checks pass
-- Require branches up-to-date
-- Require signed commits (gitsign)
-- Linear history
-- No force push
+## 4. Global-rule enforcement for every agent
 
----
+The actual owner global rules are authoritative. This matrix maps them to project behavior; it does not edit them.
 
-## 10. Documentation bundle — 22 docs + 20 ADRs + Starlight micro-site
-
-### Docs in `/docs/`
-- `README.md` — setup, quickstart, overview
-- `ARCHITECTURE.md` — 4-layer architecture, folder structure, C4 diagrams
-- `CONTRIBUTING.md` — dev onboarding, commit format, PR process
-- `AI-WORKFLOW.md` — prompts library, velocity log, before/after per AI tool
-- `AI_GOVERNANCE.md` — multi-assistant scope, tool roles, review boundary
-- `PERFORMANCE.md` — budgets, optimization log, LCP/CLS/INP strategy
-- `ACCESSIBILITY.md` — WCAG 2.2 AA posture, contrast tables, a11y test log
-- `SECURITY.md` — threat model, CSP, rate limiting, SBOM policy
-- `TESTING.md` — test strategy across Vitest + Playwright + Percy + Storybook + k6 + contract + chaos
-- `CHANGELOG.md` — version history
-- `ROADMAP.md` — Phase 2 + Phase 3 feature map with gate criteria
-- `MERCHANT-GUIDE.md` — Admin + metaobject + CMS + B2B + Markets operations
-- `COMPLIANCE.md` — FDA / DSHEA / WCAG 2.2 / GDPR / CCPA / HIPAA-ready posture
-- `DATA-MODEL.md` — metaobjects + metafields + warehouse schema + events
-- `RUNBOOK.md` — incident response, rollback, data-loss recovery
-- `API-SPEC.md` — OpenAPI 3 for custom Remix app endpoints
-- `ML-PIPELINE.md` — embedding strategy, vector search, recommendation flow
-- `SLO.md` — SLO definitions, burn-rate alerts, error-budget policy
-- `DESIGN-TOKENS.md` — token system, theming, brand variables
-- `B2B-GUIDE.md` — Plus B2B onboarding for clinics
-- `MARKETS-GUIDE.md` — market-specific catalog + tax + compliance
-- `MOBILE-GUIDE.md` (Phase 2) — mobile app architecture + pairing + deep-linking
-
-### ADRs in `/docs/adr/` — 20 total
-
-1. Why Hydrogen over Liquid themes
-2. Why TypeScript + Tailwind CSS
-3. Why Remix file-based routing
-4. Why Oxygen hosting (+ Cloudflare Pages fallback)
-5. Why the design system is a published npm package
-6. Why Shopify Dev MCP + multi-assistant (Cursor + Copilot + Codex)
-7. Why Playwright + Vitest + Percy + Storybook (testing stack — single visual-regression vendor)
-8. Why Shopify Functions over Scripts / Pixels
-9. Why custom subscription engine over Recharge
-10. Why Sanity CMS alongside metaobjects
-11. Why Segment (RudderStack self-hosted) → BigQuery → dbt
-12. Why pgvector over Pinecone / Weaviate
-13. Why Claude API for embeddings vs OpenAI
-14. Why Statsig over LaunchDarkly / PostHog
-15. Why OpenTelemetry over Sentry-only
-16. Why compliance-as-code (FDA + DSHEA CI checks)
-17. Why WCAG 2.2 AA over 2.1
-18. Why Shopify Markets for FDA vs CE segmentation
-19. Why Cloudflare Pages for docs + case study + edge middleware
-20. Why multi-assistant AI-governance honest framing (vs single-AI)
-
-### Docs micro-site
-- **Astro Starlight** deployed to Cloudflare Pages, separate from storefront
-- Includes C4 model diagrams (Structurizr or Mermaid), OpenAPI spec viewer, ADR index, searchable
-
-### Design system published
-- `@regenai/ui` — scoped npm package, semver-versioned, published to npm
-- **Storybook** static build deployed to GitHub Pages (free, no signup)
-- Consumed by storefront + custom Remix app + Phase 2 mobile app
-
----
-
-## 11. 105-day build plan
-
-### PHASE 1 — Days 1–45 (Storefront + Custom App + Functions + B2B + Markets + ML + Compliance)
-
-#### Week 1 — Foundation + CI
-**Day 1 — Setup + MCP + multi-AI + Claude Design brand session**
-- Shopify Partner account + request Partner Plus Development Store
-- Init Hydrogen project with TypeScript + Tailwind (`npx create-hydrogen@latest`)
-- Init GitHub public repo with branch protection on `main` + linear history + signed commits
-- Install Shopify Dev MCP Server; verify `claude mcp list ✓ Connected`
-- Wire Cursor, GitHub Copilot, Codex into workflow; start AI-WORKFLOW.md logging from commit #1
-- Oxygen deploy env configured; 3 environments (dev / staging / production)
-- Brand brief + SOW + 1-page tone doc in `/docs/BRAND-BRIEF.md`
-- **Claude Design session — generate full brand system** from brand brief: color palette, type pair, spacing scale, motion tokens, radii, shadows. Output → `docs/design-system/brand.json` + exported previews. Validate before locking.
-
-**Day 2 — Storefront scaffold + design tokens from Claude Design**
-- Hydrogen base layout with semantic HTML
-- Tailwind config driven by Day 1 Claude Design brand-system export (tokens → `tailwind.config.ts` + CSS custom properties)
-- shadcn/ui initialized (`npx shadcn@latest init`); Radix primitives installed
-- Fontsource self-hosted Inter + Satoshi + Geist Mono
-- Lucide icon system wired
-- Theme provider (light / dark / high-contrast / `prefers-reduced-motion`)
-- Remix route skeleton
-- ADR-001: Why Hydrogen over Liquid
-- ADR-002: Why TypeScript + Tailwind + shadcn/ui (component-ownership model)
-
-**Day 3 — CI pipeline foundation**
-- 15 GitHub Actions workflows (see §9)
-- Lighthouse CI with `budget.json`
-- Playwright + Vitest + axe + Percy setup
-- Sentry installed (4 projects under existing `zahidul-islam-71` org — storefront, app, worker, mobile)
-- Sentry Performance + Web Vitals for RUM (replaces Honeycomb / Grafana Faro)
-- Cloudflare Workers Logs wiring for custom-app observability
-- ADR-007: testing stack — Percy over Chromatic (avoid duplicate visual-regression vendors)
-
-**Day 4 — Design system scaffold — `@regenai/ui` package**
-- Package scaffold (TS + Tailwind tokens imported from root), Storybook init
-- First 15 components — shadcn/ui primitives styled with RegenAI tokens, plus brand-specific additions:
-  Button, Input, Select, Checkbox, Radio, Card, Badge, Icon, Dialog, Drawer, Accordion, Tabs, Tooltip, Toast, Popover
-- Each component: Storybook story + a11y addon + **Percy page-level baseline** (full pages, not per-component)
-- Storybook static build deployed to GitHub Pages (free)
-- Framer Motion wrapper components (FadeIn, SlideUp, StaggerChildren)
-- Publish v0.1.0 to npm (scoped public — `@regenai/ui`)
-- ADR-005: Why design system as published npm package + shadcn/ui ownership model
-
-**Day 5 — Header + Footer + Nav + Styleguide**
-- Header with logo, nav, cart, search, language/currency switcher
-- Mobile menu drawer
-- Footer with newsletter, links, trust badges, social
-- Announcement bar (dismissible, CMS-editable)
-- Styleguide route pulls from `@regenai/ui` Storybook
-
-**Day 6 — Home page**
-- Hero block with streaming SSR
-- Trust strip (clinician-reviewed + research-referenced + third-party tested)
-- Featured collections
-- Clinician quote block (metaobject-driven)
-- Newsletter (Klaviyo free tier)
-- Values strip
-- UGC / content strip
-
-**Day 7 — ADR consolidation + Week 1 tag**
-- ADR-003: Remix file-based routing
-- ADR-004: Oxygen + Cloudflare Pages fallback
-- ADR-006: multi-assistant AI governance
-- Tag `v0.1-week1-foundation`
-
-#### Week 2 — Product discovery + cart
-**Day 8 — Collection (PLP)**
-- `/collections/$handle` route
-- Filter system by BodyArea + Condition metaobjects
-- Sort dropdown + pagination
-- Lazy-loaded product card
-- Quick view modal
-
-**Day 9 — PDP part 1**
-- `/products/$handle` route
-- Gallery with thumbs + main (swipeable on mobile)
-- Variant picker with subscription toggle
-- ATC via `useOptimisticCart`
-- JSON-LD Product + AggregateRating
-- Breadcrumbs + meta + OG + Twitter cards
-
-**Day 10 — PDP part 2**
-- Clinical protocol section (metaobject-driven)
-- Contraindication callout (FDA class II awareness)
-- Certifications badges
-- Study references footnote (linked StudyReference metaobjects)
-- Recipe-analog: "How to use" step-by-step
-- FAQ accordion
-- Related products / recently viewed (localStorage)
-- Reviews integration (Judge.me via Storefront API)
-- ADR-010: Sanity alongside metaobjects
-
-**Day 11 — Body-area selector**
-- Interactive SVG Web Component
-- Click body area → filtered catalog
-- Keyboard-navigable + screen-reader described
-- Mobile-optimized tap zones (WCAG 2.2 target-size)
-
-**Day 12 — Recovery quiz**
-- Multi-step Web Component
-- Vanilla state machine
-- Writes result to customer metafield via Storefront API
-- Recommendation CTA → links to symptom → protocol ML engine
-- Analytics event: `quiz_complete`
-
-**Day 13 — Predictive search**
-- Storefront API + debounced (250ms)
-- Results across products + protocols + articles
-- Keyboard navigation + screen-reader live region
-
-**Day 14 — Cart drawer + cart page**
-- Slide animation, headless UI
-- Free-ship progress bar
-- Cart upsell section
-- Gift-note field
-- No-JS fallback for cart page
-- Tag `v0.2-week2-discovery`
-
-#### Week 3 — Custom Remix app + first Functions
-**Day 15 — Custom Remix app scaffold on Cloudflare Workers**
-- `npx @shopify/create-app@latest` → Remix app targeting **Cloudflare Workers + D1** (reuse existing Cloudflare account; avoids Fly.io signup)
-- D1 schema for session store, clinician-review queue, protocol tracker, OAuth tokens
-- Admin UI base with Shopify Polaris
-- Register app with dev store (Custom / Public mode)
-- OAuth + session management via Workers KV
-- First admin route: clinician reviewer dashboard
-- ADR-009: Why custom subscription engine (setup for Week 4)
-- ADR-021: Cloudflare Workers + D1 for custom app (vs Fly.io / Railway)
-
-**Day 16 — Shopify Function 1: Cart contraindication validator**
-- Rust + WASM function
-- Reads customer metafield (`medical_flags`) + cart items
-- Blocks checkout if pacemaker + TENS combo (or similar contraindications)
-- Deployed to Shopify via CLI
-- ADR-008: Shopify Functions over Scripts
-
-**Day 17 — Shopify Function 2: B2B tiered pricing**
-- Applies volume discounts for B2B companies by location
-- Tested against B2B staging data
-
-**Day 18 — Shopify Function 3: Delivery customization**
-- Hides express shipping for regulated-device SKUs
-- Adds signature-required for TENS/EMS
-
-**Day 19 — Shopify Function 4: Discount stacking**
-- Allows subscription + first-time + clinic discount stack under rules
-- Caps total discount at 40%
-
-**Day 20 — Clinician approval workflow v1**
-- Custom app route: claim-review queue
-- Product-copy diff display
-- Approve / request-change / reject with note
-- Linked to GitHub PR via webhook (auto-comments approval status)
-
-**Day 21 — Protocol engine v1**
-- Custom app CRUD for Protocol metaobjects
-- 8-week adherence tracker data model
-- Push trigger scaffolding (Phase 2 activates)
-- Tag `v0.3-week3-app-functions`
-
-#### Week 4 — B2B + Markets + Checkout + Subscriptions
-**Day 22 — Shopify Plus B2B setup**
-- Companies / locations / price lists / payment terms / approval chains
-- Clinic onboarding form (frontend) → admin approval → company creation via Admin API
-- Tax-exempt flag handling
-
-**Day 23 — Shopify Markets setup**
-- 5 markets: US (default), CA, UK, EU, AU
-- Market-specific catalogs: US = FDA-cleared SKUs, EU = CE-marked SKUs
-- Currency + tax per market
-- ADR-018: Markets for FDA vs CE segmentation
-
-**Day 24 — Checkout Extensibility part 1**
-- 4 UI extensions: Trust badges, Subscription upsell, Gift message, Delivery instructions
-- Each extension: own route, tested in checkout simulator
-
-**Day 25 — Checkout Extensibility part 2**
-- Pre-purchase extension (subscription offer)
-- Post-purchase extension (download app + protocol link)
-- Payment customization Function (hide COD for high-value orders)
-
-**Day 26 — Custom subscription engine**
-- Selling Plans API — 4 cadences (weekly, bi-weekly, monthly, quarterly)
-- Subscription Contracts — custom controller in Remix app
-- Customer-facing self-serve management (pause, skip, swap SKU)
-- ADR-009 finalized
-
-**Day 27 — B2B frontend portal**
-- B2B-only Hydrogen routes (gated by customer tag + company context)
-- Bulk-order templates, reorder, net-30 invoice view
-
-**Day 28 — Affiliate portal scaffold**
-- Partner registration
-- Unique referral code
-- Dashboard with clicks + conversions + payout balance
-- Tag `v0.4-week4-plus-features`
-
-#### Week 5 — Data pipeline + ML + Observability
-**Day 29 — Data pipeline**
-- RudderStack self-hosted (OSS) event collection
-- Events → BigQuery free tier
-- Product / Order / Customer / Event tables
-- dbt Core project with staging + mart models
-
-**Day 30 — dbt models**
-- `stg_orders`, `stg_customers`, `stg_products`, `stg_events`
-- `mart_customer_cohorts`, `mart_product_performance`, `mart_funnel`
-- Scheduled via GitHub Actions daily run
-
-**Day 31 — pgvector setup**
-- Supabase free tier with pgvector extension
-- Product embeddings via OpenAI `text-embedding-3-small` (cheap) or Claude API
-- Symptom embeddings (quiz answers pre-embedded)
-- Ingestion pipeline: product metadata → embedding → Supabase
-
-**Day 32 — ML v1 recommendation engine**
-- Custom app endpoint `/api/recommend`
-- Vector search (cosine similarity) + reranking
-- Returns top 3 protocols + top 5 products
-- Served to storefront via Storefront API custom endpoint
-- ADR-012: pgvector over Pinecone
-
-**Day 33 — Contraindication rules engine**
-- Structured rules DSL in YAML
-- Evaluated at cart (Function) + at recommendation time (app)
-- Unit tests per rule
-- Admin UI to edit rules
-
-**Day 34 — Distributed tracing via Sentry**
-- Sentry distributed tracing instrumentation across browser (Hydrogen) + Remix loader + custom app (Cloudflare Workers) + Shopify GraphQL + Functions
-- Trace IDs propagated across all layers (one trace per user journey)
-- Cloudflare Workers Logs wired via `logpush` → Sentry breadcrumbs
-- ADR-015: Sentry distributed tracing over separate OTel collector + Honeycomb (single-vendor simplicity + zero infra)
-
-**Day 35 — SLOs + error budgets + synthetic checks**
-- `docs/SLO.md` with 5 SLOs defined (checkout 99.5%, search p95 <300ms, LCP p75 <2s, API p95 <500ms, recommendation engine p95 <800ms)
-- Sentry Alerts + Sentry Performance dashboards
-- **Cloudflare Worker cron synthetic** — hits checkout + quiz + PDP + ML recommendation endpoint every 10 min, fails to Sentry alert channel
-- Error-budget burn-rate alerts
-- Tag `v0.5-week5-ml-observability`
-
-#### Week 6 — Quality + Security + i18n + SEO + Compliance
-**Day 36 — Accessibility pass**
-- Run axe on every route
-- VoiceOver / NVDA / JAWS walkthroughs on PDP + quiz + cart + checkout
-- Keyboard-only end-to-end
-- Contrast audit; fix any <4.5:1
-- Focus-appearance + target-size (WCAG 2.2) verified
-- Update ACCESSIBILITY.md
-
-**Day 37 — Performance pass**
-- Lighthouse baseline; measure LCP / CLS / INP
-- Hydrogen streaming tuning
-- Image optimization audit (AVIF/WebP via Hydrogen `Image`)
-- Font preload + subset
-- Route-level cache headers
-- Edge-rendered above-fold via Cloudflare Worker
-- Target Lighthouse 95+ all 4 categories
-- Update PERFORMANCE.md
-
-**Day 38 — i18n + RTL + Markets**
-- Extract all strings to `locales/*.json` (5 locales)
-- Arabic RTL with CSS logical properties
-- CLDR plurals
-- `hreflang` per locale + market
-- Market-specific catalog switch verified
-
-**Day 39 — SEO + schema**
-- All 10 JSON-LD schemas implemented + validated
-- Sitemap + robots.txt
-- Meta + OG + Twitter cards per route
-- Google Rich Results test clean
-
-**Day 40 — Security hardening**
-- CSP via `headers()` — hashed + strict-dynamic
-- Rate limiting (Cloudflare Worker middleware + custom app throttle)
-- gitleaks + CodeQL + Trivy + ZAP all green
-- SBOM generated (CycloneDX)
-- SLSA provenance workflow
-- Signed commits enforced on `main`
-- Update SECURITY.md
-
-**Day 41 — Compliance-as-code**
-- `compliance-lint.yml` workflow
-- FDA claim linter: regex patterns + Claude-API call for ambiguous cases
-- DSHEA disclaimer CI check
-- Contraindication CI check
-- Age-gate enforcement Playwright test
-- ADR-016: compliance-as-code
-
-**Day 42 — Feature flags + A/B (Phase 1 = localStorage; Statsig deferred to Phase 2)**
-- `lib/flags.ts` — localStorage-backed flag resolver with URL override, Do-Not-Track respect, exposure analytics event
-- 3 active experiments in demo mode: hero variant, PDP layout, checkout trust-badge order
-- Exposure events → BigQuery via RudderStack → dbt mart
-- Statsig wiring deferred to Phase 2 Day 71 (when real traffic justifies real A/B infra + Statsig signup)
-- ADR-014: localStorage flags in Phase 1, Statsig in Phase 2+ (staged adoption vs day-1 dependency)
-- Tag `v0.6-week6-quality`
-
-#### Week 7 — Documentation + Case study + Phase 1 deliverables
-**Day 43 — Documentation sprint**
-- README.md, CONTRIBUTING.md, CHANGELOG.md (Keep-a-Changelog)
-- ACCESSIBILITY, PERFORMANCE, SECURITY, TESTING, COMPLIANCE, DATA-MODEL, RUNBOOK, API-SPEC (OpenAPI 3), ML-PIPELINE, SLO, DESIGN-TOKENS, B2B-GUIDE, MARKETS-GUIDE, MERCHANT-GUIDE, ROADMAP (Phase 2 + 3 gated map)
-- AI-WORKFLOW.md filled with real prompt log + velocity data
-- AI_GOVERNANCE.md multi-assistant honest framing
-- All 20 ADRs finalized in `/docs/adr/`
-
-**Day 44 — Docs micro-site + architecture diagrams**
-- Astro Starlight init, deployed to Cloudflare Pages
-- C4 model diagrams (Structurizr OSS / Mermaid embedded)
-- OpenAPI spec viewer
-- ADR index
-- Search
-
-**Day 45 — Case study site + Loom + Phase 1 release**
-- Case-study site on Cloudflare Pages (distinct from docs site)
-- Sections: hero + challenge + approach + solution + results + AI workflow + tech stack + links
-- 5-minute Loom walkthrough recorded: storefront tour + admin walkthrough + Function demo + ML demo + multi-AI workflow demo
-- Final visual regression baseline (Percy)
-- All 16 CI workflows green
-- Tag `v1.0-phase1-complete`
-
----
-
-### PHASE 2 — Days 46–75 (Mobile + Community + Sleep/Mental/Stress/Meditation catalog)
-
-#### Week 8 — Mobile foundation
-**Day 46 — React Native / Expo scaffold**
-- `npx create-expo-app@latest`
-- TypeScript + Tailwind (NativeWind) + Expo Router
-- Shared types from `@regenai/ui` (subset for mobile)
-- ADR-021: mobile framework choice
-
-**Day 47 — Mobile Storefront API integration**
-- Product browse + cart + checkout handoff
-- Customer auth SSO with Shopify customer accounts
-
-**Day 48 — Mobile auth**
-- Shopify mobile auth SDK OR Supabase Auth as SSO bridge
-- ADR-022: auth strategy
-
-**Day 49 — Push notifications**
-- OneSignal free tier integration
-- Server-side trigger via custom Remix app webhook
-- Subscription reminders, protocol adherence nudges
-- ADR-023: push vendor choice
-
-**Day 50 — Multi-device BLE pairing**
-- Posture sensor (Phase 1 device) + sleep tracker + HRV ring
-- Expo BLE module
-- Connection state UI + error recovery
-- ADR-024: BLE pairing architecture
-
-**Day 51 — HealthKit + Google Fit OAuth**
-- iOS HealthKit: sleep stages, HRV, SpO2, activity
-- Android Google Fit mirror
-- Data ingestion → custom app → warehouse
-- ADR-025: health data model (proprietary vs HealthKit-canonical)
-
-**Day 52 — Mobile observability**
-- Sentry mobile SDK
-- Segment mobile SDK → RudderStack
-- Crash reporting + performance metrics
-
-#### Week 9 — Phase 2 catalog + content
-**Day 53 — Sleep tracker PDP + protocol**
-- PDP with BLE pairing flow inline
-- Sleep protocol metaobject
-- Sleep dashboard template data model
-
-**Day 54 — Weighted blanket + sleep mask PDPs**
-- Variant picker (weight, size)
-- Clinical protocol linkage
-
-**Day 55 — Vagus-nerve stim + HRV biofeedback PDPs**
-- Mental wellness category landing
-
-**Day 56 — Cold immersion + breathwork PDPs**
-- Restricted-product handling (some stress devices gate 18+)
-
-**Day 57 — Meditation headband + tactile PDPs**
-- Neurofeedback pairing demo
-
-**Day 58 — Cross-vertical ML v2**
-- Multi-domain embeddings (physio + sleep + mental)
-- Cohort recommendations ("users who bought posture sensor also improved sleep with X")
-- ADR-026: ML v2 embedding strategy
-
-**Day 59 — Sleep dashboard template + content expansion**
-- Sleep-stage + HRV history view
-- Sanity content: 50 clinical articles on sleep + mental wellness
-
-#### Week 10 — Community + moderation
-**Day 60 — Community platform scaffold**
-- Remix route `/community` + Supabase free tier
-- Threads + posts + replies data model
-- SSO from Shopify customer → Supabase
-- ADR-027: build vs Discourse SSO
-
-**Day 61 — Community UI**
-- Thread list + detail + new-post flow
-- Reactions + saves
-- Moderator tools (pin, lock, delete)
-
-**Day 62 — Moderation pipeline**
-- OpenAI Moderation API on every post
-- Human-review queue in custom app
-- Escalation policy for crisis flags
-- ADR-028: content moderation workflow
-
-**Day 63 — Crisis flagging**
-- Suicide / self-harm detection → immediate redirect to crisis resources (US 988, UK Samaritans, localized per market)
-- Moderator alert + follow-up protocol
-
-**Day 64 — Cohort pages**
-- Insomnia, anxiety, athletic recovery, chronic pain
-- Metaobject-driven content + community channel linked
-
-**Day 65 — Community × Shopify integration**
-- Product mentions auto-link to PDP
-- Protocol mentions auto-link to protocol page
-- Tracked events for conversion attribution
-
-**Day 66 — APAC market expansion**
-- Shopify Markets: + Japan + Singapore + Australia
-- Market-specific compliance (Japan PMDA segmentation)
-
-#### Week 11 — Phase 2 polish + deliverables
-**Day 67 — Mental wellness compliance**
-- Crisis resources localized per market
-- Age gating 18+ enforced on neuro-devices
-- Content moderation SLA documented
-
-**Day 68 — HIPAA-active pipeline**
-- Data minimization defaults
-- Audit logs for any PHI access
-- Encryption-at-rest verified
-- BAA-ready documentation (vendor list, data flow diagram)
-
-**Day 69 — Phase 2 ADRs finalized**
-- ADRs 21–30 written + reviewed
-
-**Day 70 — Phase 2 docs**
-- MOBILE-GUIDE.md
-- COMMUNITY-GUIDE.md
-- Updated COMPLIANCE.md with Phase 2 additions
-- Updated DATA-MODEL.md with mobile + community + sleep domains
-
-**Day 71 — ML v2 production launch**
-- Cross-vertical recommendations live
-- A/B tested against ML v1 via Statsig
-- Performance metrics in dashboard
-
-**Day 72 — Observability additions**
-- Mobile RUM metrics
-- Content-moderation latency + queue depth
-- Community engagement metrics
-
-**Day 73 — Phase 2 QA sprint**
-- Full regression pass across storefront + mobile + community
-- Playwright suite expanded to cover new flows
-
-**Day 74 — Phase 2 case study chapter**
-- New section in case-study site: "From physio to full wellness — how the platform scaled"
-- Mobile demo Loom (3 min)
-
-**Day 75 — Phase 2 tag + release**
-- Tag `v2.0-phase2-complete`
-- All 22 CI workflows (6 new: mobile build, mobile tests, mobile preview, community-mod queue health, HealthKit contract, APAC locale check) green
-- Release notes published
-
----
-
-### PHASE 3 — Days 76–105 (Full wellness: Nutrition + AI monitoring + Home gym + Women's health + Anti-aging + Platform)
-
-#### Week 12 — Nutrition & supplements
-**Day 76 — Supplement catalog**
-- 15 SKU setup with DSHEA metafields
-- Ingredient + allergen + third-party test metaobjects
-- Automated DSHEA disclaimer injection
-- Age-appropriate labeling
-
-**Day 77 — Personalized supplement stack builder**
-- Quiz-driven UI → ML-powered stack recommendation
-- Contraindication overlay
-- Budget-tier selector
-
-**Day 78 — Supplement subscription cadence engine**
-- Custom cadence logic (monthly / bi-monthly / per-cycle)
-- Rotating stack formulation A/B
-- Delayed-release logic for high-cost items
-- ADR-031: custom cadence over Recharge
-
-**Day 79 — Biomarker → supplement ML v3**
-- Causal inference layer (uplift models / synthetic-RCT)
-- Requires biomarker data integration (Day 80)
-- Clinician-reviewed recommendations only
-- ADR-032: causal inference framework
-
-**Day 80 — Biomarker lab integration**
-- Function Health + InsideTracker + Quest + Labcorp partner API mocks (real integrations require paid contracts — scope as ADR only)
-- HL7 FHIR-compliant data model
-- Biomarker dashboard template
-- ADR-033: biomarker data model
-
-**Day 81 — Supplement claim review workflow**
-- Pharmacist + clinician dual-sign required for biomarker-linked claims
-- Workflow built into custom app clinician-review module
-- Audit trail
-
-**Day 82 — Women's health data residency**
-- State-by-state routing logic
-- Data-minimization defaults (ephemeral session, no long-term PII retention for menstrual data)
-- Post-Dobbs US compliance pattern
-- ADR-035: women's-health data sovereignty
-
-#### Week 13 — AI monitoring + home gym
-**Day 83 — CGM-adjacent + wellness devices**
-- Stelo / Lingo partnership mockup (non-diabetic CGM)
-- PDP with clinician oversight messaging
-
-**Day 84 — Smart ring PDPs**
-- HRV / temperature / BP rings
-- Multi-device family page
-
-**Day 85 — At-home biomarker test kit flow**
-- Order → shipped kit → sample return → lab processing → results in app
-- End-to-end workflow modeled (mocked where needed)
-
-**Day 86 — Home gym smart equipment PDPs**
-- Smart mirror + cables + bike
-- Large-item shipping + installation option
-- Financing indicator (Shop Pay / Affirm surface)
-
-**Day 87 — Smart gym IoT pipeline**
-- Device registration in custom app
-- Mock firmware OTA update flow
-- Telemetry ingestion → warehouse
-- ADR-034: IoT platform (AWS IoT Core vs self-managed)
-
-**Day 88 — AI coach form-correction demo**
-- Uses webcam + MediaPipe (free, in-browser)
-- Exercise form feedback demo (not production inference, UX demo)
-
-**Day 89 — Cross-border device segmentation**
-- Market catalogs: US (FDA) vs EU (CE) vs Japan (PMDA) vs AU (TGA)
-- Restricted-product display logic verified in each market
-
-#### Week 14 — Women's health + anti-aging
-**Day 90 — Women's health catalog**
-- Pelvic-floor, menstrual, postpartum, PCOS, menopause SKUs
-- Dedicated metaobject track
-
-**Day 91 — Women's health hub**
-- Cohort-specific content (postpartum week-by-week, menopause stages)
-- Community channels gated to cohort
-
-**Day 92 — Menstrual tracking privacy**
-- Explicit opt-in + local-first storage
-- Delete-on-request DSAR endpoint tested
-- No third-party analytics on menstrual-data routes
-
-**Day 93 — Anti-aging catalog**
-- Red-light therapy, NAD+ precursors, collagen devices, biological-age testing
-- DSHEA-compliant peptide disclaimers
-
-**Day 94 — Longevity protocol builder**
-- Multi-month protocols
-- Biomarker re-test cadence built in
-- Clinician sign-off required for any claim
-
-**Day 95 — Peptide claim taxonomy**
-- Allowed claims (DSHEA) vs restricted (prescription-adjacent) vs prohibited
-- CI check on product copy enforces taxonomy
-- ADR-036: peptide / supplement claim taxonomy
-
-**Day 96 — Age gating enforcement**
-- 18+ + 21+ + clinician-verified tiers
-- Hardware-backed session (FIDO2 optional)
-- Playwright tests enforce gate
-- ADR-037: age gating architecture
-
-#### Week 15 — Platform layer + deliverables
-**Day 97 — Multi-tenant B2B SaaS admin**
-- Tenant schema isolation (row-level or schema-per-tenant, see ADR-038)
-- Tenant-level branding (logo, color, domain)
-- API key management per tenant
-- Usage metering
-- ADR-038: multi-tenancy architecture
-
-**Day 98 — White-label partner flow**
-- Partner onboarding
-- Custom subdomain routing (via Cloudflare Worker)
-- Co-branded Hydrogen theme
-
-**Day 99 — Shopify POS integration**
-- Shopify POS Lite (free with plan)
-- Inventory sync verified
-- Retail location metaobjects
-- ADR-039: retail POS architecture
-
-**Day 100 — International 3PL routing**
-- Multi-3PL ADR (no real 3PL contract; routing logic modeled)
-- Per-market fulfillment route table
-- Carbon-offset option (free via Shopify Planet)
-- ADR-040: 3PL routing
-
-**Day 101 — Telehealth partner integration scaffolds**
-- Ro / Hims scope-of-practice mapping
-- Restricted-product gating (supplement stacks requiring telehealth clearance)
-- Partner API stubs
-
-**Day 102 — Phase 3 compliance docs**
-- DSHEA full posture
-- EU MDR auth rep strategy
-- PMDA (Japan) segmentation
-- US state residency for women's-health data
-- Cross-border supplement restrictions matrix
-
-**Day 103 — Phase 3 ADRs finalized**
-- ADRs 31–45 + 5 additional (40–45: 3PL, telehealth, international compliance, white-label, platform pricing)
-- Total ADR count now 45
-
-**Day 104 — Phase 3 case study chapter**
-- New chapter: "From wellness DTC to platform — how RegenAI licenses its recommendation engine"
-- 5-minute Loom: platform admin walkthrough + biomarker demo + women's-health compliance walkthrough
-
-**Day 105 — Final tag + release**
-- Tag `v3.0-phase3-complete`
-- All 28 CI workflows green (new: biomarker contract, HIPAA audit log verifier, tenant isolation test, PMDA locale check, telehealth scope-check, age-gate e2e, women's-health residency check)
-- 48 templates live
-- 48 docs + 45 ADRs
-- Docs micro-site + case study site updated
-- 150+ SKUs modeled (fictional portfolio-safe)
-- Final visual regression baseline
-- Release notes
-- **RegenAI v3.0 complete — end-to-end 3-phase wellness platform, $0 infrastructure, ready for portfolio submission**
-
----
-
-## 12. Final deliverables
-
-1. **Live Shopify storefront** (on Partner Plus Development Store) — public URL, full 48 templates, 150+ SKUs, 5 markets, 5 locales
-2. **GitHub repo** (public)
-   - Clean conventional commits with signed trailers
-   - Branch protection on `main`, linear history
-   - 28 GitHub Actions workflows green
-   - 48 docs + 45 ADRs + OpenAPI spec + C4 diagrams
-   - Semantic version tags: v0.1 → v1.0-phase1 → v2.0-phase2 → v3.0-phase3
-3. **Docs micro-site** (Cloudflare Pages, Astro Starlight)
-4. **Case study site** (Cloudflare Pages)
-5. **Loom walkthroughs** (3 total — Phase 1, Phase 2, Phase 3)
-6. **Design system** — `@regenai/ui` published npm package + Storybook on GitHub Pages
-7. **Metrics proof:**
-   - Lighthouse 95+ screenshots (all 4 categories)
-   - Core Web Vitals dashboard
-   - axe clean report
-   - Sentry / Grafana SLO dashboards
-   - Playwright + Vitest + Percy + Storybook reports
-   - k6 load test results
-   - Compliance-as-code CI screenshots
-8. **Client-style deliverables:** SOW, project timeline, merchant handoff guide, roadmap, compliance posture doc
-9. **Retrospective blog post** — "Building a 3-phase wellness platform at $0 — what scales free, what doesn't, when to graduate to paid"
-
----
-
-## 13. JD coverage check — Anderson Collaborative
-
-| JD Requirement | Covered by RegenAI |
+| Global rule | Required project enforcement |
 |---|---|
-| **Mandatory: Shopify** | ✅ Full Plus feature stack on Dev Store |
-| **Mandatory: cursor** | ✅ Logged in AI-WORKFLOW with real commit evidence |
-| **Mandatory: OpenAI Codex** | ✅ Logged in AI-WORKFLOW with real commit evidence |
-| **Mandatory: Microsoft 365 Copilot** | ⚠️ Honest note in AI-WORKFLOW — substitutable with Copilot for equivalent IDE work |
-| **Mandatory: GitHub Copilot** | ✅ Logged in AI-WORKFLOW with real commit evidence |
-| **Must: 3+ yrs Shopify** | ⚠️ User-specific; portfolio demonstrates capability |
-| **Must: Liquid/JS/HTML/CSS** | ✅ Admin theme uses Liquid snippets; frontend is React/TS but Liquid artifacts exist in `extensions/` |
-| **Must: AI tools hands-on** | ✅ 4 AI assistants wired + logged |
-| **Must: Custom theme + Shopify APIs** | ✅ Storefront API, Admin API, Functions, App Proxy |
-| **Must: Performance + CRO** | ✅ Lighthouse 95+, Statsig A/B infra, 3 active experiments |
-| **Must: Work independently + fast** | ✅ 105-day solo delivery with 45 tags |
-| **Nice: Shopify Plus** | ✅ Full Plus stack (B2B, Markets, Functions, Checkout Extensibility) |
-| **Nice: Headless (Hydrogen / Next.js)** | ✅ Hydrogen is core architecture |
-| **Nice: E-commerce brands/agencies** | ⚠️ Fictional brand, agency-style SOW + handoff deliverables |
-| **Nice: SEO + page speed** | ✅ 10 JSON-LD schemas, edge-rendered, <1.8s LCP |
+| 1 Research first | Official version-matched docs/registry/schema before significant work; record source/date and uncertainty |
+| 2 Native inventory | Shopify APIs; Cloudflare zones/DNS/Workers/D1/KV inventories plus available billing; server Compose/listeners/resources. No guessed resource creation |
+| 3 Verify before acting | Written acceptance/repro, configuration inventory and reviewed approach before implementation |
+| 4 Verified claims | Per-task evidence; state missing/skipped gates and distinguish historical from current results |
+| 5 Cost approval | Fresh explicit cost warning/approval before chargeable calls, upgrades or purchases; no top-up/cap change. Completed one-image approval is consumed; no video approval |
+| 6 Documents | No Google Doc/.docx rewrite or `my-project-view/` changes without explicit request. If later requested, edit existing document and verify PDF refresh |
+| 7 Usage/provider | No invented subscription meter or savings claim; no automatic checkpoint at a guessed threshold; use switch-provider skill only when requested |
+| 8 Credentials | Verify Git ignore first; actual available values in private root CREDENTIALS.md; separate environment records, preserve legacy values, unknown remote values explicitly unknown; never echo secrets |
+| 9 Local first | Snapshot/hash live files to be touched, reconcile any newer live changes locally, verify locally, deploy only authorized result, prove post-deploy parity |
+| 10 Honesty | Identify flawed assumptions, unsupported claims and failed checks directly; don't label a mock feature real |
+| 11 Dossier | Update private PROJECT-DOSSIER.md first; seven required sections; append incidents, retain lessons; public docs scrubbed from it |
+| 12 Configuration | Typed settings + safe env examples + validated content; provider/model/version/prices/timeouts not embedded in business logic; regression audit |
+| 13 Tests | Personal manual scripts in ignored own folder; never delete; genuine CI tests remain tracked |
+| 14 Security pipeline | Fix scanner findings; never disable/bypass hooks or suppress detection. Verify pre-commit and CI wiring; paid review job stays off |
+| 15 Gates/review | Spec before code; one bounded feature; tests/type/lint/security/build, real-flow verification and independent fresh-context review; escaped bugs enter DEFECT-LOG.md |
+| 16 Memory | All project memory in ignored root memory/; MEMORY.md index only; no external project-note store |
+| 17 Rule sync | No global rules change requested here. If later requested, minimally synchronize all five existing instruction files and verify all five |
 
-**Proposal questions coverage:**
-1. AI tools — ✅ 4 tools actively used, logged with before/after
-2. Recent project — ✅ RegenAI + Kindred Grove
-3. 2–3 store links — ✅ RegenAI live storefront + Kindred Grove + case study site = 3 links
+Public plan contains no secrets, infrastructure IPs, account identifiers or key locations. Source-scoped private records own those values. A known earlier shared-credential exposure remains a private follow-up: supervisor must assess/rotate with the owner before relying on that credential for release; never copy it into logs or Luna prompts.
 
----
+## 5. Supervisor and Luna operating protocol
 
-## 14. Out of scope
+After the owner explicitly says start:
 
-- Real Shopify Plus paid plan (use Partner Plus Dev Store)
-- Custom domain / business registration (deferred until real launch)
-- Real AliExpress / CJ Dropshipping / supplier integration (fictional catalog for portfolio)
-- Real manufacturing / fulfillment partnerships (scoped as ADR only)
-- Real telehealth partner contracts (mocked integration only)
-- Real lab partner contracts (mocked only)
-- Real FDA 510(k) filings
-- Real DSHEA supplement manufacturer partnerships
-- Real 3PL contracts
-- Real physical retail lease
-- Real mobile app store submission (scaffolded + TestFlight / internal track only)
-- Real international EU MDR auth rep
-- Paid SaaS tiers on any service (operate entirely on free tiers)
-- Apple Developer Program / Google Play fees (scoped as future launch cost only)
-- GLP-1 / prescription peptide handling (excluded — DSHEA-compliant only)
+1. **Supervisor** re-reads current checkpoint, dirty worktree, task dependencies and relevant live-drift evidence. Protect existing uncommitted work; never reset it. Establish one feature branch/isolated checkout when appropriate without losing current work.
+2. Supervisor researches the chosen task, writes acceptance/repro first, chooses configuration ownership, and approves a small implementation approach.
+3. **Luna (`gpt-5.6-luna`, low reasoning)** receives a fresh bounded task packet, not the entire ambiguous backlog. If that model is unavailable, report it; do not silently substitute or route through a new paid provider. Hosted Luna is not an offline local model. Actual billing depends on the available session/provider; no cost saving is guaranteed.
+4. Luna edits only its assigned local files and runs specified checks. It reports failure evidence immediately instead of weakening tests or expanding scope. Default: one implementation task at a time. Disjoint work may run in parallel only when supervisor explicitly coordinates ownership.
+5. Supervisor inspects diff/configuration/security and exercises actual flows. Return precise defects to Luna. Supervisor retains architectural decisions, auth/data design, runtime migration, production credentials, paid requests and release control.
+6. A reviewer in a fresh context that did not author the change compares diff to criteria. Fix all blocking findings. If unavailable, report missing review; do not invent a verdict.
+7. Update dossier, task evidence/checkpoint and plan status. Give owner concise milestone reports and review URLs. Task completion is separate from deployment authorization.
 
----
+### Required task packet (copy for every assignment)
 
-## 15. Pre-flight checklist
+```text
+Task ID / title:
+Dependency evidence and current revision/worktree state:
+Goal (one observable behavior):
+Read first (exact existing files and official sources):
+Allowed edit files; explicitly forbidden surfaces:
+Inputs and configuration/data owner:
+Acceptance checks (numbered; include failure/edge cases):
+Repro or baseline command/result:
+Implementation outline (small, reviewed steps):
+Exact verification commands and real browser/API flow:
+No remote mutations, paid calls, secret printing, commit/push or deployment.
+Escalate if: schema/runtime mismatch, missing authorization/access,
+new dependency/provider, live drift, data migration or scope expansion.
+Return: files changed, diff summary, checks with exit/results, screenshots/
+request evidence, risks, remaining work. Do not say done without evidence.
+```
 
-**State as of Day 0 (2026-04-20) — live-tested this session:**
+Task states: `not-started`, `in-progress`, `review-needed`, `verified`, `blocked`, `owner-deferred`. A blocker needs a concrete cause and next action. Never mark work verified because time/context is short. Repeated corrective cycles trigger supervisor re-analysis rather than blind retries.
 
-Confirmed ready:
-- [x] Shopify Partner account — active (reused from Kindred Grove)
-- [x] Partner Plus Dev Store — `regenai.myshopify.com` provisioned with Plus preview + Multiple Business Entities feature preview
-- [x] Admin custom app `regenai-admin` installed with full scopes (`write_companies` for B2B, `write_markets`); token **HTTP 200** live-tested
-- [x] GitHub — `gh` CLI authed as `Zahidulislam2222`
-- [x] Cloudflare — Wrangler authed, account ID `f523a94f3089b05b1943314df3fd2624`, full Workers + Pages + D1 + AI scopes (hosts storefront edge + custom Remix app + docs site + case study + edge personalization + synthetic cron)
-- [x] gcloud — authed for BigQuery (Day 29 warehouse)
-- [x] Supabase — project `regenai` provisioned in East US, service_role live-tested HTTP 200
-- [x] Sanity — project `regenai-cms` provisioned, Editor token live-tested HTTP 200
-- [x] Klaviyo — reused existing account, Public `UqGK34` + Private key live-tested HTTP 200
-- [x] Sentry org `zahidul-islam-71` — exists, 4 project DSNs to mint Day 3 via CLI
-- [x] Percy — reused Kindred Grove account, project token to mint Day 3 via API
-- [x] npm — `@regenai` org created (Free tier), access token in `.env`
-- [x] Shopify Dev MCP — connected (reused from KG)
-- [x] Claude Code Max — active
-- [x] Local env: Node 20+, Shopify CLI 3.93.2, `gh`, `wrangler`, `gcloud`, Python
-- [x] Project folder: `D:/Website and project/Shopify/RegenAI/`
-- [x] Brand name: RegenAI
-- [x] Timeline: 105 days target, honest delivery band 105–130 days
+## 6. Configuration and data ownership
 
-Deferred — I mint via API/CLI during the build (no user action needed upfront):
-- [ ] Storefront API tokens → Day 2 (via Admin API)
-- [ ] Cloudflare API token → Day 3 (via Wrangler)
-- [ ] Sentry project DSNs × 4 + auth token → Day 3 (via Sentry CLI)
-- [ ] Percy project token → Day 3 (via Percy API)
-- [ ] Judge.me API token → Day 12 (after app install)
-- [ ] Klaviyo list ID → Day 12 (via Klaviyo API)
-- [ ] GA4 measurement ID + stream ID → Day 29 (via gcloud)
-- [ ] GCP project + BigQuery + service-account JSON → Day 29 (via gcloud CLI)
-- [ ] Rust toolchain → Day 16 (local `rustup` install)
-- [ ] OpenAI API key → Day 31 (user does $5 billing + pastes key)
-
-Phase 2 signups — deferred to Day 46+:
-- [ ] Statsig account, Expo / EAS, OneSignal, Apple Developer Program ($99/yr), Google Play Console ($25 one-time)
-
----
-
-## 16. Risk mitigation
-
-| Risk | Mitigation |
+| Variable data | Single owner / implementation requirement |
 |---|---|
-| **Timeline slip (105 days is tight for 4-layer / 3-phase scope)** | Phase-gate releases; each phase shippable standalone. Honest delivery band 105–130 days. Flag slip weekly. If tight at Day 40, drop Phase 3 retail POS + smart gym IoT first, then Phase 3 white-label SaaS (convert to ADR-only) |
-| Hydrogen learning curve | Day 1–2 dedicated to Hydrogen + Remix onboarding; use Shopify official templates; AI-WORKFLOW tracks first-week velocity to detect drag |
-| ~~Partner Plus Dev Store request rejected~~ | **Resolved Day 0** — store provisioned with Plus preview |
-| Multi-AI tool coherence | AI_GOVERNANCE defines explicit role per tool; no overlap |
-| Real ML demo feels faked | Use real pgvector (Supabase provisioned) + real embeddings; log actual inference calls; demo in Loom |
-| WebBluetooth demo without hardware | Default to `web-bluetooth-mock` simulated peripheral in browser — demo-ready without buying hardware. Optional real device ($30-80) later |
-| Compliance theater risk | Compliance-as-code CI checks documented as *signals of discipline*, not substitutes for regulatory counsel |
-| CI flakiness | Keep CI <8 min full suite; Playwright retry logic; parallel shards |
-| Mobile BLE unreliable in CI (Phase 2) | Simulate BLE peripheral locally; e2e mobile tests run on Detox + Expo EAS |
-| Community moderation crisis (Phase 2) | OpenAI Moderation + human-review queue + documented escalation; crisis-flagging never deployed without working resource links |
-| A11y regressions | axe in CI + Storybook a11y addon + WCAG 2.2 manual checklist per phase |
-| Visual regressions | Percy baselined per phase (page-level); Storybook a11y addon catches component-level regressions |
-| Cloudflare free-tier rate limits (100k req/day per Worker) | Scope each Worker (edge middleware, custom app, synthetic cron) separately — each gets its own 100k budget. Unlikely to hit during build; monitored via CF dashboard |
-| ADR drift | PR template requires "ADR needed?" checkbox; ADR index in docs micro-site |
-| Secret handling in chat | Per feedback memory: dual-write secrets to GitHub Secrets + local `.env` in the same turn to avoid orphaned secrets |
+| Demo catalog, prices, options, interface copy, finder questions | Existing validated app/content files; fixtures never silently replace live Shopify data |
+| Real catalog, prices, inventory, availability | Shopify response mapped to typed view models; currency-aware decimal handling, no universal two-decimal assumption |
+| Brand style, motion, 3D transforms | Existing recovery CSS/config and original assets; reduced-motion/poster fallbacks preserved |
+| Runtime host/port, origin, proxy policy, session/cookie settings | Typed server settings populated from environment, mirrored by safe env examples |
+| Shopify domains/API versions/scopes/timeouts/retries | Central server provider/settings boundary; stable protocol syntax centralized separately |
+| URLs, callback allowlists, checkout hosts, market/feature flags | Typed per-environment deployment settings validated at startup |
+| Session/encryption/provider secrets | Approved secret injection; actual values privately recorded; none in client bundle/container layers |
+| Function thresholds/messages/rules | Versioned validated rule data or Shopify-owned metafields; shared contract with discovery rules |
+| AI endpoint/model/version/prompts/budgets | Typed server config + versioned prompt/rubric data; paid-disabled default until approved |
+| DNS/Compose names, image digest, volumes, allocated port | Project deployment manifest; allocation after inventory; private access details elsewhere |
+| Analytics events/retention | Reviewed allowlist and retention config; no finder answers or tokens in logs/analytics |
 
----
+Before claiming completion, search public source, staging/history and built client assets for secrets/URLs/models/paths/duplicated defaults; verify ignores; compare env names with typed settings/examples; prove provider/price/timeout changes require config/data edits only. Report secrets found yes/no, moved values, and intentionally fixed constants. Fail a regression test when obvious credential or provider literals return to business modules.
 
-## 17. Success metric
+## 7. Phase A — preserve and accept the frontend
 
-**The 60-second test:** When a CTO / agency reviewer spends 60 seconds on your portfolio, they see:
+Status: **owner selected the newly built recovery frontend for integration; preserve its design**. Full evidence and criteria remain in `docs/FRONTEND-SPEC.md` and `docs/FRONTEND-REVIEW.md`; this plan does not rewrite their historical results.
 
-1. **Live storefront** → "Looks like Therabody / Oura / Eight Sleep" — clinical, modern, trust-first
-2. **GitHub repo** → 28 green CI workflows, 45 tags across 3 phase releases, 48 docs + 45 ADRs + OpenAPI + C4 diagrams
-3. **Docs micro-site** → full searchable documentation, architecture diagrams, ADR index
-4. **Case study site** → 3 phase chapters, real metrics, multi-AI workflow evidence, live demo links
-5. **3 Loom walkthroughs** → "They shipped a 4-layer Shopify Plus commerce platform solo in 105 days. Using 4 AI assistants. With compliance-as-code. At zero infrastructure cost. This person runs a Plus practice."
+| ID | Owner and files | Bounded work | Acceptance / dependency |
+|---|---|---|---|
+| A01 | Supervisor; current review/checkpoint | Confirm owner feedback and exact accepted visual scope | Owner explicitly selected the newly built frontend; no additional visual change requested |
+| A02 | Luna; recovery views/content/CSS only | Apply one requested visual change at a time; preserve assets, performance/fallback intent | Relevant F01–F12 rerun; screenshots at 390/768/1440 plus keyboard/zoom; A01 |
+| A03 | Supervisor; asset ledger | Keep six editable Blender sources, web variants, GLB, approved image and provenance | No absent video CTA; no generated claims/endorsements; no extra generation without cost gate |
 
-**If all five signals land, the portfolio is not just ready — it is overqualified for any sub-$50k Shopify freelance posting, and competitive for $80–120k Shopify Plus agency senior / staff roles.**
+First frontend review is already delivered. These tasks are refinement, not permission to replace the design with generic templates.
 
----
+## 8. Phase B — foundation, Node runtime and real Shopify integration
 
-## 18. What this plan signals
+**Entry:** owner start command. **Exit:** M2 customer storefront runs through normal Hydrogen build/server with real sandbox commerce. Work B01–B05 may proceed while visual feedback is pending; B06 ports the owner-selected new frontend; A02 applies only if specific refinements are requested.
 
-| Bar | What RegenAI delivers |
-|---|---|
-| Junior Shopify dev | ✅ Wildly exceeded |
-| Mid-level Shopify dev | ✅ Wildly exceeded |
-| Senior Shopify dev at agency | ✅ Exceeded |
-| Staff / lead at agency (Shopify Plus practice) | ✅ Matched |
-| Principal / head of commerce engineering | ✅ Approached — with 4-layer architecture, multi-year platform evolution, compliance-as-code, real ML, and multi-tenant SaaS layer, this is principal-tier signal |
-| CTO reading this | ✅ Signals "commerce platform architect who thinks about multi-year scale, regulatory surfaces, and operational reality — not just features" |
+| ID / dependency | Read/edit scope | Implementation contract | Required acceptance proof |
+|---|---|---|---|
+| B01 / start | Supervisor; memory/live-snapshot, relevant deployed versions and source, Git state | Reinventory Shopify/Workers and obtain live source/artifact mapping; compare files before touching deployed routes. Reconcile newer live code locally. Inventory scopes, publication, plan, channels, test payment setup, app distribution and Functions eligibility | Dated capability matrix + source hashes. If bundle-only evidence cannot prove parity, record unresolved mapping and prepare isolated candidate; no overwrite/cutover |
+| B02 / B01 for deployed paths | Luna; package scripts, runtime pins, codegen config, app/UI types | Reproduce root build-directory failure and missing types; repair correct working directory/explicit project selection; align runtime/lockfile; fix errors rather than bypassing codegen/typegen | Root build/type/lint and workspace builds reproduce on fresh install; no handwritten generated GraphQL types or type-error suppressions |
+| B03 / B02 | Supervisor researches; Luna scoped dependency/config changes | Trace audit dependency paths and native install-script needs; verify real registry versions; apply narrow upgrades/patches; enable only verified required scripts; verify hook/pre-commit/CI scanning | Re-audit runtime/build/dev reachability; critical/high exploitable findings resolved before release; any residual needs written risk decision, never “all clear” |
+| B04 / B01–B03 | Supervisor contracts; Luna settings modules/env examples | Inventory current app/storefront hardcoded API version/scopes/domains/limits; build typed validated server settings; isolate public vs private settings | Missing/invalid settings fail closed; config-only provider changes; secret/config regression tests and full gates |
+| B05 / B02–B04 | Supervisor designs; Luna server.ts, context/session, entry.server, Vite/RR configs, proposed deploy container files | Node/Hydrogen SSR spike using installed-version APIs. Adapt request headers/streaming, cache interface, background work, secure cookie commits and graceful shutdown; keep Hydrogen context | Local production container serves SSR route/assets/404; session survives navigation; separate buyers cannot share cache/cart; abort/error paths tested; restart and shutdown verified. No VPS migration yet |
+| B06 / B05 + visual decision | Luna; app/features/recovery, root.tsx, routes, CSS | Extract presentational views from preview routing; SSR-safe window/localStorage/matchMedia effects; one route tree, main, overlay provider and cart source | SSR content without WebGL; hydration has no mismatch; back/forward/reload/deep link work; client-only 3D lazy loads; approved design comparison |
+| B07 / B04–B06 | Luna; typed catalog adapter + collection/search/product loaders | Fixture/Shopify adapter contract; generated queries; publish/seed only authorized synthetic dev-store records, never overwrite unrelated products. Map real variants/media/options/prices | Real published Shopify product/collection IDs; search/filter/sort/pagination; absent image, long title, sold-out/missing variant, API timeout/404; no fictional fallback in live mode |
+| B08 / B07 | Luna; cart route/action, Bag adapter, session/fragments | Hydrogen/Storefront cart, validated variant/quantity mutations, server session persistence, mutation errors; authoritative Shopify totals; fresh checkoutUrl from Shopify | Add/update/remove/mixed variants; two browsers isolated; inventory/race/retry failures visible; test checkout reaches Shopify. No real charge/order authorization inferred [R4] |
+| B09 / B08 | Supervisor auth contract; Luna account routes/settings | Customer Account API flow with configured callback/origin, state/PKCE/session behavior through official supported approach; order/address views limited to actual grants | Login/logout/expiry/error; cross-customer denial; no account tokens in logs; genuine sandbox order history, no fake success [R5] |
+| B10 / B07–B09 | Luna; root SEO/meta/content/policy/consent routes | Real canonical/robots/sitemap/status codes, content metaobject mapping, owner-approved policies, consent-gated analytics; remove legacy fabricated clinical copy | Canonical matches configured domain; true HTTP404; no indexation of preview/private/cart; structured data reflects visible reality; scripts obey consent |
+| B11 / B06–B10 | Supervisor + fresh reviewer | Run all gates and real dev-store acceptance; retain fixture mode explicitly for deterministic tests, retire duplicate production routes | M2 customer flow evidence plus responsive/a11y/motion/network failure and SSR performance; no Vite dev server shipped |
 
-**This is not a portfolio project. This is a productized senior-staff commerce capability proof.**
+B08 security detail: preserve separate session/cart cookies, allowlist configured checkout hosts, pass buyer IP only from trusted proxy-derived request data where Shopify requires it, never trust arbitrary client forwarding headers. Fetch current checkoutUrl rather than constructing a payment URL. [R4]
 
----
+## 9. Phase C — authenticated merchant app and Functions
 
-## 19. Phase gates + velocity targets
+**Entry:** B01 capability/drift matrix and B02–B04 foundation. C work may be scoped independently of the visual port, but customer release requires all exposed admin/API paths safe. Existing app remains Worker-targeted unless a separate migration is accepted.
 
-| Phase | Days | Wall-clock target (at ~5–6 hr/day focused) | Tag | Reviewable artifact |
-|---|---|---|---|---|
-| Phase 1 | 1–45 | ~250 hrs | `v1.0-phase1-complete` | Storefront + custom app + Functions + B2B + Markets + ML v1 + 22 docs + 20 ADRs + case study site |
-| Phase 2 | 46–75 | ~170 hrs | `v2.0-phase2-complete` | Mobile app + community + sleep/mental catalog + ML v2 + 10 more docs + 10 more ADRs |
-| Phase 3 | 76–105 | ~170 hrs | `v3.0-phase3-complete` | Full wellness catalog + platform / white-label + biomarker + women's-health + anti-aging + 15 more docs + 15 more ADRs |
-| **Total** | **105** | **~590 hrs focused** | **v3.0** | **Complete 4-layer 3-phase wellness platform** |
+| ID / dependency | Files / bounded work | Acceptance |
+|---|---|---|
+| C01 / B01–B04 | Supervisor chooses embedded/non-embedded auth approach using actual distribution; Luna `app/lib/shopify.ts`, auth routes and middleware | Valid install/session flow; invalid HMAC/state/shop/session denied; no manual shortcut that trusts a shop query parameter; supported SDK assessed before keeping custom auth [R6] |
+| C02 / C01 | OAuth persistence and migration; browser-bound state consumed atomically; token encryption/key-versioning with no plaintext debug output | Concurrent/replayed callbacks cannot both succeed; tampered/expired state rejected; encrypted persisted values; controlled key rotation/migration tested on local data. KV get/delete is not accepted as one-time semantics [R7] |
+| C03 / C01 | `admin.reviews.tsx`, all loaders/actions; authenticated shop-scoped repository, least privilege roles | Unauthenticated access denied, shop-A cannot read/mutate shop-B, CSRF/session checks, tenant predicate on every query |
+| C04 / C02–C03 | `wrangler.toml`, environment adapters and migrations | Preview/staging/production data/session resources isolated. Read-only inventory precedes any resource creation. Local restore first; bounded, authorized remote migration with rollback; never reuse production DB for tests |
+| C05 / C03–C04 | Review detail/diff + approve/reject/request-changes with required note, concurrency/version check and append-only audit | Allowed transitions persist, double-approval prevented, forbidden mutation denied, error state honest; audit identifies authenticated actor. Do not invent clinician approval |
+| C06 / C05 | Protocol/catalog associations and content publishing workflow | Validated create/edit/archive/version flows; publishing requires approved record; no unapproved medical claims or real patient adherence data |
+| C07 / C01–C04 | Webhook routes, event inbox/idempotency, bounded processing/reconciliation | Raw-body HMAC verified before parse; duplicate/out-of-order/replayed delivery cannot duplicate action; tenant association trusted; uninstall revokes tokens; privacy topics handled where required [R8] |
+| C08 / B01 + B04 | Four existing Rust crates/shared rule schema/TOML/GraphQL | Pin supported target schemas and prove output/export compatibility with actual Function runner, not Rust unit tests only; verify WASM path/size/current limits; no arbitrary network/LLM call from run target [R9] |
+| C09 / C08 + C05 | Activate eligible Functions on authorized dev store; validate cart checks, discount interaction, B2B tier and delivery rules independently | Native runner + actual sandbox checkout matrix; currency boundaries, malformed/missing data, overlapping discounts, no customer-data leakage. Versioned input rules agree with finder where relevant |
+| C10 / C01–C09 | Merchant browser/API tests, backup/restore and independent review | Auth/tenant/token safety, audit immutability, webhook failure recovery, schema migration restore all pass. Unsupported Function capability remains blocked, not silently emulated as real enforcement |
 
-**Velocity target:** ~8× multiplier vs hand-coded equivalent. Hand-coded estimate for this scope: 4,500–5,500 hrs (2.5–3 years solo). AI-assisted target: 590 hrs (15 weeks solo).
+Custom apps containing Functions generally require Shopify Plus; verify the actual development-store capability and exact Function target before activation. Do not buy Plus or claim that historical Plus-preview enables every API. Checkout extensions and subscriptions have their own capability gates. Functions run on Shopify regardless of storefront hosting. [R9–R10]
 
----
+## 10. Phase D — full commercial feature workstream
 
-## 20. Cost model — confirmed $0
+These were part of the earlier project ambition and remain visible. After B/C, supervisor creates one task packet per row using current store capability evidence. Each row is either verified or explicitly owner-deferred/blocked. Do not call the full selected project complete with unexplained missing rows.
 
-**During build (105 days):**
-- Shopify: $0 (Partner Plus Dev Store)
-- Hosting: $0 (Oxygen + Cloudflare Workers + Pages + D1 all on existing CF account)
-- Data/ML: $0 (BigQuery + Supabase + dbt Core all free)
-- Observability: $0 (Sentry reused existing org + CF Workers Logs)
-- Testing: $0 (Percy reused from KG; Storybook on GitHub Pages)
-- Feature flags: $0 (localStorage in Phase 1; Statsig free tier Phase 2+)
-- CMS: $0 (Sanity free tier — provisioned)
-- Security: $0 (CodeQL + ZAP + Trivy + Syft + gitsign all OSS or free on public repos)
-- CI: $0 (GitHub Actions free on public repos)
-- **Total: $0/month infrastructure**
+| ID | Feature / dependencies | Minimum implementation and proof |
+|---|---|---|
+| D01 | B2B / B09,C09, eligible store | Inquiry consent/spam defense, merchant approval, genuine company/location context and contextual pricing. Test unauthorized location, cross-company isolation, normal retail path and sandbox order |
+| D02 | Markets / B07–B10 | One working baseline market first; then supported locale/currency routes, translations, currency-aware amounts, tax/shipping presentation and canonical/hreflang. Test each configured market; never infer currency by symbol |
+| D03 | Subscriptions / B08–B09,C07 + grants | Research selling-plan/contract/app-distribution access before implementation. Genuine purchase option, lifecycle, cancellation and retry/idempotency. Test authorized sandbox renewal/failure; no live recurring charge |
+| D04 | Checkout extensions / B08,C08 + target eligibility | Only supported extension targets/sandbox SDK. Test actual checkout placement, validation, failure and accessibility. The custom frontend must not collect card details or pretend to replace Shopify checkout |
+| D05 | Account utilities / B09,C07 | Real authorized order/address workflows, gift notes and requested data export/deletion boundaries; permissions and pagination/failure tests |
+| D06 | Affiliate/consultation / explicit business workflow | Recipient, attribution, consent, permissions, fraud boundaries and fulfilment specified before code. No email/Slack/customer outreach or fake submitted-success without explicit authorization |
 
-**Only one-time paid item during build:** OpenAI $5 credit at Day 31 for ML embeddings (deferred; user approves when we get there).
+At D entry, record the owner's selected feature list. Pending selection does not block foundation work and is not permission to discard features. Supplier/manufacturing availability, approved legal policies and real payment eligibility are prerequisites for actual commerce, not inferred from a portfolio demo.
 
-**Personal tool subscriptions (excluded per user direction):** Claude Code Max (already have), Cursor Pro (optional), ChatGPT Plus (optional), Apple Developer $99/yr + Google Play $25 one-time (Phase 2 only if shipping mobile apps publicly — internal test track is free).
+## 11. Phase E — recommendation and data layer
 
-**When to graduate to paid tiers (post-launch only):**
-- Klaviyo paid: ~1k contacts (~$45/mo start)
-- Segment paid: ~1k visitors/mo (or stay on RudderStack OSS forever)
-- Sentry Team: ~10k errors/mo (~$26/mo)
-- Cloudflare paid: scale beyond free-tier Worker req limits (still cheap — $5/mo Workers Paid unlocks 10M req/mo)
-- Sanity paid: beyond 10k documents or 1M API calls
-- Supabase paid: beyond 500 MB DB or 50k MAU
-- Statsig paid: beyond 1M events/mo
-- Shopify Plus: only when actually selling (~$2,500/mo)
+| ID / dependency | Implementation task | Acceptance |
+|---|---|---|
+| E01 / B07 + privacy review | Define permitted inputs, purpose, consent, retention/deletion, logging policy and trusted product source | No health details required for ordinary shopping; fixture evaluation data synthetic; privacy controls tested |
+| E02 / E01,C08 where shared rules | Deterministic ranking with honest fallback reasons and hard exclusions; version rule content | Golden test matrix including no match/missing data/conflicts; matches and explanation agree; no medical-safety certification claim |
+| E03 / E02 | Supervisor researches current provider/model, capabilities, data terms, pricing and bounded usage | Written decision/config contract; no paid API until fresh cost approval. Model IDs and endpoint settings centrally owned, never hardcoded |
+| E04 / E03 + authorization | Server retrieval/generation adapter, schema-validated output, allowlisted product IDs, timeout/rate/budget limits, deterministic fallback | Offline and authorized online eval: relevance, unsupported claims, prompt injection, out-of-catalog IDs, provider failure, latency and cost. AI must outperform or justify itself against baseline |
+| E05 / E01–E04 | Vector store only if retrieval requires it; idempotent ingestion/version/delete propagation | Restore and deletion proof, dimensions/schema match configured model, tenant filtering; no stale unsafe product resurfacing |
+| E06 / concrete reporting need | Minimal event schema and report; warehouse/dbt only if required by measured use case | No clinical answers/tokens in telemetry; consent respected; report reconciliation and deletion tested; no speculative cloud fleet provisioning |
 
-**Everything scales from $0 → paid at real traffic, not arbitrary. No tier trigger during portfolio build.**
+No provider call inside checkout validation. AI recommendations are product discovery, not diagnosis, clinical prescription or a substitute for verified product evidence. Existing image authorization does not authorize AI inference.
 
----
+## 12. Phase F — release engineering on existing infrastructure
 
-**End of plan.**
+**Entry:** required B/C, selected D/E, applicable P01–P10 and S01–S06 readiness gates verified; owner reviews scope and proposed deployment. Preparing local deployment artifacts is allowed after start; remote publication needs authorization for the concrete candidate.
+
+| ID / dependency | Supervisor-controlled work; Luna may prepare local files | Required evidence |
+|---|---|---|
+| F01 / B05,B11 | Read current shared INFRASTRUCTURE.md. Native Cloudflare DNS/Workers inventories; server Compose/container/listener/capacity/billing checks; existing-host ownership | Proposed subdomain free or reconcile owner; choose unused loopback port, no guessed assignment; resources measured not advertised-plan assumptions |
+| F02 / F01 | Versioned release/Compose, non-root pinned image, healthchecks, resource/log limits, project network/volumes, secret injection; one Caddy site | Local production-container flow; no secrets baked into image; no database/public host ports; keep shared main Caddy/Docker settings intact [R11–R12] |
+| F03 / B11,C10 + F02 | Make CI test current candidate code and built artifact; unit/type/lint/security/build/contract/e2e/a11y gates; portable manual tooling retained | Failing gate blocks release; missing credentials reported blocked; no stale Workers preview tested as proof for new VPS code; no paid scan job without approval |
+| F04 / F02–F03 + applicable P/S readiness | Assemble reviewable release manifest: exact image/artifact digest, DNS diff, Caddy diff, migrations, config changes, test evidence and rollback | Owner can approve concrete changes; new costs explicitly itemized/approved; deployment authorization recorded before mutation |
+| F05 / authorized F04 | Drift check immediately before upload; stage candidate; locally authored config upload; validators; atomic promotion/reload; targeted DNS | Preserve main portfolio/root domain and other apps. Change only project hostname. Cloudflare Full(strict) with valid origin TLS. Reconcile newer live config locally; never overwrite blindly |
+| F06 / F05 | Public browser/HTTP verification plus origin checks and local/live artifact hashes | SSR/deep links/true404/assets, HTTPS/redirects, actual Shopify test flow, account cookies, webhook reachability, protected data isolation, external private-port closure; source/build mapping and hash parity saved |
+| F07 / before valuable data, before final release | App-consistent backups, off-server copy, encrypted sensitive data, restore drill and rollback of code/config/data | Actual restored data checked; previous release retained; migration compatibility tested; backup owner/schedule/RPO/RTO measured and recorded, not guessed |
+| F08 / F06–F07 | Bounded performance/recovery testing, incident runbook and owner handoff | Defined devices/network/concurrency/duration; SSR latency/asset budget/memory/restarts; no fabricated load/SLA. Final N/N criteria and reviewer verdict |
+
+Operational constraints: use the privately documented versioned-release convention; local deployment manifest chooses the actual slug. Bind app to loopback and route via Caddy. Never global-prune, delete volumes, replace shared main config, expose Docker/admin/database ports, or decommission previous Workers automatically. Proposed project DNS and server access details remain private. Recheck before mutation because the shared registry is not an allocation lock.
+
+Origin/API compatibility: test Cloudflare challenges/cache/WAF behavior for Shopify callbacks/webhooks. Never cache private cart/account/admin responses across users. Keep configuration changes narrowly scoped; disable only a proven interfering rule for a specific authorized endpoint, not site-wide protection. Do not claim Cloudflare proxy prevents direct origin access.
+
+## 12A. Production-readiness workstream P — US/EU client delivery
+
+Added at owner request, 2026-09-21. These are required cross-cutting tasks, not optional polish after deployment. Implement alongside B–E; F04 requires the applicable P gates below. Current state: **planned, not implemented or legally certified**. Distinguish the public synthetic portfolio demo from an actual merchant accepting customer data/orders. Legal applicability depends on merchant location, customer locations, products, claims, processing, role and thresholds; hosting in the EU is not compliance by itself.
+
+| ID / dependencies | Bounded task and proposed evidence | Acceptance / release gate |
+|---|---|---|
+| P01 / B01 | Supervisor produces client applicability register: jurisdiction, business role, product classification, data/processors/transfers, rule/source/effective date, applicability rationale, control, owner, evidence, review date | Every relevant row resolved or explicitly launch-blocking; qualified legal/product specialist review where required. No blanket “all US/EU law compliant” badge |
+| P02 / B04,C01–C04 | Threat model and version-pinned OWASP ASVS Level 2 control mapping; tenant/role boundaries, CSRF/XSS/SSRF/injection, session rotation, MFA for admin accounts where supported, origin/proxy trust, upload/redirect validation, rate/body/time limits | Negative auth/tenant/abuse tests; protected headers/CSP verified against actual app; scanner/DAST results addressed; no unreviewed exploitable critical/high finding. A scanner alone does not certify security [R14] |
+| P03 / P01,B09–B10,C07 | Privacy: minimal data collection, purpose/lawful basis, consent/preferences, withdraw/reject path, retention/deletion/export, processor and transfer register, access logs and breach process | Rejecting optional analytics prevents network/storage; consent withdrawal works; authenticated rights request and downstream deletion exercised; backups have retention/redeletion process; no sensitive quiz inputs in telemetry [R15–R18] |
+| P04 / P01,B07,C05,D03 | Commerce/product review: seller identity/contact, total-price/shipping/tax clarity, delivery/returns/cancellation/subscription rules, product safety/traceability, supported health claims and review/endorsement authenticity | Actual offer and checkout match disclosed terms; evidence approval controls publishing; per-product classification review. No false FDA/CE/clinical claim or misleading countdown/review; real-sales gate separate from demo [R19–R21] |
+| P05 / B06–B11 | Accessibility: WCAG 2.2 AA engineering target plus applicable EAA/US legal assessment; keyboard, screen reader, focus/dialog/error announcements, zoom/reflow, contrast, touch, motion, media controls and checkout | Automated axe + manual NVDA/VoiceOver or equivalent documented screen-reader exercise, 200%/400% zoom checks, desktop/mobile full commerce journey; accessibility statement only describes actual evidence [R22] |
+| P06 / B07,B10 | SEO and search-agent/AI-search visibility: meaningful SSR HTML, true status codes, canonical/sitemap/hreflang, product/offer/breadcrumb/organization data, accurate availability, internal links, crawl controls and merchant feeds when eligible | Fetch source with JS disabled, verify visible structured-data consistency, Search Console validation and crawl/index errors; no fake ratings or indexation of account/cart/staging. Assess each crawler's current docs; no guaranteed ranking, citation or purchase-agent inclusion [R23] |
+| P07 / B05–B11 | Frontend/backend performance budgets: first-load JS, image/GLB/video bytes, request count, SSR latency, hydration/main-thread work and public-cache behavior | Representative home/PLP/PDP/cart/quiz/account measured on documented mobile hardware/network and desktop; lab budgets in CI; field p75 goals LCP≤2.5s, INP≤200ms, CLS≤0.1 when sufficient traffic. Do not label lab data field performance [R24] |
+| P08 / B04,C07,F02 | Observability: structured redacted logs, traces/correlation, frontend/server errors, route latency/error/traffic, CPU/memory/disk/event-loop, cache hit/miss, queue age/dead-letter, API throttling, webhook success and secret/cert/backup expiry | Controlled fault produces metric/trace and tested approved alert; no token/health-data logging; bounded retention/cardinality; dashboard access authenticated; external monitoring observes VPS failure |
+| P09 / P08,F02,F07 | Reliability operations: 99% rolling 30-day objective, separate business-journey indicators, error budget, incident severity/owner/escalation, dependency outage playbooks, restore/deploy-failure drills | SLO definition and monitoring validated before release; uptime achieved only after measured window. Missed SLO triggers remediation and release-risk review. Runbooks tested; no invented 24/7 human on-call |
+| P10 / P01–P09, S01–S05 | Client-facing engineering evidence index: control→source→test→result/date→limitations; security/privacy/SEO/performance/reliability/scale status separately | A reviewer can trace claims to code/tests. Independent review; incomplete capability plainly marked. Final report lists applicable criteria N/N; no placeholder policies or infrastructure diagrams masquerading as working controls |
+
+### P01 legal applicability checklist — scope before coding
+
+This is a review inventory, not a claim that every listed regime applies:
+
+- **EU data/privacy:** GDPR roles, lawful bases and special-category assessment; processor agreements, rights, retention, breach handling, international transfers; ePrivacy/national cookie rules. Assess EU representative/DPO/DPIA requirements where relevant. Map Shopify, analytics, support, email and AI destinations, not only the VPS.
+- **US privacy:** state-by-state applicability including California CCPA/CPRA thresholds, opt-out/GPC where required, and consumer-health regimes such as Washington My Health My Data. Assess FTC health-breach rules and HIPAA only against actual role/data; wellness branding does not automatically imply HIPAA.
+- **Consumer/marketing:** EU distance-selling/withdrawal/guarantees and unfair-practice rules; applicable US shipping/refund, endorsement and recurring-billing rules; electronic marketing/email/SMS consent rules. Verify actual jurisdictions and current requirements; no outdated blanket click-to-cancel claim.
+- **Products and tax:** FTC substantiation; FDA intended-use/device classification; EU GPSR/MDR and CE obligations where applicable, economic operator/traceability/recall duties, consumer disclosures and jurisdiction-specific VAT/sales-tax assessment. Configuring a tax setting does not establish tax compliance.
+- **Accessibility:** European Accessibility Act scope/exemptions and national implementation; applicable US accessibility obligations. WCAG engineering evidence is not a universal legal certificate.
+- **AI and minors:** evaluate current AI Act roles/transparency/applicability if AI launches; disclose generated content as required, prohibit invented professional advice, assess children's-data/marketing obligations if the audience includes minors. Avoid collecting sensitive data by default.
+- **Payment:** keep card entry on Shopify checkout; determine merchant PCI responsibilities and payment-provider eligibility. Using hosted checkout narrows scope; it does not establish every merchant obligation is satisfied.
+
+No new clinical, tax or legal operating claim is authorized. P01 records current official source and qualified-review needs before actual selling; the portfolio demonstrates controls with synthetic data. Unresolved applicable legal/product obligations block real launch, not unrelated local development.
+
+### Performance and AI-search implementation rules
+
+Preserve the visual identity while setting measurable budgets: responsive optimized images with dimensions; preload only the actual LCP asset; deferred 3D/film; bounded GPU resolution; stop offscreen/background animation; low-power/reduced-motion stills; avoid scroll hijacking. Split heavy modules, remove duplicate font payloads, cache immutable hashed assets, invalidate public catalog data correctly, and never share personalized caches. Paid video is not required for a production-quality result.
+
+Search-agent optimization means accessible facts, reliable source content and controlled crawler access. Optional llms.txt or a vendor-specific agent integration is not a substitute for SSR/indexability and is not a guaranteed discovery standard. Distinguish search crawling, model-training crawling and user-triggered agents; keep private routes protected. Agent-triggered state changes or purchases need authenticated, authorized workflows—not unrestricted bot access.
+
+## 12B. Scalability workstream S — credible path to 10k–1M+ active sessions
+
+**Goal:** implement and demonstrate architectural boundaries that reduce application rewrites when larger infrastructure is funded. **Not a claim:** the current VPS or code already handles 10k, 100k or 1M simultaneous users. A few configuration changes may connect an implemented adapter; database migration, redundancy, provider capacity approval and production validation can be substantial work.
+
+The public [scalability blueprint](docs/SCALABILITY.md) is a derived client reading guide. This master plan owns tasks/targets. Every proposed source location below must be labeled planned until implementation and evidence exist; do not generate unused abstraction scaffolds merely to impress a reviewer. Every scaling boundary must be used by a real request/job flow and covered by an executable contract or failure test. The derived blueprint must link to actual implementation files and evidence after each task, and classify each future upgrade as configuration-only, infrastructure addition, data migration, or application change; unimplemented items remain visibly planned.
+
+| ID / dependencies | Deliverable in codebase after start | Acceptance and proof |
+|---|---|---|
+| S01 / B01,B04,P01 | Workload contract and capacity model; maintained profile data under proposed `tests/load/profiles/`, documented budget/config owner | Concurrent active sessions, request rate, route mix, think time, payload/egress, session length, cache ratio, regions, bursts, cart/account/checkout shares and dependency calls explicitly defined; no monthly-visitors/concurrency confusion |
+| S02 / B05,B08,C02–C07 | Runtime-neutral boundaries for cache, session/state, jobs, rate limits and telemetry as needed; configuration-injected adapters; stateless request handlers | Run same build on two local instances behind a local balancer: sessions/cart/auth correct on alternating nodes; no sole in-process durable state; role/tenant cache-key tests; shared durable state where necessary. Do not replace Shopify commerce with a new homegrown DB |
+| S03 / S02 | Bounded dependency access: public cache revalidation/coalescing, admission control, timeouts, retry-with-jitter/budget, circuit breaking; durable webhook/job inbox, idempotency and dead-letter recovery | Cache stampede, slow/down upstream, duplicate jobs, queue saturation and worker crash exercised against controlled local upstreams; no retry amplification/double mutation; cart fails honestly rather than using stale inventory; optional AI fails to deterministic path |
+| S04 / S01–S03,P07 | Real k6 scenarios and CI execution replacing missing tests/load files and `|| true` in `.github/workflows/test-load.yml`; representative bounded browser checks | CI fails on thresholds, scenario absence or dropped-iteration budget; reports executor, VUs/arrival rate, attempted/completed/dropped work, throughput/p95/p99/errors/cache/hardware/commit/duration. Manual scripts retained, CI suite tracked |
+| S05 / S02–S04,P08 | Reproducible local multi-instance deployment plus proposed scaled deployment templates under `deploy/`; adapter contract tests and a migration checklist | Fresh setup, adding/removing app replica, rolling restart, failed replica, durable job recovery and shared-state behavior verified at small scale. Same-host replicas prove software portability, not host HA or million-user capacity |
+| S06 / S01–S05 | Paid-scale bill of materials and bottleneck decision register: CDN/cache policies, load balancer, independent app hosts, durable/shared data, queues, telemetry, backups, generator fleet, egress and provider commitments | Each item names measured trigger, config/interface touched, migration/recovery, cost unit/estimate source/date, account/plan constraints and approval gate. No fabricated current dollar estimate or blanket “free forever” |
+| S07 / funded scope + explicit load/release authorization | Incremental distributed validation at approved workload tiers and failure scenarios; vendor coordination for real upstreams | Report highest measured capacity at stated latency/error SLO with margin and saturation point. Local/stub extrapolation visibly distinct from end-to-end proof. 1M+ remains a design target until the actual workload and infrastructure pass |
+
+### Workload math — illustrative, not a benchmark
+
+Let U be concurrent active sessions, r average application requests per second per session, d dynamic/uncacheable fraction and h public-route CDN hit ratio. Approximate application-origin rate is `U × r × [d + (1−d) × (1−h)]`. Model assets, refreshes, background jobs and bursts separately; “open browser tabs” are not continuous requests.
+
+Example assumptions only: U=1,000,000, one application request every 30 seconds, d=5%, h=99%. Edge traffic is about 33,333 app requests/s; origin traffic about 1,983/s. With a cold public cache it can approach 33,333/s. Neither value sizes a server or proves Shopify checkout capacity. Record calls per route and egress bytes separately; checkout initiation/account/AI traffic have separate limits and costs. [R25–R26]
+
+| Architecture tier | Design intent, not established capacity | Scaling changes that may be needed |
+|---|---|---|
+| T0 Current/local | Measure actual capacity of existing candidate; single shared VPS | Small reproducible tests, optimized SSR/assets, resource limits, observability, deterministic failure handling |
+| T1 10k active-session scenario | Mostly cached browsing with explicitly measured dynamic share | Public CDN caching, stateless app replicas as needed, shared durable state, bounded queues; validate miss/burst/backend traffic before claim |
+| T2 100k active-session scenario | Independent failure domains and measured dynamic capacity | Load balancing across independent hosts, scalable state/queue adapters, database connection/index/query controls, upstream budgets, external probes and recovery |
+| T3 1M+ active-session scenario | Large distributed delivery architecture for the agreed workload | Provider-reviewed edge/origin/backend capacity, multiple failure domains, possibly regional delivery/failover, partitioning only where measured, coordinated Shopify limits, significant distributed testing and operational staffing |
+
+A tier number is not an automatic server specification. Size from sustainable per-instance throughput at the required latency/error rate, not a CPU-count guess. Model normal and lost-instance capacity, cache-warm/cold behavior, hot products, inventory contention, bandwidth and cost. Do not add Kubernetes, microservices or sharding before a measured need; scale the modular application first.
+
+### 99% availability objective and honest measurement
+
+Target: at least 99.0% time-based availability per configured core synthetic journey and serving region over a rolling 30-day window. Start with external US/EU probes of homepage, product browsing and a safe read-only cart/account health path. Identify exactly what is tested; homepage 200 alone does not establish working checkout. Configure approved synthetic sandbox checkout verification separately—never charge a real card for uptime monitoring. [R27]
+
+Before release, P09 defines interval, deadline, valid body/status, route weights if any, probe locations, missing-sample policy and incident deduplication. Report per-region/per-journey results, not a blended number that hides a broken region. Count planned maintenance and dependency failures in customer-visible availability; attribute root causes separately. Missing telemetry is unknown, not success. Do not count routine expected user validation responses as server downtime.
+
+A complete 30-day window has 43,200 minutes: a 1% downtime budget is 432 minutes (**7h12m**). This is a modest initial SLO, not a high-availability guarantee or contractual SLA. Track successful eligible business requests, mutation correctness and latency separately from uptime; time error budget is not interchangeable with failed-request percentage. Rejecting legitimate traffic to protect a server does not make that traffic successful.
+
+Ship monitoring/injected-failure proof with the first release; mark actual 30-day achievement pending until observed. Track error-budget burn, alert on sustained/rapid depletion with documented thresholds, and prioritize reliability work when exhausted. Local container auto-restart does not survive a failed VPS; real host redundancy requires independent infrastructure. The status monitor and backup copy must not depend solely on the same VPS.
+
+### Local Docker and Kubernetes validation
+
+Latest local-tool verification on 2026-09-21 supersedes the earlier unreachable-engine result: Docker client and engine both responded with version 29.7.2. Docker Desktop Kubernetes subsequently reported starting (kind, one node, v1.36.1), no error, and no registered docker-desktop context yet. Readiness remains unverified. The owner explicitly authorizes using and modifying local Docker/Kubernetes configuration as needed for RegenAI, with project isolation and explicit local-context verification; unrelated cloud clusters remain outside scope. Full project implementation still awaits the start command.
+
+After start, verify the Docker engine and available CPU/RAM/disk, then use an isolated project Compose setup for S02/S05. Kubernetes is an optional local validation target for replica replacement, readiness/liveness, rolling updates and resource bounds; its presence is not a reason to require it in production. Before any cluster command, explicitly select and verify a local context/server and isolated namespace; never rely on the current default context or use another project’s cloud cluster. Keep templates and repeatable assertions in the repository, with resource limits and cleanup of only this project’s resources. Local cluster setup, if needed, follows research and bounded local configuration; no paid/cloud provisioning is implied.
+
+Derived contracts: [production applicability](docs/PRODUCTION-APPLICABILITY.md) and [workload definition](docs/WORKLOAD-CONTRACT.md). Supervisor reviewed the demo-specific draft; implementing controls and executable profiles remains pending. Initial local smoke ceiling: 5 VUs, 2 HTTP request starts/second, 60 seconds, 120 total HTTP requests, zero third-party calls. The future validated profile/config owns executable limits; this plan owns authorization and product objectives. Full journeys must obey the same request limits and are reported separately.
+
+### Load-test authorization and cost boundary
+
+Local bounded tests against isolated candidates and controlled upstreams are the default. No 10k/1M load generator is automatically authorized by this target. Supervisor sets allowlisted targets, maximum duration/RPS/VUs, abort conditions, resource/cost budget and cleanup; remote/shared-host/high-volume tests require explicit scope approval and provider-policy review. Never flood Shopify, a shared VPS, Cloudflare or third parties to demonstrate scale. Free test software does not make compute, egress, retention or provider requests free.
+
+Mostly-free baseline: use existing infrastructure and locally runnable/open-source test, security and telemetry components where appropriate; verify licenses and free-tier limits when selecting versions. Keep provider adapters/config explicit. Paid growth options include additional independent compute, balancing/failover, managed durable storage/cache/queues, independent monitoring/log retention, offsite backup storage, egress, distributed test generators and specialist reviews. Exact quotes and spend caps belong to S06 at procurement time; no purchase is authorized now.
+
+
+## 13. Completion scope ledger
+
+| Scope | Delivery condition | Current status |
+|---|---|---|
+| Visual storefront | Phase A evidence + accepted refinements | Review delivered; visual acceptance pending |
+| Shopify SSR/catalog/cart/accounts | B11 real-flow evidence | Not started for new design |
+| Merchant auth/review/content/webhooks | C10 evidence | Existing scaffold; release blockers identified |
+| Four Functions | C08/C09 schema/runner/activation evidence per target | Source exists; current activation unverified |
+| B2B/Markets/subscriptions/extensions/utilities/affiliate | Each D row verified or explicit owner deferral | Capability/selection pending |
+| Recommendation/data layer | E baseline + approved evaluated extensions | Baseline demo exists; connected AI/data unverified |
+| Production controls | Applicable P01–P10, engineering/legal-review evidence and known limitations | Planned; no blanket compliance claim |
+| Scale architecture | S01–S06 implemented/local proof; S07 separately authorized capacity testing | 10k–1M+ targets unverified |
+| Availability | P09/SLO monitoring, then actual rolling 30-day observation | 99% objective; no achieved uptime claim |
+| VPS/domain deployment | F08, authorized release and parity/restore | Proposed; not deployed |
+| Mobile/sleep/community/BLE/biomarkers/supplements/white-label/telehealth | Separate future product spec, data/clinical/provider/cost review | Historical expansion backlog; outside this release unless owner explicitly adds it |
+
+Historical expansion ideas stay recorded, not silently “implemented” through placeholders. No real patient information is authorized. Any scope change updates this ledger and the dossier before public claims.
+
+## 14. Verification commands and release evidence
+
+Existing executable local review commands (root unless noted):
+
+```sh
+npm run dev:frontend
+npm run build:frontend
+npm run typecheck:frontend
+npm --workspace packages/storefront run lint:frontend
+npm --workspace packages/storefront run test:unit
+npm run lint
+npm run typecheck
+npm run build
+```
+
+Runtime note: current implementation checks use Windows Node 24.20.0/npm 12.0.2 (earlier evidence used npm 11.19.0); WSL PATH did not resolve Node. Use the project's verified Windows runtime or deliberately configure a compatible WSL runtime; do not install/upgrade ad hoc to avoid a path error. Browser tooling is currently a retained local script; F03 must promote the appropriate assertions into actual CI tests without deleting that manual script.
+
+Function checks are run in `packages/app`: Cargo workspace tests, format/clippy where applicable, target build and Shopify's native function runner against version-matched fixtures. Verify installed toolchain/CLI first; command names or old WASM size comments are not proof. App needs its own automated auth/tenant/migration tests and lint coverage; absence of a script is a missing gate, not N/A.
+
+Every task records:
+
+1. Criterion IDs and N/N met, with remaining blockers.
+2. Current code/artifact identifier and exact commands/exit results.
+3. Tests, typecheck, lint, gitleaks, applicable Bandit/Semgrep/hook status, build and dependency audit separately. Mark genuine non-applicable gates with reason; never hide unavailable tools.
+4. Real UI/API/CLI flows and negative cases; browser screenshots, request evidence and data cleanup.
+5. Config audit: secrets found yes/no, values moved, fixed constants retained and rationale.
+6. Fresh-context review verdict and corrections; later escaped defect row in DEFECT-LOG.md.
+7. For release: authorization, target, before/after hashes, artifact digest, backup/restore/rollback evidence and actual public flow.
+
+Use private `memory/task-<ID>.md` for task evidence; one-line entry in MEMORY.md. Dossier is the durable narrative, not a duplicate task log. Never copy secrets to evidence or tests. Public case study comes from the scrubbed dossier; Google Doc/PDF remains locked until explicitly requested.
+
+## 15. Research register — checked 2026-09-21
+
+Official sources guide design; installed types/schema and the current account determine what actually works. Recheck time-sensitive eligibility/pricing/API details when the dependent task starts.
+
+| Ref | Official source | Plan implication |
+|---|---|---|
+| R1 | [Shopify self-hosting Hydrogen](https://shopify.dev/docs/storefronts/headless/hydrogen/deployments/self-hosting) | Supports alternate hosting; version caveat requires runtime validation; retain Hydrogen context |
+| R2 | [React Router deployment](https://reactrouter.com/start/framework/deploying) | Node/Docker target is available; adapt server/build properly |
+| R3 | [Hydrogen April 2026 release](https://hydrogen.shopify.dev/update/april-2026-release) | Match installed generation/API behavior; no blind old Remix recipe |
+| R4 | [Storefront cart API](https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/cart/manage) | Shopify cart/checkoutUrl and buyer identity govern real checkout |
+| R5 | [Hydrogen Customer Account API](https://shopify.dev/docs/storefronts/headless/building-with-the-customer-account-api/hydrogen) | Channel and authentication-domain configuration required |
+| R6 | [Shopify authentication](https://shopify.dev/docs/apps/build/authentication-authorization) | Choose supported auth for actual app shape; authenticate each request |
+| R7 | [Cloudflare KV consistency](https://developers.cloudflare.com/kv/concepts/how-kv-works/) | Eventual consistency is unsuitable for atomic get/delete replay prevention |
+| R8 | [Verify webhook deliveries](https://shopify.dev/docs/apps/build/webhooks/verify-deliveries) | Verify signed deliveries; preserve raw-body verification and retry-safe processing |
+| R9 | [Shopify Function APIs](https://shopify.dev/docs/api/functions/latest) | Versioned schemas/targets, resource limits and plan-specific availability; current latest shown 2026-07, not an instruction to upgrade blindly |
+| R10 | [Checkout app availability](https://help.shopify.com/en/manual/checkout-settings/customize-checkout-configurations/checkout-apps) | Target/plan capability checks precede implementation |
+| R11 | [Cloudflare Full(strict)](https://developers.cloudflare.com/ssl/origin-configuration/ssl-modes/full-strict/) | Valid certificate required between edge and origin |
+| R12 | [Docker port publishing](https://docs.docker.com/engine/network/port-publishing/) | Explicit loopback binding and external exposure testing |
+| R13 | [Shopify API versioning](https://shopify.dev/docs/api/usage/versioning) | Pin supported versions, track deprecation and rerun contract checks |
+| R14 | [OWASP ASVS](https://owasp.github.io/www-project-application-security-verification-standard/) | Versioned security requirements and verification evidence |
+| R15 | [EU online privacy](https://europa.eu/youreurope/business/growing/digitalising/online-privacy/index_en.htm) | Cookie and personal-data applicability review |
+| R16 | [EU international data transfers](https://commission.europa.eu/law/law-topic/data-protection/international-dimension-data-protection/rules-international-data-transfers_en) | Map processors, locations and applicable transfer mechanisms |
+| R17 | [California CCPA](https://www.oag.ca.gov/privacy/ccpa) | Assess business thresholds and applicable consumer rights |
+| R18 | [Washington health-data privacy](https://www.atg.wa.gov/protecting-washingtonians-personal-health-data-and-privacy) | Assess recovery-quiz health-data scope beyond HIPAA |
+| R19 | [EU distance selling](https://europa.eu/youreurope/business/selling-in-eu/selling-goods-services/ecommerce-distance-selling/index_en.htm) | Review actual offers, disclosures and consumer rights |
+| R20 | [FTC health products guidance](https://www.ftc.gov/business-guidance/resources/health-products-compliance-guidance) | Substantiate health claims and review endorsements |
+| R21 | [FDA device classification](https://www.fda.gov/medical-devices/classify-your-medical-device/how-determine-if-your-product-medical-device) | Classify actual products and intended claims before real sales |
+| R22 | [EU accessibility](https://www.consilium.europa.eu/en/policies/accessibility-goods-services/) | Assess covered services, exemptions and national implementation |
+| R23 | [Google AI search guidance](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide) | Useful crawlable content; no guaranteed AI inclusion |
+| R24 | [Core Web Vitals](https://web.dev/articles/vitals) | Field percentile targets are distinct from laboratory results |
+| R25 | [Shopify API limits](https://shopify.dev/docs/api/usage/limits) | Model API-specific limits and checkout throttling; no blanket unlimited capacity |
+| R26 | [k6 workload models](https://grafana.com/docs/k6/latest/using-k6/scenarios/concepts/open-vs-closed/) | Choose arrival-rate or concurrent-user executors explicitly |
+| R27 | [Google SRE implementing SLOs](https://sre.google/workbook/implementing-slos/) | Define indicators, windows and error-budget policy before claims |
+| R28 | [EU product safety](https://commission.europa.eu/topics/business-and-industry/product-safety_en) | Review product-specific safety and economic-operator obligations |
+| R29 | [EU AI Act overview](https://commission.europa.eu/news-and-media/news/ai-act-enters-force-2024-08-01_en) | Assess actual AI role/use and current staged applicability; overview is not a legal determination |
+
+Local source evidence: current global rules, project checkpoint/review, storefront server/context/session/routing/build configuration, merchant OAuth/admin/worker/schema/bindings, extension manifests/crates, CI workflows, historical ADR-011/021 and shared infrastructure records. This is a targeted full-plan audit, not a claim that every archived binary or every dependency file was read. No live capacity, DNS reservation or current Shopify plan was established during this documentation-only task.
+
+## 16. Exact next action after the owner says start
+
+Supervisor begins **B01 read-only inventory and drift/capability audit**, opens P01 applicability and S01 workload contracts, confirms A01 visual feedback without delaying independent foundation work, then issues Luna one bounded B02 repair task with its baseline repro and file allowlist. No deployment or paid API follows automatically from “start.” Continue through verified dependencies, reporting concrete milestones until the agreed scope is fulfilled.
+
+## Live visual-review checkpoint — 2026-09-22
+
+Owner-authorized standalone frontend published at **https://regenai.zahidul-islam.com**. Selected new design, 3D and browser fixture commerce are available for review. Dedicated frontend gates and local/public Chrome/HTTP checks passed; evidence summary: `docs/FRONTEND-DEPLOYMENT.md`. Full integration remains paused; do not mark B05, genuine Shopify commerce, production controls or scale verification complete because this frontend is public.

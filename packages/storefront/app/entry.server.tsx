@@ -5,7 +5,12 @@ import {
   createContentSecurityPolicy,
   type HydrogenRouterContextProvider,
 } from '@shopify/hydrogen';
-import type {EntryContext} from 'react-router';
+import type {EntryContext, HandleErrorFunction} from 'react-router';
+import {logSafeError} from '~/lib/safe-logger.server';
+
+export const handleError: HandleErrorFunction = (_error, {request}) => {
+  if (!request.signal.aborted) logSafeError('requestFailed');
+};
 
 /**
  * Additional security headers beyond the CSP that Hydrogen generates.
@@ -34,8 +39,8 @@ export default async function handleRequest(
 ) {
   const {nonce, header, NonceProvider} = createContentSecurityPolicy({
     shop: {
-      checkoutDomain: context.env.PUBLIC_CHECKOUT_DOMAIN,
-      storeDomain: context.env.PUBLIC_STORE_DOMAIN,
+      checkoutDomain: context.settings.checkoutDomain,
+      storeDomain: context.settings.shopDomain,
     },
     // Extend the default CSP with origins RegenAI needs:
     // - Sentry ingest (error + performance tracking, Day 3+)
@@ -83,8 +88,8 @@ export default async function handleRequest(
     {
       nonce,
       signal: request.signal,
-      onError(error) {
-        console.error(error);
+      onError() {
+        logSafeError('renderFailed');
         responseStatusCode = 500;
       },
     },

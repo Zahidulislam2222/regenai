@@ -1,5 +1,8 @@
 # ADR-021 — Custom app on Cloudflare Workers + D1 (not Fly.io / Railway)
 
+> Planning update (2026-09-21): historical decision preserved. Current hosting, eligibility, runtime, cost and security assumptions must be checked against [PROJECT_PLAN.md](../../PROJECT_PLAN.md). Its audited findings supersede conflicting blanket claims here; no infrastructure migration has been performed.
+
+
 **Status:** Accepted
 **Date:** 2026-04-20 (Day 15)
 **Layer:** `packages/app/` — merchant-facing Remix app (clinician review workflow, protocol engine, FDA claim audit, subscription management, B2B portal)

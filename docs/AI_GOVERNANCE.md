@@ -1,5 +1,8 @@
 # AI Governance — RegenAI
 
+> Current execution notice (2026-09-21): the supervisor/Luna task protocol and gates in [PROJECT_PLAN.md](../PROJECT_PLAN.md) now govern this project. The older tool roles, 105-day schedule, metrics and instructions below are historical records, not current authorization or verified current capabilities. Owner global rules always apply.
+
+
 Last updated: 2026-04-20 (Day 1)
 
 Records how AI tooling is used on the RegenAI project: what tools are in play, what each is allowed to touch, what it isn't, and how human judgment gates shipping. Complements [`AI-WORKFLOW.md`](./AI-WORKFLOW.md) which is the running log of prompts, velocity, and session notes. Governance = rules. Workflow = what happened.

@@ -1,6 +1,5 @@
-import {data, useLoaderData} from 'react-router';
-import {Analytics, getPaginationVariables} from '@shopify/hydrogen';
-import type {Route} from './+types/collections.$handle';
+import {data, useLoaderData, type LoaderFunctionArgs, type MetaFunction} from 'react-router';
+import {Analytics, getPaginationVariables, type HydrogenRouterContextProvider} from '@shopify/hydrogen';
 import {Breadcrumbs} from '~/components/Breadcrumbs';
 import {BodyAreaSelector} from '~/components/BodyAreaSelector';
 import {PlpFilters} from '~/components/commerce/PlpFilters';
@@ -8,8 +7,9 @@ import {PlpGrid, type PlpGridProps} from '~/components/commerce/PlpGrid';
 import {JsonLd, breadcrumbSchema} from '~/lib/seo/jsonld';
 
 type PlpProduct = PlpGridProps['products'][number];
+type LegacyLoaderArgs = Omit<LoaderFunctionArgs, 'context'> & {context: HydrogenRouterContextProvider};
 
-export const meta = ({data}: Route.MetaArgs) => {
+export const meta: MetaFunction = ({data}) => {
   if (!data?.collection) return [{title: 'Collection — RegenAI'}];
   return [
     {title: `${data.collection.title} — RegenAI`},
@@ -19,7 +19,7 @@ export const meta = ({data}: Route.MetaArgs) => {
   ];
 };
 
-export async function loader({request, params, context}: Route.LoaderArgs) {
+export async function loader({request, params, context}: LegacyLoaderArgs) {
   const {handle} = params;
   if (!handle) throw new Response('Collection handle required', {status: 400});
 

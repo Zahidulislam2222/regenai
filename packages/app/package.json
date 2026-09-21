@@ -7,27 +7,27 @@
   "scripts": {
     "build": "react-router build",
     "dev": "wrangler dev --local",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "react-router typegen && tsc --noEmit",
     "deploy": "npm run build && wrangler deploy",
     "migrate:local": "wrangler d1 migrations apply DB --local",
     "migrate:remote": "wrangler d1 migrations apply DB --remote"
   },
   "dependencies": {
-    "@react-router/cloudflare": "^7.9.4",
+    "@react-router/cloudflare": "7.18.4",
     "@remix-run/cloudflare": "^2.15.0",
     "@shopify/polaris": "^13.9.5",
     "@shopify/polaris-icons": "^9.3.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router": "^7.9.6"
+    "react-router": "7.18.4"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.15.3",
     "@cloudflare/workers-types": "^4.20250927.0",
-    "@react-router/dev": "^7.9.6",
+    "@react-router/dev": "7.18.4",
     "isbot": "^5.1.32",
     "typescript": "^5.9.3",
-    "vite": "^6.4.2",
+    "vite": "^6.4.3",
     "vite-tsconfig-paths": "^5.1.4",
     "wrangler": "^4.79.0"
   },

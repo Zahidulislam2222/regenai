@@ -1,48 +1,22 @@
-# RegenAI Roadmap
+# RegenAI delivery roadmap
 
-Phase structure at a glance. Master build plan: [`PROJECT_PLAN.md`](../PROJECT_PLAN.md) (20 sections, 105 days).
+Updated 2026-09-21. Derived navigation for the [master build plan](../PROJECT_PLAN.md); task contracts, dependencies and completion evidence live there. The historical 105-day schedule is superseded, not a delivery promise.
 
-## Phase 1 — Storefront + custom app + Functions + ML (Days 1–45)
-
-| Milestone | Status | Tag |
+| Phase | Outcome | Status |
 |---|---|---|
-| Foundation scaffold | ✅ | `v0.1-week1-foundation` (Day 7) |
-| Discovery (PLP + PDP + cart) | 🚧 Days 8–14 | `v0.2-week2-discovery` |
-| Plus features (B2B + Markets + Checkout Extensibility) | 📅 Days 15–21 | `v0.3-week3-plus-features` |
-| Custom subscription engine + B2B portal + affiliate | 📅 Days 22–28 | `v0.4-week4-subscriptions` |
-| Data pipeline + ML recommendations + observability | 📅 Days 29–35 | `v0.5-week5-ml-observability` |
-| Quality / security / i18n / SEO / compliance-as-code | 📅 Days 36–42 | `v0.6-week6-quality` |
-| Docs + case-study site + Loom + release | 📅 Days 43–45 | `v1.0-phase1-complete` |
+| A | Preserve and accept original local frontend design | Local review delivered; final visual acceptance pending |
+| B | Repair foundation; validate Node runtime; integrate real Shopify catalog/cart/accounts into Hydrogen | Active: inventory and foundation diagnosis |
+| C | Secure merchant app, isolate environments, verify review workflow/webhooks and four Shopify Functions | Scaffold exists; blocking gaps documented |
+| D | B2B, Markets, subscriptions, checkout extensions and customer/business utilities | Capability-gated; every feature needs evidence or explicit owner deferral |
+| E | Deterministic recommendations, then approved/evaluated AI and necessary data reporting | Demo baseline only; no paid inference authorized |
+| P | US/EU applicability, security/privacy/accessibility, SEO/AI-search, speed, monitoring and reliability | Planned; evidence and applicable specialist review required |
+| S | 10k–1M+ scaling path, real code boundaries, workload tests, deployment templates and paid upgrade register | Design targets; no demonstrated capacity or observed 99% uptime |
+| F | Existing-server deployment, Cloudflare routing, CI, backup/restore, rollback and public verification | Proposed; no deployment authorization inferred |
 
-## Phase 2 — Sleep / Mental / Stress / Meditation + mobile + community (Days 46–75)
+Intended storefront: Hydrogen on the existing VPS behind Cloudflare. Shopify keeps commerce, checkout and Function execution. Existing Worker-based merchant app is retained initially, subject to authentication/data-isolation repairs; an app-to-VPS migration is a separate decision.
 
-- React Native / Expo companion app
-- BLE multi-device pairing + Apple HealthKit / Google Fit OAuth
-- Community platform (Supabase) + OpenAI Moderation + crisis flagging
-- Cross-vertical ML v2 (cohort recommendations)
-- +40 SKUs across sleep / mental wellness / stress relief / smart fitness / meditation
-- `v2.0-phase2-complete` (Day 75)
+Implementation is authorized as of 2026-09-21; see the master plan and private recovery checkpoint for current task status. Supervisor owns research, architecture, acceptance, review and authorized release. Luna low implements bounded local tasks. Current planning did not launch Luna or change application code/infrastructure.
 
-## Phase 3 — Nutrition / AI monitoring / Home gym / Women's health / Anti-aging / Platform layer (Days 76–105)
+Mobile, BLE, clinical/biomarker, supplement, community and white-label concepts remain the explicit future backlog in the master plan. They are not shipped functionality.
 
-- DSHEA-compliant supplement catalog + custom cadence engine
-- Biomarker lab integrations (Quest / InsideTracker / Function Health — scaffolded, contracts out-of-scope)
-- CGM-adjacent + smart rings + at-home biomarker kits
-- Home gym smart equipment (mirror / cables / bike)
-- Women's health track with US state-by-state data residency (post-Dobbs)
-- Anti-aging / longevity protocols (DSHEA-compliant, no Rx peptides)
-- Multi-tenant B2B SaaS admin (white-label recommendation engine for clinics)
-- Shopify POS integration for physical retail
-- Telehealth partner scaffolds (Ro / Hims-adjacent)
-- `v3.0-phase3-complete` (Day 105)
-
-## Post-105 (out of Phase 1 scope)
-
-- Convert Partner Plus Dev Store to real Plus ($2,500/mo)
-- Real customer acquisition + paid ads
-- Real supplier / manufacturing / 3PL partnerships
-- Real clinical partnerships + telehealth contracts
-- Real FDA 510(k) filings for RegenAI-branded devices
-- Real EU MDR authorized representative
-- Real App Store / Google Play public releases (Apple Dev $99/year + Google Play $25 one-time)
-- Real Statsig / paid Snowflake / paid Segment upgrade
+See the [scalability evidence guide](SCALABILITY.md) for required source/test links, upgrade categories and current limitations. The master plan requires used, tested code boundaries, not documentation-only claims.
