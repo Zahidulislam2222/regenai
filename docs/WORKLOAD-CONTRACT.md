@@ -3,7 +3,7 @@
 Updated: 2026-09-21
 Status: design assumptions only. No load test was run and no capacity was measured.
 
-This contract gives future S01/S04 work a reproducible starting point. It describes candidate scenarios, input ownership, acceptance evidence and a local safety proposal. The supervisor has ratified a conservative local-only smoke envelope below; that is not authorization for remote or third-party testing. The master plan owns product workload goals; the reviewed machine-readable profile/config is to own executable smoke limits and thresholds when implemented. Markdown is explanatory and must never be parsed at runtime. Keep its prose synchronized with the validated profile and master plan.
+This contract gives future S01/S04 work a reproducible starting point. It describes candidate scenarios, input ownership, acceptance evidence and a local safety proposal. The maintainer has approved a conservative local-only smoke envelope below; that is not authorization for remote or third-party testing. The master plan owns product workload goals; the reviewed machine-readable profile/config is to own executable smoke limits and thresholds when implemented. Markdown is explanatory and must never be parsed at runtime. Keep its prose synchronized with the validated profile and master plan.
 
 Related sources: [master plan S01/S04 and load-test authorization](../PROJECT_PLAN.md#12b-scalability-workstream-s--credible-path-to-10k1m-active-sessions), [scalability evidence guide](SCALABILITY.md). All profile/config paths are proposed until implemented. This document is not a benchmark, a capacity claim, or approval for remote/high-volume testing.
 
@@ -85,7 +85,7 @@ A future executable S01/S04 suite is meaningful only if it fails closed when a s
 
 The report must show p50/p95/p99 latency by route and phase, status/error rate, timeouts, throughput at generator/edge/origin/dependency, cache hit/miss and cold/warm phase, response/request bytes and egress, active VUs/sessions, attempted/completed/dropped work, resource saturation at generator and target, test duration, commit/profile/config provenance and limitations. A test that reports only average latency, omits dropped iterations, or lacks target hardware is insufficient evidence.
 
-Test distinct cases: warm public browse, cold cache, hot product, personalized cache isolation, cart contention, account path, sandbox checkout initiation, slow/down controlled dependency, burst, and one-generator-saturation check. The suite itself should fail when a required case is removed, not silently pass with a placeholder or `|| true`. Stub/local test results establish only the tested software path; they do not establish real provider capacity, production readiness, or 99% uptime.
+Test distinct cases: warm public browse, cold cache, hot product, personalized cache isolation, cart contention, account path, sandbox checkout initiation, slow/down controlled dependency, burst, and one-generator-saturation check. The suite itself should fail when a required case is removed, not silently pass with a placeholder or `|| true`. Stub/local test results establish only the tested software path; they do not establish real provider capacity, production readiness, or the availability objective in [RELIABILITY.md](RELIABILITY.md).
 
 ## Current evidence
 

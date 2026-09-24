@@ -1,75 +1,86 @@
 # RegenAI
 
-RegenAI is a client-facing Shopify recovery-commerce demo. The selected customer experience uses original Blender assets, Three.js product views and a bone-and-blue visual design. The new visual frontend is live at **https://regenai.zahidul-islam.com**. Full Shopify integration is paused and incomplete; see [build status](docs/BUILD-STATUS.md) for verified work and remaining gates.
+**Headless Shopify commerce platform for recovery and wellness products** — a live 3D visual storefront with Hydrogen integration in progress, a merchant app on Cloudflare Workers, and Shopify Functions written in Rust.
 
-The live visual demo and local design preview use synthetic products and a browser-local bag. Integration with real Shopify development-store catalog, cart, accounts and test checkout is planned. This project does not accept real payments or establish clinical efficacy or legal compliance.
+**Live demo:** https://regenai.zahidul-islam.com
 
-**Stack at a glance:**
-- **Customer experience** — React, TypeScript, Three.js and an isolated Vite design preview; Hydrogen/React Router integration underway.
-- **Hosting target** — Hydrogen on a Node server behind Cloudflare; the static visual demo is deployed, while integrated Node/Hydrogen acceptance remains pending. Existing Oxygen/Worker tooling remains during migration.
-- **Merchant app** — React Router on Workers/D1; authentication and tenant-isolation repairs remain release gates.
-- **Shopify Functions** — Rust/WASM extension sources; current capability, runner and checkout validation required.
-- **Design system** — local `@regenai/ui` workspace with Storybook; publication is not claimed.
-- **Recommendations and operations** — deterministic demo finder exists; optional AI, connected telemetry and recovery controls follow explicit implementation and verification tasks.
+> RegenAI is a client-facing portfolio demo. Products are fictional, nothing is sold, no payment can be made, and no clinical claim is made. The visual storefront is live; Shopify integration is in progress. See [build status](docs/BUILD-STATUS.md) for exactly what is verified.
 
-The [scalability guide](docs/SCALABILITY.md) maps required code boundaries, tests and infrastructure upgrades toward 10k–1M+ active sessions and a 99% availability objective. These are design targets, not tested capacity or observed uptime. Its evidence table distinguishes planned work from implemented and measured behavior.
+## What is in this repository
 
-## Repository layout
+| Part | Package | Stack | Status |
+|---|---|---|---|
+| **Frontend** — customer storefront | [`packages/storefront`](packages/storefront/README.md) | React 18, TypeScript, Three.js, Vite; Hydrogen 2026.4 + React Router 7 | Visual storefront **live**; Hydrogen integration **in progress** |
+| **Backend** — merchant app | [`packages/app`](packages/app/README.md) | React Router 7 on Cloudflare Workers, D1, KV, Polaris | Scaffold built; security release blockers open |
+| **Backend** — Shopify Functions | [`packages/app/extensions`](packages/app/extensions/README.md) | Rust → WebAssembly | 4 Functions built; 47/47 unit tests pass |
+| Design system | [`packages/ui`](packages/ui/README.md) | React, Radix, Tailwind v4, Storybook | 15 components built |
+| Deployment | [`deploy/frontend`](deploy/frontend/README.md) | Docker, Nginx, Caddy, Cloudflare | Live frontend release |
 
+## Architecture at a glance
+
+Target architecture (the visual storefront is live; the Hydrogen, merchant-app and Function paths are being integrated):
+
+```mermaid
+flowchart LR
+  Buyer[Buyer] --> CF[Cloudflare edge]
+  CF --> SF[Storefront - Hydrogen / React]
+  SF --> SAPI[Shopify Storefront API]
+  Buyer --> CO[Shopify checkout]
+  CO --> FN[Shopify Functions - Rust/WASM]
+  Merchant[Merchant] --> APP[Merchant app - Workers + D1]
+  APP --> ADMIN[Shopify Admin API]
 ```
-regenai/
-├── packages/
-│   ├── storefront/       # Hydrogen storefront (active)
-│   ├── app/              # Merchant app and Rust extension workspace
-│   └── ui/               # Shared components and local Storybook
-├── docs/                 # Plans, evidence guides and historical ADRs
-└── .github/workflows/    # Existing workflows; release-gate repairs planned
-```
 
-## Quickstart
+Shopify owns catalog, cart, checkout, orders and payments; RegenAI never touches card data. Storefront servers are designed to be stateless so they scale horizontally behind a CDN. Full detail: [ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
-Run these commands from the repository root. The root `package-lock.json` owns all npm workspaces; separate workspace lockfiles are not maintained.
+## Engineering targets
+
+| Target | Design | Evidence today |
+|---|---|---|
+| **Scale:** 1M+ concurrent shoppers | CDN-first caching, stateless storefront, checkout on Shopify, queue-backed webhooks — [SCALABILITY.md](docs/SCALABILITY.md) | Capacity model documented; load tests not yet run |
+| **Availability:** 99.9% target, 99.0% floor | Redundant origin, SLOs, error budgets, rollback, DR — [RELIABILITY.md](docs/RELIABILITY.md) | Release-archive restore verified; rollback not yet drilled; uptime not yet measured |
+| **Security** | Threat model, strict CSP, hardened containers, secret scanning — [SECURITY-MODEL.md](docs/SECURITY-MODEL.md) | Frontend controls verified; merchant-app blockers listed openly |
+| **Privacy & law** | Data minimisation; PCI, GDPR, US state privacy, health-product rules mapped — [COMPLIANCE.md](docs/COMPLIANCE.md) | Live demo collects no personal data; legal review required before real sales |
+| **Accessibility** | WCAG 2.2 AA target — [ACCESSIBILITY.md](docs/ACCESSIBILITY.md) | Automated axe: 0 violations; keyboard and reduced-motion checks pass |
+
+These are engineering targets with an explicit evidence trail. Nothing here claims capacity, uptime or legal compliance that has not been measured or reviewed.
+
+## Quick start
+
+Requirements: Node 24 LTS (see `.nvmrc`), npm 12. Rust stable with the `wasm32-wasip1` target for Functions.
 
 ```bash
-# Node 24.20.0 LTS (see .nvmrc); npm 12.0.2
 npm install
 
-# Review the selected frontend without Shopify credentials
-npm run dev:frontend
+# Run the visual storefront locally — no Shopify credentials needed
+npm run dev:frontend          # http://127.0.0.1:3000
 
-# Typecheck all workspaces
-npm run typecheck
+# Frontend-only checks (these gate the live release)
+npm run typecheck:frontend
+npm run build:frontend
 
-# Lint all workspaces
-npm run lint
+# Shopify Function unit tests
+cd packages/app && cargo test --workspace
 ```
 
-## Environment
+`npm run dev` starts the Hydrogen integration environment and needs Shopify configuration; copy `packages/storefront/.env.example` to `.env` and fill values locally. Never commit real secrets.
 
-Use `.env.example` as the safe configuration inventory. The separate `npm run dev` command starts the Hydrogen integration environment and requires its Shopify/session configuration. Keep real values in ignored local environment files and the private credential recovery record. Fresh-install reproducibility and dependency security are still under verification; current limitations are recorded in build status.
-
-## Checkpoint status
-
-This branch preserves the verified standalone frontend and unfinished integration work. It is not a production-ready Shopify release; full-runtime and commerce gates remain open.
+Whole-workspace `npm run typecheck`, `npm run lint` and `npm run build` currently fail on the unfinished Hydrogen integration — this is tracked in [BUILD-STATUS.md](docs/BUILD-STATUS.md).
 
 ## Documentation
 
-Client-facing overview: [vision, delivery status and roadmap](my-project-view/technical-overview.md).
+Full index: [docs/README.md](docs/README.md). Most useful:
 
-Full docs live in [`docs/`](./docs). Key documents:
-- [PROJECT_PLAN.md](./PROJECT_PLAN.md) — dependency-ordered completion plan
-- [Build status](docs/BUILD-STATUS.md) — current evidence and next gates
-- [Scalability guide](docs/SCALABILITY.md) — implementation evidence required for scaling claims
-- [docs/adr/](./docs/adr/) — architecture decision records
-- [Production applicability](docs/PRODUCTION-APPLICABILITY.md) — demo controls and real-sales prerequisites
-- [Workload contract](docs/WORKLOAD-CONTRACT.md) — scenario definitions and bounded local validation
+- [Architecture](docs/ARCHITECTURE.md) · [Build status](docs/BUILD-STATUS.md) · [Roadmap](docs/ROADMAP.md)
+- [Scalability](docs/SCALABILITY.md) · [Reliability](docs/RELIABILITY.md)
+- [Security model](docs/SECURITY-MODEL.md) · [Privacy](docs/PRIVACY.md) · [Compliance](docs/COMPLIANCE.md) · [Accessibility](docs/ACCESSIBILITY.md)
+- [Architecture decision records](docs/adr/) · [Master plan](PROJECT_PLAN.md)
+- [Client overview](my-project-view/technical-overview.md) (dated snapshot; the current availability target is in [RELIABILITY.md](docs/RELIABILITY.md))
+
+## Contributing and security
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md). Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md) — not in public issues.
 
 ## License
 
-MIT — see [LICENSE](./LICENSE). Brand assets and content are separate and not MIT licensed.
-
-## Local frontend design review
-
-Run `npm run dev:frontend` and open http://127.0.0.1:3000 in Chrome. This starts the customer concept storefront without Shopify credentials. `npm run build:frontend` builds the preview. Product choices persist locally; checkout does not collect payments.
-
-See [frontend review evidence](docs/FRONTEND-REVIEW.md) for tested scope, production limitations and restart details. Existing `npm run dev` remains the separate Hydrogen development command.
+Code is MIT licensed — see [LICENSE](LICENSE). Brand assets, 3D models, imagery and written content are not covered by the MIT license.

@@ -2,7 +2,7 @@
   "name": "@regenai/app",
   "private": true,
   "version": "0.1.0",
-  "description": "RegenAI custom merchant app — Remix on Cloudflare Workers + D1. Clinician review workflow, protocol engine, FDA claim audit.",
+  "description": "RegenAI merchant app scaffold — React Router on Cloudflare Workers + D1, with product-claim review queue and Rust Shopify Functions.",
   "type": "module",
   "scripts": {
     "build": "react-router build",

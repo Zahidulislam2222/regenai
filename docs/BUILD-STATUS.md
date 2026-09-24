@@ -1,6 +1,18 @@
 # Build status
 
-Updated 2026-09-22. **Full integration remains paused. The owner has now authorized publishing the selected standalone frontend for live review; the visual demo is live at https://regenai.zahidul-islam.com.** Derived from the private project dossier and [master plan](../PROJECT_PLAN.md).
+Updated 2026-09-24. **The visual storefront is live at https://regenai.zahidul-islam.com. Full Shopify integration is paused and incomplete.** Derived from the private project dossier and [master plan](../PROJECT_PLAN.md). Architecture, security, reliability, scale and compliance documentation: [docs index](README.md).
+
+## Latest verification — 2026-09-24
+
+| Check | Result |
+|---|---|
+| Shopify Functions unit tests (`cargo test --workspace`) | 47/47 pass |
+| Shopify Functions release WASM build | All 4 build; 159–181 KiB each, under Shopify's 256 kB limit |
+| Live frontend security headers (CSP, frame, content-type, referrer, permissions, CORP) | Present on live response; HSTS not present (tracked as SEC-05) |
+| `main` branch protection | PR + 1 approving review, linear history, no force-push — verified via GitHub API |
+| Public documentation set | Architecture, scalability (1M+ model), reliability (99.9% target / 99.0% floor), security model, privacy, compliance, accessibility, contributing, security policy |
+
+No application code, deployment or infrastructure changed in this update.
 
 | Workstream | Current evidence | Next gate |
 |---|---|---|
@@ -14,7 +26,7 @@ This is a client-facing portfolio demo. New features, legal compliance, observed
 
 Recovery notes and before/after task evidence are maintained locally in the private project memory directory. Each completed task needs check results and an independent review; an interrupted task remains unverified.
 
-At stop: the selected visual demo has earlier passing browser/component evidence. The Node runtime and Hydrogen route migration remain unfinished; the latest cache-test correction has not been rerun. Full commerce, production controls and release acceptance are outstanding. Rough engineering estimate: 15–20% of full scope, 80–90% of visual demo work; these are estimates, not verified task completion rates.
+At stop: the selected visual demo has earlier passing browser/component evidence. The Node runtime and Hydrogen route migration remain unfinished; the focused Node/cache/privacy tests now pass (24/24, 2026-09-24); integrated acceptance remains outstanding. Full commerce, production controls and release acceptance are outstanding. Rough engineering estimate: 15–20% of full scope, 80–90% of visual demo work; these are estimates, not verified task completion rates.
 
 ## Selected frontend live review
 

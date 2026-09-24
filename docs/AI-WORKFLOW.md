@@ -1,6 +1,6 @@
 # AI Workflow — RegenAI
 
-> Current execution notice (2026-09-21): the supervisor/Luna task protocol and gates in [PROJECT_PLAN.md](../PROJECT_PLAN.md) now govern this project. The older tool roles, 105-day schedule, metrics and instructions below are historical records, not current authorization or verified current capabilities. Owner global rules always apply.
+> Current execution notice (2026-09-21): the supervised task protocol and gates in [PROJECT_PLAN.md](../PROJECT_PLAN.md) now govern this project. The older tool roles, 105-day schedule, metrics and instructions below are historical records, not current authorization or verified current capabilities. Owner global rules always apply.
 
 
 > **Purpose:** Every AI-assisted commit, decision, prompt, and velocity data-point for the RegenAI 105-day build logged here. Functions as:

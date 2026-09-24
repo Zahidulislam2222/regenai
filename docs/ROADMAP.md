@@ -1,22 +1,64 @@
-# RegenAI delivery roadmap
+# Roadmap
 
-Updated 2026-09-21. Derived navigation for the [master build plan](../PROJECT_PLAN.md); task contracts, dependencies and completion evidence live there. The historical 105-day schedule is superseded, not a delivery promise.
+Updated 2026-09-24. Task-level acceptance criteria and dependencies live in the [master plan](../PROJECT_PLAN.md). Current evidence lives in [BUILD-STATUS.md](BUILD-STATUS.md). Phases are ordered by dependency; dates are not promised.
 
-| Phase | Outcome | Status |
+## Where the project is
+
+| Milestone | Outcome | Status |
 |---|---|---|
-| A | Preserve and accept original local frontend design | Local review delivered; final visual acceptance pending |
-| B | Repair foundation; validate Node runtime; integrate real Shopify catalog/cart/accounts into Hydrogen | Active: inventory and foundation diagnosis |
-| C | Secure merchant app, isolate environments, verify review workflow/webhooks and four Shopify Functions | Scaffold exists; blocking gaps documented |
-| D | B2B, Markets, subscriptions, checkout extensions and customer/business utilities | Capability-gated; every feature needs evidence or explicit owner deferral |
-| E | Deterministic recommendations, then approved/evaluated AI and necessary data reporting | Demo baseline only; no paid inference authorized |
-| P | US/EU applicability, security/privacy/accessibility, SEO/AI-search, speed, monitoring and reliability | Planned; evidence and applicable specialist review required |
-| S | 10k–1M+ scaling path, real code boundaries, workload tests, deployment templates and paid upgrade register | Design targets; no demonstrated capacity or observed 99% uptime |
-| F | Existing-server deployment, Cloudflare routing, CI, backup/restore, rollback and public verification | Proposed; no deployment authorization inferred |
+| **M1 — Visual storefront** | Original 3D product design, catalog, finder, bag; live for review | **Done** — live at https://regenai.zahidul-islam.com |
+| **M2 — Integrated Shopify store** | Real development-store catalog, cart, accounts and test checkout through Hydrogen; secured merchant app; verified Functions | In progress |
+| **M3 — Production-grade platform** | M2 plus security, privacy, accessibility, observability, reliability and scale evidence; backups and rollback drilled | Planned |
 
-Intended storefront: Hydrogen on the existing VPS behind Cloudflare. Shopify keeps commerce, checkout and Function execution. Existing Worker-based merchant app is retained initially, subject to authentication/data-isolation repairs; an app-to-VPS migration is a separate decision.
+## Phases
 
-Implementation is authorized as of 2026-09-21; see the master plan and private recovery checkpoint for current task status. Supervisor owns research, architecture, acceptance, review and authorized release. Luna low implements bounded local tasks. Current planning did not launch Luna or change application code/infrastructure.
+### Phase A — Frontend ✅
+Selected visual design, original Blender assets, Three.js product inspection, accessible shopping flow, live deployment with rollback.
 
-Mobile, BLE, clinical/biomarker, supplement, community and white-label concepts remain the explicit future backlog in the master plan. They are not shipped functionality.
+### Phase B — Foundation and Shopify integration 🔄
+- Repair full-workspace build, typecheck and lint
+- Finish the Node server adapter for self-hosted Hydrogen (settings, bounded public cache, safe logging — built, integration pending)
+- Port the visual storefront into Hydrogen routes with real Storefront API data
+- Real cart, Customer Account API sign-in, sandbox checkout on a development store
+- Dependency advisory remediation; masked CI checks made honest
 
-See the [scalability evidence guide](SCALABILITY.md) for required source/test links, upgrade categories and current limitations. The master plan requires used, tested code boundaries, not documentation-only claims.
+### Phase C — Merchant app and Shopify Functions
+- Close security release blockers SEC-01 to SEC-04 ([SECURITY-MODEL.md](SECURITY-MODEL.md)): token encryption, per-shop authorization, atomic OAuth state, isolated environments
+- Webhook intake with HMAC verification, queue, idempotency and dead-letter replay
+- Shopify mandatory privacy webhooks
+- Revalidate the four Functions against the current API version and run store activation tests (unit tests and WASM size already verified)
+
+### Phase D — Commerce features
+B2B pricing and company accounts, Shopify Markets (US/EU currencies and languages), subscriptions, checkout extensions — each enabled only after plan/capability verification.
+
+### Phase E — Recommendations and data
+Deterministic recommendation baseline first. Optional AI recommendations only behind server-side configuration, with evaluation, disclosure and no sensitive inputs.
+
+### Phase P — Production readiness
+| Area | Deliverable |
+|---|---|
+| Security | OWASP ASVS L2 control mapping, negative auth/tenant tests, DAST, external penetration test before launch |
+| Privacy & legal | Processor register, consent where needed, rights handling, legal review — see [COMPLIANCE.md](COMPLIANCE.md) |
+| Accessibility | Manual screen-reader journeys, zoom/reflow, CI axe gates — see [ACCESSIBILITY.md](ACCESSIBILITY.md) |
+| SEO & AI search | Server-rendered HTML, structured data, sitemaps, canonical URLs, correct status codes |
+| Performance | Budgets for JS, images and 3D assets; Core Web Vitals p75 targets |
+| Observability | Metrics, redacted logs, traces, external uptime probes, burn-rate alerts |
+| Reliability | 99.9% availability target with 99.0% floor, error-budget policy, runbooks, restore drills — see [RELIABILITY.md](RELIABILITY.md) |
+
+### Phase S — Scale (10k → 100k → 1M+ concurrent users)
+| Step | Deliverable |
+|---|---|
+| S1 | Workload model and k6 scenarios with failing CI thresholds |
+| S2 | Stateless storefront proven on multiple instances behind a load balancer |
+| S3 | Cache coalescing, backpressure, timeouts/retry budgets, durable job queue |
+| S4 | Measured per-instance throughput and horizontal-scaling test |
+| S5 | Tier T1/T2 infrastructure templates (multi-host, autoscaling) |
+| S6 | Tier T3 design: multi-region origin, failover, launch-day playbook, provider capacity review |
+
+Details and math: [SCALABILITY.md](SCALABILITY.md).
+
+### Phase F — Release engineering
+Candidate-revision CI, staged deploys, parity checks, backup/restore, rollback drills, public verification.
+
+## Future backlog (not scheduled)
+Mobile app (sharing the `@regenai/ui` component API), wearable/BLE integrations, clinician-facing features, community features and white-label deployment. These are ideas, not commitments, and each would need its own privacy and regulatory review.

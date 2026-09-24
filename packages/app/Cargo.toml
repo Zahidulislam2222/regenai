@@ -27,7 +27,7 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 
 [profile.release]
-# Shopify enforces a WASM size cap per extension (~1.5 MB). Optimise
+# Shopify caps each compiled Function binary at 256 kB. Optimise
 # aggressively for code size, not speed — Function runs are short-lived.
 opt-level = "z"
 lto = true

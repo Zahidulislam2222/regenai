@@ -265,7 +265,7 @@ Added at owner request, 2026-09-21. These are required cross-cutting tasks, not 
 | P06 / B07,B10 | SEO and search-agent/AI-search visibility: meaningful SSR HTML, true status codes, canonical/sitemap/hreflang, product/offer/breadcrumb/organization data, accurate availability, internal links, crawl controls and merchant feeds when eligible | Fetch source with JS disabled, verify visible structured-data consistency, Search Console validation and crawl/index errors; no fake ratings or indexation of account/cart/staging. Assess each crawler's current docs; no guaranteed ranking, citation or purchase-agent inclusion [R23] |
 | P07 / B05–B11 | Frontend/backend performance budgets: first-load JS, image/GLB/video bytes, request count, SSR latency, hydration/main-thread work and public-cache behavior | Representative home/PLP/PDP/cart/quiz/account measured on documented mobile hardware/network and desktop; lab budgets in CI; field p75 goals LCP≤2.5s, INP≤200ms, CLS≤0.1 when sufficient traffic. Do not label lab data field performance [R24] |
 | P08 / B04,C07,F02 | Observability: structured redacted logs, traces/correlation, frontend/server errors, route latency/error/traffic, CPU/memory/disk/event-loop, cache hit/miss, queue age/dead-letter, API throttling, webhook success and secret/cert/backup expiry | Controlled fault produces metric/trace and tested approved alert; no token/health-data logging; bounded retention/cardinality; dashboard access authenticated; external monitoring observes VPS failure |
-| P09 / P08,F02,F07 | Reliability operations: 99% rolling 30-day objective, separate business-journey indicators, error budget, incident severity/owner/escalation, dependency outage playbooks, restore/deploy-failure drills | SLO definition and monitoring validated before release; uptime achieved only after measured window. Missed SLO triggers remediation and release-risk review. Runbooks tested; no invented 24/7 human on-call |
+| P09 / P08,F02,F07 | Reliability operations: 99.9% rolling 30-day target with a 99.0% floor (owner decision 2026-09-24; see docs/RELIABILITY.md), separate business-journey indicators, error budget, incident severity/owner/escalation, dependency outage playbooks, restore/deploy-failure drills | SLO definition and monitoring validated before release; uptime achieved only after measured window. Missed SLO triggers remediation and release-risk review. Runbooks tested; no invented 24/7 human on-call |
 | P10 / P01–P09, S01–S05 | Client-facing engineering evidence index: control→source→test→result/date→limitations; security/privacy/SEO/performance/reliability/scale status separately | A reviewer can trace claims to code/tests. Independent review; incomplete capability plainly marked. Final report lists applicable criteria N/N; no placeholder policies or infrastructure diagrams masquerading as working controls |
 
 ### P01 legal applicability checklist — scope before coding
@@ -319,9 +319,11 @@ Example assumptions only: U=1,000,000, one application request every 30 seconds,
 
 A tier number is not an automatic server specification. Size from sustainable per-instance throughput at the required latency/error rate, not a CPU-count guess. Model normal and lost-instance capacity, cache-warm/cold behavior, hot products, inventory contention, bandwidth and cost. Do not add Kubernetes, microservices or sharding before a measured need; scale the modular application first.
 
-### 99% availability objective and honest measurement
+### Availability objective and honest measurement
 
-Target: at least 99.0% time-based availability per configured core synthetic journey and serving region over a rolling 30-day window. Start with external US/EU probes of homepage, product browsing and a safe read-only cart/account health path. Identify exactly what is tested; homepage 200 alone does not establish working checkout. Configure approved synthetic sandbox checkout verification separately—never charge a real card for uptime monitoring. [R27]
+Updated 2026-09-24 by owner decision: **target 99.9%, floor 99.0%** (43 min 12 s vs 7 h 12 min per 30 days); the floor triggers a release freeze. Public definition: [RELIABILITY.md](docs/RELIABILITY.md). The original floor definition follows.
+
+Floor: at least 99.0% time-based availability per configured core synthetic journey and serving region over a rolling 30-day window. Start with external US/EU probes of homepage, product browsing and a safe read-only cart/account health path. Identify exactly what is tested; homepage 200 alone does not establish working checkout. Configure approved synthetic sandbox checkout verification separately—never charge a real card for uptime monitoring. [R27]
 
 Before release, P09 defines interval, deadline, valid body/status, route weights if any, probe locations, missing-sample policy and incident deduplication. Report per-region/per-journey results, not a blended number that hides a broken region. Count planned maintenance and dependency failures in customer-visible availability; attribute root causes separately. Missing telemetry is unknown, not success. Do not count routine expected user validation responses as server downtime.
 
@@ -356,7 +358,7 @@ Mostly-free baseline: use existing infrastructure and locally runnable/open-sour
 | Recommendation/data layer | E baseline + approved evaluated extensions | Baseline demo exists; connected AI/data unverified |
 | Production controls | Applicable P01–P10, engineering/legal-review evidence and known limitations | Planned; no blanket compliance claim |
 | Scale architecture | S01–S06 implemented/local proof; S07 separately authorized capacity testing | 10k–1M+ targets unverified |
-| Availability | P09/SLO monitoring, then actual rolling 30-day observation | 99% objective; no achieved uptime claim |
+| Availability | P09/SLO monitoring, then actual rolling 30-day observation | 99.9% target / 99.0% floor; no achieved uptime claim |
 | VPS/domain deployment | F08, authorized release and parity/restore | Proposed; not deployed |
 | Mobile/sleep/community/BLE/biomarkers/supplements/white-label/telehealth | Separate future product spec, data/clinical/provider/cost review | Historical expansion backlog; outside this release unless owner explicitly adds it |
 
