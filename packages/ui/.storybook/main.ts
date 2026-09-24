@@ -1,15 +1,17 @@
 import type {StorybookConfig} from '@storybook/react-vite';
+import tailwindcss from '@tailwindcss/vite';
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.stories.@(ts|tsx|mdx)'],
-  addons: [
-    '@storybook/addon-essentials',
-    '@storybook/addon-a11y',
-    '@storybook/addon-interactions',
-  ],
+  addons: ['@storybook/addon-docs', '@storybook/addon-a11y'],
   framework: {name: '@storybook/react-vite', options: {}},
-  typescript: {check: false, reactDocgen: 'react-docgen-typescript'},
-  docs: {autodocs: 'tag'},
+  async viteFinal(config) {
+    return {
+      ...config,
+      plugins: [...(config.plugins ?? []), tailwindcss()],
+    };
+  },
+  typescript: {reactDocgen: 'react-docgen-typescript'},
   core: {disableTelemetry: true},
 };
 

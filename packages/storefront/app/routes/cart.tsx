@@ -1,35 +1,39 @@
-import {
-  data,
-  type ActionFunctionArgs,
-  type MetaFunction,
-  useLoaderData,
-} from 'react-router';
-import {CartForm, type CartQueryDataReturn} from '@shopify/hydrogen';
-import {type CartLineUpdateInput} from '@shopify/hydrogen/storefront-api-types';
-import {CartMain} from '~/components/CartMain';
-import {Breadcrumbs} from '~/components/Breadcrumbs';
+import {data, type CartQueryDataReturn, CartForm} from '@shopify/hydrogen';
+import type {CartLineUpdateInput} from '@shopify/hydrogen/storefront-api-types';
+import type {MetaFunction} from 'react-router';
+import type {Route} from '../+types/cart';
+import {CartView} from '~/features/recovery/Experience';
+import {recoverySettings} from '~/config/recovery';
 
 export const meta: MetaFunction = () => [
-  {title: 'Cart — RegenAI'},
+  {title: 'Your bag — RegenAI'},
   {name: 'robots', content: 'noindex, nofollow'},
 ];
 
-/**
- * POST target for <CartForm>. Also renders a full-page /cart view with
- * no-JS fallback — forms submit here on-submit and return updated cart
- * JSON that the CartMain re-reads from root loader on next revalidation.
- */
-export async function action({request, context}: ActionFunctionArgs) {
+/** The concept bag stays local until a real cart provider is selected. */
+export async function loader({context}: Route.LoaderArgs) {
+  if (recoverySettings.mode === 'local-demo') return {cart: null};
+  return {cart: await context.cart.get()};
+}
+
+export async function action(args: Route.ActionArgs) {
+  if (recoverySettings.mode === 'local-demo') {
+    throw new Response('Cart updates are unavailable in this concept experience.', {
+      status: 501,
+    });
+  }
+  return updateShopifyCart(args);
+}
+
+/** Retained Shopify mutation path for the later commerce integration. */
+async function updateShopifyCart({request, context}: Route.ActionArgs) {
   const {cart} = context;
   const formData = await request.formData();
 
   const {action: intent, inputs} = CartForm.getFormInput(formData);
-  if (!intent) {
-    throw new Response('No cart intent provided', {status: 400});
-  }
+  if (!intent) throw new Response('No cart intent provided', {status: 400});
 
   let result: CartQueryDataReturn;
-
   switch (intent) {
     case CartForm.ACTIONS.LinesAdd:
       result = await cart.addLines(inputs.lines);
@@ -75,9 +79,6 @@ export async function action({request, context}: ActionFunctionArgs) {
 
   const cartId = result?.cart?.id;
   const headers = cart.setCartId(cartId ?? '');
-
-  // If the submission came from the PDP AddToCartButton we want to redirect
-  // back to the referring page, else stay on /cart.
   const redirectTo = formData.get('redirectTo');
   if (typeof redirectTo === 'string' && redirectTo) {
     return data(
@@ -85,30 +86,12 @@ export async function action({request, context}: ActionFunctionArgs) {
       {status: 303, headers: {...Object.fromEntries(headers), Location: redirectTo}},
     );
   }
-
   return data(
     {cart: result.cart, errors: result.errors, warnings: result.warnings},
     {status: 200, headers},
   );
 }
 
-export async function loader({context}: ActionFunctionArgs) {
-  const {cart} = context;
-  const cartData = await cart.get();
-  return data({cart: cartData});
-}
-
 export default function CartRoute() {
-  const {cart} = useLoaderData<typeof loader>();
-  return (
-    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-      <Breadcrumbs items={[{name: 'Home', href: '/'}, {name: 'Cart', href: '/cart'}]} />
-      <header className="mt-4 mb-8">
-        <h1 className="text-3xl font-semibold tracking-tight text-[var(--text-primary)] sm:text-4xl">
-          Your cart
-        </h1>
-      </header>
-      <CartMain cart={cart ?? null} layout="page" />
-    </div>
-  );
+  return <CartView />;
 }

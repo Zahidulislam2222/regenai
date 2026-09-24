@@ -1,7 +1,6 @@
-import {data, useLoaderData} from 'react-router';
-import {Analytics, getSelectedProductOptions} from '@shopify/hydrogen';
+import {data, useLoaderData, type LoaderFunctionArgs, type MetaFunction} from 'react-router';
+import {Analytics, getSelectedProductOptions, type HydrogenRouterContextProvider} from '@shopify/hydrogen';
 import {useState} from 'react';
-import type {Route} from './+types/products.$handle';
 import {Breadcrumbs} from '~/components/Breadcrumbs';
 import {Gallery, type GalleryImage} from '~/components/pdp/Gallery';
 import {VariantPicker, type VariantOption} from '~/components/pdp/VariantPicker';
@@ -20,7 +19,9 @@ import {
   medicalWebPageSchema,
 } from '~/lib/seo/jsonld';
 
-export const meta = ({data}: Route.MetaArgs) => {
+type LegacyLoaderArgs = Omit<LoaderFunctionArgs, 'context'> & {context: HydrogenRouterContextProvider};
+
+export const meta: MetaFunction = ({data}) => {
   if (!data?.product) return [{title: 'Product — RegenAI'}];
   const p = data.product;
   return [
@@ -34,7 +35,7 @@ export const meta = ({data}: Route.MetaArgs) => {
   ];
 };
 
-export async function loader({params, request, context}: Route.LoaderArgs) {
+export async function loader({params, request, context}: LegacyLoaderArgs) {
   const {handle} = params;
   if (!handle) throw new Response('Product handle required', {status: 400});
 
