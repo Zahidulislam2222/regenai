@@ -1,7 +1,7 @@
 # RegenAI
 ## Recovery commerce — live experience, engineering vision and delivery roadmap
 
-Project by Zahidul Islam. Client review edition, updated 22 September 2026.
+Project by Zahidul Islam. Client review edition, updated 24 September 2026.
 
 Live frontend: https://regenai.zahidul-islam.com
 
@@ -29,9 +29,13 @@ VERIFIED — Trusted origin HTTPS and hostname validation succeeded; the public 
 
 IN PROGRESS — Hydrogen/Node runtime work and migration of the selected visual design into the integrated storefront exist in the working tree. Their complete current runtime, shutdown, SSR and commerce acceptance gates are not closed. Earlier foundation and design-system checks are useful history, but do not establish that the latest full repository is ready for a commercial launch.
 
-EXISTING SOURCE, REVALIDATION REQUIRED — The repository contains a merchant application, design-system/Storybook work and four Rust/WASM Shopify Function projects: cart validation, B2B tiered pricing, delivery customization and discount interaction rules. Native runner compatibility, store eligibility, activation and real sandbox checkout behavior require fresh verification. Source files and old compiled artifacts alone are not proof of enforcement.
+EXISTING SOURCE, REVALIDATION REQUIRED — The repository contains a merchant application, design-system/Storybook work and four Rust/WASM Shopify Function projects: cart validation, B2B tiered pricing, delivery customization and discount interaction rules. On 24 September 2026 the four Functions passed 47/47 native unit tests and built to WebAssembly at 159–181 KiB each, under Shopify's 256 kB limit. Native runner compatibility, store eligibility, activation and real sandbox checkout behavior still require fresh verification. Source files and old compiled artifacts alone are not proof of enforcement.
+
+KNOWN ISSUE — A development build of the merchant application is deployed at a Cloudflare workers.dev address. Its review page currently has no sign-in and no shop scoping; the review queue was empty when checked on 24 September 2026. It must be secured or taken offline before any real store installs it.
 
 PLANNED — Full privacy, legal applicability, security, SEO, accessibility, performance, observability, availability and scale acceptance work. No million-user benchmark, observed 30-day uptime result, legal certification, clinical validation or full-project production-readiness claim is made.
+
+DOCUMENTED — On 24 September 2026 public architecture, scalability, reliability, security, privacy, compliance and accessibility documents were published in the GitHub repository (see section 13). They describe targets and current evidence; they are not certifications.
 
 ## 3. Architecture: current release and intended platform
 
@@ -64,6 +68,8 @@ Expanded commerce remains planned: B2B company/location pricing, supported marke
 ## 5. Security and trustworthy engineering
 
 The present release has scoped protections: HTTPS, restrictive response headers, a same-origin content policy, demo noindex controls, limited container privileges, protected configuration and a local-first release process. These controls are verified for the static demo; they are not a blanket claim that every repository component is secure.
+
+The public security model, published 24 September 2026, lists nine tracked gaps (SEC-01 to SEC-09). Release blockers cover merchant token encryption at rest, per-request authentication and shop scoping on merchant routes, atomic one-time OAuth state and separated environments; the live demo also lacks an HSTS header. Security issues can be reported privately as described in the repository's security policy.
 
 The next security workstream establishes a threat model and a versioned control mapping using OWASP guidance. It covers authentication and authorization, tenant separation, session rotation, supported administrator MFA, CSRF, XSS, injection, SSRF, redirect/upload validation, trusted proxy handling, bounded request sizes, timeouts and abuse controls. Negative tests must demonstrate the boundaries, not merely a successful happy path.
 
@@ -127,17 +133,21 @@ Validation must report workload mix, arrival/session model, duration, regions, h
 
 Current position: the workload contract and scaling roadmap are documented; the distributed runtime, executable load profiles and capacity claims remain unverified. Local Docker is available and was used for this release. Kubernetes is an optional future validation tool, not proof of scale or a requirement imposed before a measured need.
 
+Capacity model published 24 September 2026: with the illustrative assumptions above, origin traffic is about 20, 198 and 1,983 requests per second for 10k, 100k and 1M active sessions with a warm cache, and about 333, 3,333 and 33,333 with a cold cache (double that during a 2× burst). Checkout creation, payments and Shopify Functions run on Shopify infrastructure. Provider limits used in the model — Shopify Storefront, Admin and Functions APIs; Cloudflare Workers and D1 — were checked against official documentation on that date. No load test at these volumes has been run.
+
 ## 10. Reliability, monitoring and recovery
 
-The initial objective is at least 99% availability for each defined core journey and serving region over a rolling 30-day window. A complete 30-day window contains 43,200 minutes; the corresponding 1% downtime budget is 432 minutes, or 7 hours 12 minutes. This is an engineering objective, not a contractual SLA or a currently observed result.
+The availability objective, raised on 24 September 2026, is a 99.9% target with 99% as the minimum floor, for each defined core journey and serving region over a rolling 30-day window. A complete 30-day window contains 43,200 minutes: the 99.9% target allows about 43 minutes of downtime, and the 99% floor allows 432 minutes, or 7 hours 12 minutes. This is an engineering objective, not a contractual SLA or a currently observed result.
+
+Error-budget policy: while more than half of the monthly budget remains, releases proceed normally; with 25–50% remaining, each release needs a reviewed rollback plan; below 25%, only reliability and security fixes ship; once the budget is exhausted or availability falls below the 99% floor, releases freeze and reliability work takes priority until recovered. Reaching 99.9% requires at least two independent origin instances behind a health-checked load balancer; the current single-host static release is not expected to meet the target.
 
 Monitoring must distinguish a homepage response from a working product, account or checkout journey. Planned external US/EU probes need explicit intervals, deadlines and expected responses. Missing telemetry is unknown, not successful uptime. Count customer-visible maintenance and dependency failures while recording their causes separately. Sandbox checkout probes must not charge real cards.
 
 Operational telemetry is planned for latency, errors, resource saturation, queue age, failed jobs, API throttling, webhook processing and backup/certificate health. Logs and traces must use redaction and bounded retention/cardinality. Dashboards require appropriate access control; alert delivery and escalation ownership must be tested. No staffed 24/7 on-call service is claimed.
 
-The current static release has a tested off-server artifact backup and byte-verified restore. Future persistent commerce/app data requires application-consistent backups, access protection, retention, recovery drills and measured recovery point/time objectives. A container restart cannot recover a failed host; a monitor or sole backup on that same host does not provide independent protection.
+The current static release has a tested off-server artifact backup and byte-verified restore; a rollback drill to a previous release has not yet been run. Future persistent commerce/app data requires application-consistent backups, access protection, retention, recovery drills and measured recovery point/time objectives. A container restart cannot recover a failed host; a monitor or sole backup on that same host does not provide independent protection.
 
-Release and incident playbooks should cover dependency outage, bad deployment, compromised credentials, queue backlog, data restoration and rollback/migration compatibility. Error-budget consumption should influence release decisions. Actual 99% achievement can be reported only after the agreed observation window and journey coverage exist.
+Release and incident playbooks should cover dependency outage, bad deployment, compromised credentials, queue backlog, data restoration and rollback/migration compatibility. Error-budget consumption should influence release decisions. Actual achievement of the 99.9% target or the 99% floor can be reported only after the agreed observation window and journey coverage exist.
 
 ## 11. Delivery plan and acceptance milestones
 
@@ -171,7 +181,27 @@ The longer-term product vision includes a richer recovery catalog, additional ma
 
 The intended client value is a distinctive frontend backed by inspectable engineering: a clear delivery status, maintainable boundaries, measured quality, a defensible growth plan and honest limits. Success is demonstrated through working customer and merchant journeys and retained evidence, not the number of services or technologies listed.
 
-## 13. Primary references
+## 13. Public documentation on GitHub
+
+On 24 September 2026 a public engineering documentation set was added to the project repository. It is currently on the build/b02-foundation branch, submitted to the main branch as [draft pull request #19](https://github.com/Zahidulislam2222/regenai/pull/19), which remains a draft until the full-workspace build gates pass. Each document labels items as live, built, partial, planned or not measured, and none of them is a certification.
+
+[Architecture](https://github.com/Zahidulislam2222/regenai/blob/build/b02-foundation/docs/ARCHITECTURE.md) — components, frontend/backend split, trust boundaries, hosting and repository map.
+
+[Scalability](https://github.com/Zahidulislam2222/regenai/blob/build/b02-foundation/docs/SCALABILITY.md) — capacity model and tier-by-tier path from 10k to 1M+ concurrent users, using provider limits checked against official Shopify and Cloudflare documentation.
+
+[Reliability](https://github.com/Zahidulislam2222/regenai/blob/build/b02-foundation/docs/RELIABILITY.md) — 99.9% availability target with 99% floor, journey-level indicators, error-budget policy, backup and disaster-recovery objectives, incident response and observability.
+
+[Security model and security policy](https://github.com/Zahidulislam2222/regenai/blob/build/b02-foundation/docs/SECURITY-MODEL.md) — threat model, verified controls, nine openly tracked gaps (SEC-01 to SEC-09) and how to report a vulnerability privately.
+
+[Privacy](https://github.com/Zahidulislam2222/regenai/blob/build/b02-foundation/docs/PRIVACY.md) — live-demo privacy notice (no personal data collected; demo bag stored only in the browser) and the planned data map for the full platform.
+
+[Compliance](https://github.com/Zahidulislam2222/regenai/blob/build/b02-foundation/docs/COMPLIANCE.md) — overview of PCI DSS, GDPR, US state privacy, consumer-health data, health-product claims, consumer protection and accessibility obligations for a real launch; not legal advice.
+
+[Accessibility](https://github.com/Zahidulislam2222/regenai/blob/build/b02-foundation/docs/ACCESSIBILITY.md) — WCAG 2.2 AA engineering target, tested scope and known limitations.
+
+[Package guides](https://github.com/Zahidulislam2222/regenai/tree/build/b02-foundation) — updated READMEs for the storefront, design system, merchant application, the four Shopify Functions and the frontend deployment, plus contributing guidelines, a code of conduct and issue/pull-request templates.
+
+## 14. Primary references
 
 These sources support the planned review framework; they do not certify this project or replace merchant-specific advice. Recheck applicability when products, markets, data use or platform capabilities change.
 
@@ -187,3 +217,11 @@ These sources support the planned review framework; they do not certify this pro
 [10] [Google web.dev, Web Vitals](https://web.dev/articles/vitals)
 [11] [Google Search Central, AI features and websites](https://developers.google.com/search/docs/appearance/ai-features)
 [12] [Shopify API limits](https://shopify.dev/docs/api/usage/limits)
+
+[13] [Shopify Functions API and resource limits](https://shopify.dev/docs/api/functions/latest)
+
+[14] [Cloudflare Workers platform limits](https://developers.cloudflare.com/workers/platform/limits/)
+
+[15] [Cloudflare D1 limits](https://developers.cloudflare.com/d1/platform/limits/)
+
+[16] [Google SRE Workbook, implementing SLOs](https://sre.google/workbook/implementing-slos/)
