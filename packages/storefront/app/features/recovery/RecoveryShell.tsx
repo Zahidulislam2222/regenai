@@ -4,7 +4,7 @@ import * as Dialog from '@radix-ui/react-dialog';
 import {ArrowUpRight, Menu, Pause, Play, Search, X} from 'lucide-react';
 import {ui} from '../../content/recovery-ui';
 import {site} from '../../content/recovery';
-import {BagProvider, useBag} from './Bag';
+import {BagProvider} from './Bag';
 
 export type RecoveryMotionState = {paused: boolean; toggle: () => void};
 
@@ -37,9 +37,7 @@ export function Mark() {
 }
 
 function Header({paused, toggle}: RecoveryMotionState) {
-  const bag = useBag();
   const [mobile, setMobile] = useState(false);
-  const count = bag.lines.reduce((sum, line) => sum + line.quantity, 0);
 
   return (
     <header className="site-header">
@@ -68,15 +66,7 @@ function Header({paused, toggle}: RecoveryMotionState) {
         <Link className="icon-button" to="/search" aria-label={ui.search_products_c65cb6}>
           <Search size={19} />
         </Link>
-        <button
-          className="bag-button"
-          data-bag-trigger
-          onClick={() => bag.setOpen(true)}
-          aria-label={`Open bag, ${count} items`}
-        >
-          {ui.bag_19b270}
-          <span>{count.toString().padStart(2, '0')}</span>
-        </button>
+        <Link className="header-availability" to="/policies/delivery">Availability <ArrowUpRight size={16} /></Link>
         <Dialog.Root open={mobile} onOpenChange={setMobile}>
           <Dialog.Trigger className="icon-button mobile-trigger" aria-label={ui.open_navigation_0ed77f}>
             <Menu size={22} />

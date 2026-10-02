@@ -13,8 +13,8 @@ export async function loader({params}: LoaderFunctionArgs) {
 }
 
 export const meta: MetaFunction<typeof loader> = ({data}) => [
-  {title: data ? `${data.product.name} — Recovery concept | RegenAI` : 'Product concept — RegenAI'},
-  {name: 'description', content: data?.product.description ?? 'An original product design concept.'},
+  {title: data ? `${data.product.name} — RegenAI` : 'Product design — RegenAI'},
+  {name: 'description', content: data?.product.description ?? 'An original recovery-object design study.'},
 ];
 
 export default function RecoveryProductRoute() {

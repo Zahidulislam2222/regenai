@@ -1,6 +1,6 @@
-# Standalone recovery frontend — deployment
+# Standalone recovery storefront — deployment
 
-This deployment has served the live demo at https://regenai.zahidul-islam.com since 2026-09-22 ([release evidence](../../docs/FRONTEND-DEPLOYMENT.md)). It serves only the static React Router portfolio/demo build. It does not run Hydrogen SSR, Shopify account/cart APIs, live checkout, payments, or backend routes. The demo's bag and product data remain local browser fixtures; this deployment makes no real-commerce or medical claims.
+This deployment has served the public design-study storefront at https://regenai.zahidul-islam.com since 2026-09-22 ([release evidence](../../docs/FRONTEND-DEPLOYMENT.md)). It serves a static React Router build. Hydrogen SSR, Shopify account/cart APIs, checkout, payments and backend routes are not deployed here. Product data are local design records; ordering is closed until real merchandise and fulfillment are verified. The site makes no medical claims.
 
 ## Build and local configuration
 
@@ -10,7 +10,7 @@ Validate configuration with `docker compose --env-file deploy/frontend/.env -f d
 
 ## Routing and headers
 
-The recognized preview paths are `/`, `/collections/all`, `/search`, `/products/pulse`, `/products/roller`, `/products/bands`, `/products/wrap`, `/products/balls`, `/products/sensor`, `/quiz`, `/cart`, `/about`, `/evidence`, `/policies/privacy`, and `/policies/delivery`. Each serves `index.html` with HTTP 200 so the existing client router can render its page. Other extensionless client paths internally receive `index.html` with HTTP 404, allowing the app's not-found screen while keeping the HTTP status truthful. Unknown product IDs therefore receive the app's not-found screen with status 404. Missing asset paths, dotfiles and unsupported methods do not fall back to the SPA. Only GET and HEAD are accepted.
+The recognized preview paths are `/`, `/collections/all`, `/search`, `/products/pulse`, `/products/roller`, `/products/bands`, `/products/wrap`, `/products/balls`, `/products/sensor`, `/quiz`, `/cart`, `/about`, `/evidence`, `/journal`, `/journal/making-pulse-one`, `/journal/a-calmer-product-page`, `/journal/how-the-finder-works`, `/policies/privacy`, and `/policies/delivery`. Each serves `index.html` with HTTP 200 so the client router can render its page. Other extensionless client paths internally receive `index.html` with HTTP 404, allowing the app's not-found screen while keeping the HTTP status truthful. Unknown product IDs therefore receive the app's not-found screen with status 404. Missing asset paths, dotfiles and unsupported methods do not fall back to the SPA. Only GET and HEAD are accepted.
 
 All responses include `X-Robots-Tag: noindex`; HTML uses `no-store, no-transform`; hashed Vite assets use immutable one-year caching; public media revalidates. CSP permits same-origin scripts/assets and local Three.js rendering, including React's inline style attributes; it does not permit inline scripts or external connections. Nginx logs only status and method, and suppresses routine missing-file details so query strings and referrers are not written to logs.
 

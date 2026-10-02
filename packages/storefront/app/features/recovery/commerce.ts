@@ -85,6 +85,7 @@ export function findProducts({
   );
   if (sort === 'price-asc') result.sort((a, b) => a.price - b.price);
   if (sort === 'price-desc') result.sort((a, b) => b.price - a.price);
+  if (sort === 'name-asc') result.sort((a, b) => a.name.localeCompare(b.name));
   return result;
 }
 export function recommend(area: string, category: string) {

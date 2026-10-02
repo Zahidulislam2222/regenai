@@ -44,12 +44,12 @@ export function validateCatalog(input: unknown): RecoveryProduct[] {
 export const products = validateCatalog(rawCatalog);
 export const site = {
   name: 'regenai',
-  demo: 'A recovery collection, imagined. Explore the local concept store.',
+  demo: 'Explore recovery objects and the thinking behind their design.',
   errors: {
     notFound: {
       eyebrow: 'A MOMENT OFF TRACK',
       title: 'This page is not part of the collection.',
-      body: 'The address may have changed, or the page may not exist in this concept store.',
+      body: 'The address may have changed, or the page may not exist in this collection.',
     },
     unavailable: {
       eyebrow: 'A TEMPORARY PAUSE',
@@ -61,6 +61,7 @@ export const site = {
     {label: 'The collection', to: '/collections/all'},
     {label: 'Our approach', to: '/about'},
     {label: 'Recovery finder', to: '/quiz'},
+    {label: 'Design notes', to: '/journal'},
   ],
   hero: {
     eyebrow: 'RECOVERY, WITH INTENTION.',
@@ -104,8 +105,8 @@ export const site = {
     {
       number: '03',
       title: 'Find your own rhythm.',
-      body: 'One simple addition to your wind-down corner. Explore the concept, then build a collection around you.',
-      label: 'PULSE ONE / CONCEPT 01',
+      body: 'A form study for the wind-down corner. Explore the design details as the product is developed.',
+      label: 'PULSE ONE / DESIGN 01',
     },
   ],
   finder: {
@@ -124,17 +125,17 @@ export const site = {
       },
       {
         title: 'What would you like more of?',
-        hint: 'We’ll match your preference with the concept collection.',
+        hint: 'We’ll match your preference with the design collection.',
         options: ['Release', 'Move', 'Reset'],
       },
     ],
     resultTitle: 'Your space to recover.',
     disclaimer:
-      'These are rule-based product matches from a fictional catalog, not AI inference, a diagnosis or a treatment recommendation. Your answers stay in this page and are not saved or sent.',
+      'These are rule-based matches among design studies, not AI inference, a diagnosis or a treatment recommendation. Your answers stay in this page and are not saved or sent.',
   },
   footer: {
     line: 'A little space.\nA better everyday.',
-    note: 'An independent recovery-commerce concept. Original product designs and example prices; no products are for sale.',
+    note: 'Original recovery-object design studies. Ordering opens when product details and availability are confirmed.',
     links: [
       {label: 'Our approach', to: '/about'},
       {label: 'Evidence & transparency', to: '/evidence'},
@@ -146,30 +147,30 @@ export const site = {
     about: {
       eyebrow: 'OUR APPROACH',
       title: 'More intention.\nLess noise.',
-      body: 'RegenAI is an independent concept exploring how recovery tools could fit into everyday life. We believe thoughtful objects deserve a thoughtful shopping experience.',
+      body: 'RegenAI explores how thoughtfully designed recovery objects could fit into everyday life. The collection is in development.',
       sections: [
         [
           'Designed around the everyday',
-          'The collection brings together original industrial-design concepts, a clear product finder, and a calm place to compare your options.',
+          'The collection brings together original industrial-design studies, a clear product finder, and a calm place to explore the forms.',
         ],
         [
           'Objects you can explore',
-          'The Pulse One is modeled in Blender and rendered interactively in your browser. These models illustrate a design direction, not manufactured or clinically tested devices.',
+          'The Pulse One form was modeled in Blender and can be explored interactively in your browser. The render shows a design direction; physical specifications are not yet confirmed.',
         ],
         [
           'A work in progress, openly',
-          'This local frontend demonstrates shopping interactions. Product fulfillment, real checkout, device connectivity and clinical review are not active.',
+          'Product specifications, inventory and fulfillment are being confirmed. Ordering remains closed until those details are available.',
         ],
       ],
     },
     evidence: {
       eyebrow: 'EVIDENCE & TRANSPARENCY',
       title: 'Clarity comes first.',
-      body: 'Good design is no substitute for evidence. Here is exactly what this concept does—and what has not been established.',
+      body: 'Good design is no substitute for evidence. Here is what has and has not been established.',
       sections: [
         [
-          'Original concepts, not medical devices',
-          'Products, specifications and prices are fictional demonstration content. There are no FDA-clearance claims, clinical endorsements, verified reviews or promised health outcomes.',
+          'Original design studies, without medical claims',
+          'The current visuals represent original design studies. Physical specifications and performance have not been verified. We make no medical-device, clinical, review or health-outcome claims.',
         ],
         [
           'How the finder works',
@@ -177,18 +178,18 @@ export const site = {
         ],
         [
           'Before a real launch',
-          'Physical product validation, appropriate safety documentation, independent evidence review, approved policies and a working commerce integration would be required.',
+          'Physical product validation, appropriate safety documentation, evidence review, approved policies and confirmed merchandise are required before ordering can open.',
         ],
       ],
     },
     privacy: {
-      eyebrow: 'PRIVACY / LOCAL DEMO',
+      eyebrow: 'PRIVACY',
       title: 'Your pause is yours.',
-      body: 'This frontend runs as a local demonstration. It does not submit your finder answers or send analytics events.',
+      body: 'Finder answers stay in the current browser session. They are not submitted or used to build a profile.',
       sections: [
         [
           'What stays on this device',
-          'Your demo bag stores product identifiers, options and quantities in browser localStorage. Removing all bag items clears the contents.',
+          'This page does not require an account to explore the collection.',
         ],
         [
           'What is not stored',
@@ -196,22 +197,22 @@ export const site = {
         ],
         [
           'A future live service',
-          'A production service will need an owner-approved privacy policy and consent controls before collecting account, order or health-related information.',
+          'Before orders or accounts open, an owner-approved privacy policy and appropriate consent controls will be published.',
         ],
       ],
     },
     delivery: {
-      eyebrow: 'DELIVERY & RETURNS / LOCAL DEMO',
+      eyebrow: 'DELIVERY & RETURNS',
       title: 'Explore freely.',
-      body: 'No orders, payments, shipping or returns are processed in this concept store.',
+      body: 'Ordering is not open while products and fulfillment are being confirmed.',
       sections: [
         [
-          'Example prices',
-          'All displayed USD prices are demo values. The bag calculates a sample subtotal only; taxes and shipping are not quoted.',
+          'Prices and availability',
+          'Prices and availability will be published when merchandise is ready to order.',
         ],
         [
           'No purchase is made',
-          'The preview checkout explains this boundary. It does not collect payment details or create an order.',
+          'There is no payment form or order placement on these product pages.',
         ],
         [
           'Before products go on sale',

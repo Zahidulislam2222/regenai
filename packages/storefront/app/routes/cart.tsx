@@ -1,12 +1,12 @@
-import {data, type CartQueryDataReturn, CartForm} from '@shopify/hydrogen';
+import {type CartQueryDataReturn, CartForm} from '@shopify/hydrogen';
 import type {CartLineUpdateInput} from '@shopify/hydrogen/storefront-api-types';
-import type {MetaFunction} from 'react-router';
-import type {Route} from '../+types/cart';
+import {data, type MetaFunction} from 'react-router';
+import type {Route} from './+types/cart';
 import {CartView} from '~/features/recovery/Experience';
 import {recoverySettings} from '~/config/recovery';
 
 export const meta: MetaFunction = () => [
-  {title: 'Your bag — RegenAI'},
+  {title: 'Ordering — RegenAI'},
   {name: 'robots', content: 'noindex, nofollow'},
 ];
 
@@ -80,10 +80,14 @@ async function updateShopifyCart({request, context}: Route.ActionArgs) {
   const cartId = result?.cart?.id;
   const headers = cart.setCartId(cartId ?? '');
   const redirectTo = formData.get('redirectTo');
-  if (typeof redirectTo === 'string' && redirectTo) {
+  if (typeof redirectTo === 'string' && redirectTo.startsWith('/') && !redirectTo.startsWith('//') && !redirectTo.includes('\\')) {
+    const target = new URL(redirectTo, request.url);
+    if (target.origin !== new URL(request.url).origin) {
+      throw new Response('Invalid cart redirect', {status: 400});
+    }
     return data(
       {cart: result.cart, errors: result.errors, warnings: result.warnings},
-      {status: 303, headers: {...Object.fromEntries(headers), Location: redirectTo}},
+      {status: 303, headers: {...Object.fromEntries(headers), Location: `${target.pathname}${target.search}${target.hash}`}},
     );
   }
   return data(

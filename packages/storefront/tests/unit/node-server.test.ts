@@ -9,15 +9,23 @@ import type {AddressInfo} from 'node:net';
 import {createNodeRuntime} from '../../app/lib/node-server';
 import {loadStorefrontSettings, type StorefrontSettings} from '../../app/lib/settings.server';
 
-const baseSettings = loadStorefrontSettings({
-  NODE_ENV: 'test',
-  LOCAL_DEVELOPMENT: 'true',
-  PUBLIC_CANONICAL_ORIGIN: 'http://127.0.0.1:3001',
+const testEnv: Env = {
   PUBLIC_STORE_DOMAIN: 'regenai.myshopify.com',
   PUBLIC_CHECKOUT_DOMAIN: 'regenai.myshopify.com',
   PUBLIC_STOREFRONT_API_TOKEN: 'test-public-token-only',
+  PRIVATE_STOREFRONT_API_TOKEN: '',
   PUBLIC_STOREFRONT_ID: 'test-storefront-id',
+  PUBLIC_CUSTOMER_ACCOUNT_API_CLIENT_ID: '',
+  PUBLIC_CUSTOMER_ACCOUNT_API_URL: '',
+  SHOP_ID: '',
   SESSION_SECRET: 'test-only-session-secret-with-at-least-32-characters',
+};
+
+const baseSettings = loadStorefrontSettings({
+  ...testEnv,
+  NODE_ENV: 'test',
+  LOCAL_DEVELOPMENT: 'true',
+  PUBLIC_CANONICAL_ORIGIN: 'http://127.0.0.1:3001',
 });
 
 type TestWorker = {
@@ -27,8 +35,6 @@ type TestWorker = {
 function makeSettings(overrides: Partial<StorefrontSettings['nodeServer']> = {}): StorefrontSettings {
   return {...baseSettings, nodeServer: {...baseSettings.nodeServer, port: 0, ...overrides}};
 }
-
-const testEnv = {...baseSettings} as Env;
 
 function runRequest(port: number, options: {
   path?: string;

@@ -187,13 +187,18 @@ describe('recovery experience SSR and browser hydration', () => {
     for (const step of steps) expect(step).not.toHaveAttribute('aria-hidden', 'true');
   });
 
-  it('returns focus to the bag trigger after the dialog closes', async () => {
+  it('keeps ordering closed while offering product design notes', () => {
     renderPreview('/');
-    const trigger = screen.getByRole('button', {name: /open bag/i});
-    trigger.focus();
-    fireEvent.click(trigger);
-    const close = await screen.findByRole('button', {name: /close bag/i});
-    fireEvent.click(close);
-    await waitFor(() => expect(trigger).toHaveFocus());
+    expect(screen.queryByRole('button', {name: /open bag/i})).not.toBeInTheDocument();
+    expect(screen.getByRole('link', {name: /all design notes/i})).toHaveAttribute('href', '/journal');
+  });
+
+  it('does not present unverified pricing, variants or purchasing on a product page', () => {
+    const html = renderServerPreview('/products/pulse');
+    expect(html).toContain('Pulse One');
+    expect(html).toContain('Ordering opens after product details');
+    expect(html).not.toContain('Add to bag');
+    expect(html).not.toContain('type="radio"');
+    expect(html).not.toContain('pdp-price');
   });
 });

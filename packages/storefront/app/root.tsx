@@ -14,7 +14,6 @@ import type {Route} from './+types/root';
 import favicon from '~/assets/favicon.svg';
 import {toPublicSettings} from '~/lib/settings.server';
 import {serializePublicSettings} from '~/lib/settings.shared';
-import {logSafeError} from '~/lib/safe-logger.server';
 import {RecoveryShell, useRecoveryMotion} from '~/features/recovery/RecoveryShell';
 import {RecoveryErrorContent} from '~/features/recovery/RecoveryErrorContent';
 import recoveryStyles from '~/features/recovery/recovery.css?url';

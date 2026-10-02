@@ -16,13 +16,13 @@ const hydrogenPresetForCurrentReactRouter: typeof hydrogen = {
     const hydrogenFuture = {...config.future} as typeof config.future & {
       unstable_subResourceIntegrity?: boolean;
     };
-    const {unstable_subResourceIntegrity, ...future} = hydrogenFuture;
+    const {unstable_subResourceIntegrity: legacySubResourceIntegrity, ...future} = hydrogenFuture;
 
     return {
       ...config,
       future,
       subResourceIntegrity:
-        config.subResourceIntegrity ?? unstable_subResourceIntegrity,
+        config.subResourceIntegrity ?? legacySubResourceIntegrity,
     };
   },
   reactRouterConfigResolved(args) {

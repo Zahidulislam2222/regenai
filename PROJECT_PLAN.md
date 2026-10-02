@@ -1,6 +1,25 @@
 # RegenAI — master build and completion plan
 
-Updated: 2026-09-21. Status: **STOPPED at owner request; preserve unfinished B05 runtime and B06 Hydrogen migration.** B06a selected-design preview has earlier passing evidence; latest integration changes have not passed the full gates. Resume only on owner instruction. See [build status](docs/BUILD-STATUS.md) and private recovery checkpoint. No completion, production readiness, traffic capacity, uptime or legal certification is claimed.
+Updated: 2026-10-03. Status: **ACTIVE at owner request.** The expanded visual storefront is deployed; Hydrogen/Shopify integration remains unfinished. The ten phases below remain the completion contract. Previous B05/B06 work remains unverified for release. See [build status](docs/BUILD-STATUS.md) and the private recovery checkpoint. No full-commerce readiness, traffic capacity, uptime or legal certification is claimed.
+
+## Ten-phase delivery roadmap — active 2026-10-03
+
+This is the current execution order and supersedes the earlier concept-only scope below. Historical A–F and P/S task contracts remain technical references where compatible. "Complete" means a production-quality storefront backed by actual RegenAI merchandise, Shopify cart and checkout, merchant controls, and release evidence. The connected store currently exposes 15 sample snowboard/ski-wax/gift-card products and no RegenAI recovery products. No public claim of a sellable RegenAI catalog or checkout is allowed until genuine merchandise, imagery, specifications, prices, stock and seller/legal details are supplied and verified. Paid capacity tests and million-user performance remain separate evidence/cost decisions.
+
+| Phase | Deliverable and concrete acceptance gate | Current status |
+|---|---|---|
+| 1. Baseline and product truth | Save live frontend files; prove local/live parity; inventory existing pages, assets, Shopify routes and credentials without printing secrets; obtain genuine RegenAI merchandise source. | Prior live release matched 28/28 saved files; 15 unrelated sample Shopify products found; real catalog source pending |
+| 2. Storefront design and navigation | A coherent responsive home with visible product media, stronger hierarchy, useful category entry points, a clear header/footer and no dead CTA. Desktop/mobile, keyboard and reduced-motion review. | Expanded design deployed: visible poster, compact inspection, category cards, journal feature and FAQ; desktop/390px visual checks pass; keyboard/axe rerun pending |
+| 3. Catalog and media | Product records come from real Shopify merchandise with supplied media, specifications, prices and inventory. Every card has matching media and a working detail link; no invented efficacy, stock or reviews. | Real RegenAI merchandise missing; six existing visual concepts cannot be sold as real items |
+| 4. Product decision pages | Rich product pages with media gallery, option/variant selection, useful specifications, honest FAQs, related items and comparison. Add-to-cart acts on the selected item; direct links and unavailable states work. | Basic detail page exists |
+| 5. Discovery and content pages | Search, filters, sort, collection/category pages and finder produce explainable results. Add substantive About, design process, help/FAQ, contact and policy pages with only supportable copy. Every route has a meaningful empty/error state. | Three design articles, journal index, homepage FAQ and category entry points deployed; real contact details and full route/error checks pending |
+| 6. Shopify customer commerce | Hydrogen SSR builds cleanly; actual RegenAI products, collections, variants, cart and Shopify-hosted checkout work end to end. Session, availability and currency behavior are verified before public checkout is enabled. | Whole-workspace type/lint and Hydrogen build repaired locally; real merchandise/cart/checkout remain blocked |
+| 7. Merchant operations and Functions | Authenticate every merchant route; isolate shop data; protect tokens and OAuth state; verify D1 environment isolation. Exercise review/content flows and four Functions against version-matched sandbox fixtures and activation status. | Scaffold and four Function sources exist; release blockers remain |
+| 8. Trust, SEO and accessibility | Accurate titles/meta/canonicals, sitemap/robots and product structured data appropriate to actual catalog status; privacy/consent and no fabricated reviews or medical claims. Keyboard, zoom, reduced motion, contrast and axe checks pass on key routes. | Local canonical-origin sitemap/robots and journal/page titles pass HTTP; accessibility rerun and full metadata/policy review pending |
+| 9. Reliability, performance and security | Config/secret audit, dependency remediation, authorization tests, monitoring/backup/restore, real cache behavior and bounded load tests. Report measured capacity/availability separately from targets; no paid resource without a fresh cost warning. | Local Node HTTP and CSP first-party asset checks pass; secret scan found no source findings; dependency, authorization and operations gates remain open |
+| 10. Release and handoff | All required tests/type/lint/build/security gates green, real desktop/mobile and sandbox flows verified, fresh-context review, local/live drift reconciliation, authorized deployment, post-deploy hash parity and rollback proof. Update dossier first, then scrubbed public status documentation. | Static frontend promoted on existing VPS; integrated commerce release and remaining gates pending |
+
+Phase updates must state completed criteria, evidence, blockers and next phase. A phase does not advance because a page exists; its interaction, data truth and required gates must pass. Phase 2 and support-content work can proceed locally while catalog and integration blockers are repaired. No `my-project-view/` or existing Google Doc update is implied by this plan.
 
 ## 1. Delivery contract and definition of completion
 
@@ -359,7 +378,7 @@ Mostly-free baseline: use existing infrastructure and locally runnable/open-sour
 | Production controls | Applicable P01–P10, engineering/legal-review evidence and known limitations | Planned; no blanket compliance claim |
 | Scale architecture | S01–S06 implemented/local proof; S07 separately authorized capacity testing | 10k–1M+ targets unverified |
 | Availability | P09/SLO monitoring, then actual rolling 30-day observation | 99.9% target / 99.0% floor; no achieved uptime claim |
-| VPS/domain deployment | F08, authorized release and parity/restore | Proposed; not deployed |
+| VPS/domain deployment | F08, authorized release and parity/restore | Static design-study frontend deployed with 29/29 file parity; integrated Hydrogen commerce release pending |
 | Mobile/sleep/community/BLE/biomarkers/supplements/white-label/telehealth | Separate future product spec, data/clinical/provider/cost review | Historical expansion backlog; outside this release unless owner explicitly adds it |
 
 Historical expansion ideas stay recorded, not silently “implemented” through placeholders. No real patient information is authorized. Any scope change updates this ledger and the dossier before public claims.
@@ -433,9 +452,9 @@ Official sources guide design; installed types/schema and the current account de
 
 Local source evidence: current global rules, project checkpoint/review, storefront server/context/session/routing/build configuration, merchant OAuth/admin/worker/schema/bindings, extension manifests/crates, CI workflows, historical ADR-011/021 and shared infrastructure records. This is a targeted full-plan audit, not a claim that every archived binary or every dependency file was read. No live capacity, DNS reservation or current Shopify plan was established during this documentation-only task.
 
-## 16. Exact next action after the owner says start
+## 16. Next integrated-commerce gates
 
-Supervisor begins **B01 read-only inventory and drift/capability audit**, opens P01 applicability and S01 workload contracts, confirms A01 visual feedback without delaying independent foundation work, then issues Luna one bounded B02 repair task with its baseline repro and file allowlist. No deployment or paid API follows automatically from “start.” Continue through verified dependencies, reporting concrete milestones until the agreed scope is fulfilled.
+Obtain genuine RegenAI merchandise and seller details, then validate the Shopify product records and physical fulfillment before enabling prices, cart or checkout. Finish merchant authentication and tenant isolation, verify Function activation and versioned fixtures, and rerun accessibility, security, dependency and independent-review gates. The current static release remains a design-study storefront while those gates are open. No paid API or capacity action follows automatically.
 
 ## Live visual-review checkpoint — 2026-09-22
 

@@ -29,11 +29,12 @@ import {
   media,
   type RecoveryProduct,
 } from '../../content/recovery';
-import {money, recoverySettings} from '../../config/recovery';
-import {useBag, BagContents} from './Bag';
+import {editorial} from '../../content/recovery-editorial';
+import {recoverySettings} from '../../config/recovery';
 import {findProducts, recommend} from './commerce';
 import {Mark, RecoveryShell, useRecoveryMotion} from './RecoveryShell';
 import {RecoveryErrorContent} from './RecoveryErrorContent';
+import {CategoryExplore, HomeQuestions, JournalArticleView, JournalFeature, JournalIndexView} from './Editorial';
 export {RecoveryShell, useRecoveryMotion} from './RecoveryShell';
 const ProductScene = lazy(() => import('./ProductScene'));
 function ScenePoster() {
@@ -76,7 +77,8 @@ function PageReset() {
   const {pathname} = useLocation();
   useEffect(() => {
     window.scrollTo({top: 0, behavior: 'instant'});
-    document.title = `${pathname === '/' ? 'Make room for recovery' : pathname.split('/').filter(Boolean).pop()?.replaceAll('-', ' ')} — RegenAI`;
+    const heading = document.querySelector('#main-content h1')?.textContent?.trim();
+    document.title = `${pathname === '/' ? 'Make room for recovery' : heading || 'RegenAI'} — RegenAI`;
     const main = document.getElementById('main-content');
     main?.focus({preventScroll: true});
   }, [pathname]);
@@ -99,11 +101,19 @@ export function Experience() {
         <Route path="/cart" element={<CartView />} />
         <Route path="/about" element={<InfoView page="about" />} />
         <Route path="/evidence" element={<InfoView page="evidence" />} />
+        <Route path="/journal" element={<JournalIndexView />} />
+        <Route path="/journal/:slug" element={<PreviewJournalArticleRoute />} />
         <Route path="/policies/:policy" element={<PreviewPolicyRoute />} />
         <Route path="*" element={<NotFoundView />} />
       </Routes>
     </RecoveryShell>
   );
+}
+
+function PreviewJournalArticleRoute() {
+  const {slug} = useParams();
+  const story = editorial.stories.find((item) => item.slug === slug);
+  return story ? <JournalArticleView story={story} /> : <NotFoundView />;
 }
 
 function PreviewCatalogRoute({search = false}: {search?: boolean}) {
@@ -188,7 +198,7 @@ export function HomeView({paused}: {paused: boolean}) {
           <div className="orbit orbit-two" />
           <span className="object-cross cross-a">{ui._a318c2}</span>
           <span className="object-cross cross-b">{ui._a318c2}</span>
-          <ProductVisual paused={paused} />
+          <ScenePoster />
           <div className="object-shadow" />
           <Link className="hero-product-label" to="/products/pulse">
             <span>
@@ -238,7 +248,8 @@ export function HomeView({paused}: {paused: boolean}) {
           ))}
         </div>
       </section>
-      <Inspection paused={paused} />
+      <CategoryExplore />
+      <Inspection />
       <section className="section ritual-section">
         <div className="ritual-index">
           <Mark />
@@ -256,6 +267,7 @@ export function HomeView({paused}: {paused: boolean}) {
         </div>
       </section>
       <LabFilm paused={paused} />
+      <JournalFeature />
       <section className="finder-invitation section">
         <div>
           <p className="eyebrow">{ui.your_body_your_rhythm_5bab79}</p>
@@ -284,13 +296,7 @@ export function HomeView({paused}: {paused: boolean}) {
           ))}
         </div>
       </section>
-      <div className="demo-ribbon">
-        {site.demo}{' '}
-        <Link to="/evidence">
-          {ui.what_s_real_in_this_demo_6cceea}
-          <ArrowUpRight size={14} />
-        </Link>
-      </div>
+      <HomeQuestions />
     </>
   );
 }
@@ -315,7 +321,7 @@ function ProductCard({
         </span>
         <img
           src={p.image}
-          alt={`${p.name}, ${p.kind.toLowerCase()}, concept render`}
+          alt={`${p.name}, ${p.kind.toLowerCase()}, design render`}
           loading="lazy"
           width="1000"
           height="1000"
@@ -331,49 +337,15 @@ function ProductCard({
           </Link>
           <p>{p.kind}</p>
         </div>
-        <span>{money(p.price)}</span>
+        <span className="product-status">In development</span>
       </div>
     </article>
   );
 }
-function Inspection({paused}: {paused: boolean}) {
-  const root = useRef<HTMLElement>(null);
-  const [progress, setProgress] = useState(0);
-  useEffect(() => {
-    if (paused) {
-      setProgress(0);
-      return;
-    }
-    let frame = 0;
-    const update = () => {
-      if (frame) return;
-      frame = requestAnimationFrame(() => {
-        frame = 0;
-        const el = root.current;
-        if (!el) return;
-        const rect = el.getBoundingClientRect();
-        setProgress(
-          Math.max(
-            0,
-            Math.min(1, -rect.top / (rect.height - window.innerHeight)),
-          ),
-        );
-      });
-    };
-    window.addEventListener('scroll', update, {passive: true});
-    window.addEventListener('resize', update);
-    update();
-    return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener('scroll', update);
-      window.removeEventListener('resize', update);
-    };
-  }, [paused]);
-  const active = Math.min(2, Math.floor(progress * 3));
+function Inspection() {
   return (
     <section
-      className={`inspection ${paused ? 'inspection-static' : ''}`}
-      ref={root}
+      className="inspection inspection-static"
       aria-label={ui.pulse_one_product_inspection_2a3ef4}
     >
       <div className="inspection-sticky">
@@ -385,17 +357,16 @@ function Inspection({paused}: {paused: boolean}) {
           <div className="inspection-word" aria-hidden="true">
             {ui.pulse_64ab2b}
           </div>
-          <ProductVisual paused={paused} progress={progress} />
+          <ScenePoster />
           <div className="inspection-tag">
-            <span className="status-dot" /> {site.inspection[active].label}
+            <span className="status-dot" /> {site.inspection[0].label}
           </div>
         </div>
         <div className="inspection-content">
           {site.inspection.map((s, i) => (
             <article
               key={s.number}
-              className={`inspection-step ${active === i ? 'active' : ''}`}
-              aria-hidden={!paused && active !== i}
+              className={`inspection-step ${i === 0 ? 'active' : ''}`}
             >
               <span className="chapter-number">
                 {ui._8a5eda}
@@ -410,8 +381,8 @@ function Inspection({paused}: {paused: boolean}) {
             <ArrowUpRight size={18} />
           </Link>
           <div className="chapter-bars" aria-hidden="true">
-            {site.inspection.map((s, i) => (
-              <span className={active >= i ? 'filled' : ''} key={s.number} />
+            {site.inspection.map((s) => (
+              <span className="filled" key={s.number} />
             ))}
           </div>
           <small>
@@ -554,11 +525,10 @@ export function CatalogView({
         </label>
         <label className="sort-select">
           <SlidersHorizontal size={16} />
-          <span className="sr-only">{ui.sort_products_2fc7a4}</span>
-          <select value={sort} onChange={(e) => onSortChange(e.target.value)}>
-            <option value="featured">{ui.featured_c533ca}</option>
-            <option value="price-asc">{ui.price_low_to_high_b46704}</option>
-            <option value="price-desc">{ui.price_high_to_low_f2aec5}</option>
+          <span className="sr-only">Sort products</span>
+          <select value={sort === 'name-asc' ? sort : 'featured'} onChange={(e) => onSortChange(e.target.value)}>
+            <option value="featured">Featured</option>
+            <option value="name-asc">Name: A to Z</option>
           </select>
         </label>
       </div>
@@ -573,7 +543,7 @@ export function CatalogView({
             <X size={14} />
           </button>
         )}
-        <span>{ui.example_prices_usd_405370}</span>
+        <span>DESIGN STUDIES / ORDERING NOT OPEN</span>
       </div>
       {items.length ? (
         <div className="product-grid">
@@ -601,9 +571,7 @@ export function ProductDetailView({
   product: RecoveryProduct;
   paused: boolean;
 }) {
-  const [option, setOption] = useState(p.options[0]);
   const [angle, setAngle] = useState(0);
-  const {add} = useBag();
   return (
     <section className="page product-page">
       <Link to="/collections/all" className="back-link">
@@ -638,7 +606,7 @@ export function ProductDetailView({
           ) : (
             <img
               src={p.image}
-              alt={`${p.name} concept design`}
+              alt={`${p.name} design render`}
               width="1000"
               height="1000"
             />
@@ -648,52 +616,19 @@ export function ProductDetailView({
           <p className="eyebrow">{p.kind}</p>
           <h1>{p.name}</h1>
           <p className="product-description">{p.description}</p>
-          <div className="pdp-price">
-            <strong>{money(p.price)}</strong>
-            <span>{ui.example_price_usd_1dda14}</span>
-          </div>
+          <p className="product-availability">{editorial.ui.productAvailability}</p>
           <div className="color-row">
             <span className={`color-dot ${p.id}`} />
             {p.color}
           </div>
-          <fieldset className="product-options">
-            <legend>{ui.choose_your_option_9c33f7}</legend>
-            {p.options.map((o) => (
-              <label className={option === o ? 'selected' : ''} key={o}>
-                <input
-                  type="radio"
-                  name="product-option"
-                  value={o}
-                  checked={option === o}
-                  onChange={() => setOption(o)}
-                />
-                {o}
-                {option === o && <Check size={16} />}
-              </label>
-            ))}
-          </fieldset>
-          <button className="button full" onClick={() => add(p.id, option)}>
-            {ui.add_to_bag_23a264}
-            <Plus size={19} />
-          </button>
-          <p className="small muted">
-            {ui.local_demo_no_payment_shipping_or_order_place_dd1738}
-          </p>
+          <Link className="button full" to="/journal">{editorial.ui.productDesignAction} <ArrowUpRight size={19} /></Link>
           <div className="product-accordions">
             <details open>
               <summary>
-                {ui.the_details_01ed7e}
+                {editorial.ui.productDesignTitle}
                 <Plus size={17} />
               </summary>
-              <p>{p.detail}</p>
-              <dl>
-                {p.specs.map(([k, v]) => (
-                  <div key={k}>
-                    <dt>{k}</dt>
-                    <dd>{v}</dd>
-                  </div>
-                ))}
-              </dl>
+              <p>{editorial.ui.productDesignDetail}</p>
             </details>
             <details>
               <summary>
@@ -743,9 +678,10 @@ export function ProductDetailView({
 export function CartView() {
   return (
     <div className="page narrow">
-      <p className="eyebrow">{ui.your_collection_032a5e}</p>
-      <h1>{ui.your_bag_a3fe52}</h1>
-      <BagContents />
+      <p className="eyebrow">ORDERING</p>
+      <h1>{editorial.ui.cartTitle}</h1>
+      <p>{editorial.ui.cartBody}</p>
+      <Link className="button" to="/collections/all">Explore the collection <ArrowUpRight size={18} /></Link>
     </div>
   );
 }

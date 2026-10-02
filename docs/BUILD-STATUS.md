@@ -1,6 +1,12 @@
 # Build status
 
-Updated 2026-09-24. **The visual storefront is live at https://regenai.zahidul-islam.com. Full Shopify integration is paused and incomplete.** Derived from the private project dossier and [master plan](../PROJECT_PLAN.md). Architecture, security, reliability, scale and compliance documentation: [docs index](README.md).
+Updated 2026-10-03. **The expanded design-study storefront is live at https://regenai.zahidul-islam.com; full Shopify commerce remains incomplete.** Derived from the private project dossier and [master plan](../PROJECT_PLAN.md). Architecture, security, reliability, scale and compliance documentation: [docs index](README.md).
+
+## Current storefront release — 2026-10-03
+
+The ten-phase plan now governs completion. The home has visible original product imagery, a compact inspection section, category entry points, studio stories and FAQ. A journal index and three design articles were added. Product pages hide unverified prices and purchase controls; ordering remains closed. Read-only Shopify inventory found 15 unrelated sample products and no RegenAI recovery merchandise, so genuine product specifications, variants, prices, stock and fulfillment remain prerequisites. The updated static frontend was promoted on the existing VPS after a 28/28-file no-drift check; the previous release is retained for rollback.
+
+Current checks: 95 storefront unit tests passed with one existing Windows-specific skip; whole-workspace TypeScript and lint passed with four existing warnings; frontend and final Hydrogen builds passed. Local Chrome verified desktop and 390px mobile, visible hero imagery, three inspection details, journal/article/product/filter/cart routes, and no prices or Add to bag on those pages. The actual Hydrogen Node server returned HTTP 200 for home, journal, article, collection, product, cart, robots and sitemap; an unknown article returned 404. A first-party image CSP failure found during Node testing was corrected; the final served product route loaded imagery and a 3D canvas with no page console errors or missing assets. The promoted static container reports healthy; public Chrome loaded the new article and product routes, with product assets HTTP 200, zero page console errors and no 390px overflow. Independent review, accessibility rerun and integrated commerce flows remain open. Historical verification below is retained with its original date and must not be read as the current release verdict.
 
 ## Latest verification — 2026-09-24
 

@@ -1,5 +1,11 @@
 # Live frontend review
 
+## Updated visual storefront — 2026-10-03
+
+The expanded design-study storefront is live at **https://regenai.zahidul-islam.com**. It adds a visible product hero, compact inspection, category entry points, journal index and three articles, plus a home FAQ. Product pages state that ordering is closed and show no invented prices or purchase controls. The connected Shopify store has no verified RegenAI recovery merchandise, so this release does not enable checkout or establish full-project readiness.
+
+Before promotion, all 28 files in the prior live release matched the saved local manifest. The updated static build was deployed as a separate 29-file versioned release using the existing Compose frontend service; the prior release remains intact. Compose configuration validated, the recreated container reported running/healthy, and all **29/29** uploaded files matched the local SHA-256 manifest after deployment. Public Chrome opened the new article and Pulse One product pages; product assets returned HTTP 200, the product route had no page console errors or purchase control, and its 390px viewport had no horizontal overflow. The local storefront gate results are in [build status](BUILD-STATUS.md). Accessibility rerun, fresh independent review, real commerce and merchant-security gates remain outstanding.
+
 Updated 2026-09-22. The selected new design is available at **https://regenai.zahidul-islam.com**.
 
 This release publishes the standalone visual demo: collection browsing, product pages, recovery finder, local demo bag, informational pages, Blender product assets and Three.js motion. Shopify backend integration and real checkout remain unfinished and paused. Demo disclosures and search-engine noindex remain enabled.

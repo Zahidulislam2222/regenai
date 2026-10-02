@@ -10,18 +10,15 @@ const recoveryRoutes = layout('routes/recovery/layout.tsx', [
   route('quiz', 'routes/recovery/finder.tsx'),
   route('about', 'routes/recovery/about.tsx'),
   route('evidence', 'routes/recovery/evidence.tsx'),
+  route('journal', 'routes/recovery/journal.tsx'),
+  route('journal/:slug', 'routes/recovery/journal-article.tsx'),
   route('policies/:policy', 'routes/recovery/policy.tsx'),
   route('cart', 'routes/cart.tsx'),
   route('*', 'routes/recovery/not-found.tsx'),
 ]);
 
 const supersededStorefrontPages = [
-  'routes/_index.tsx',
   'routes/cart.tsx',
-  'routes/collections.$handle.tsx',
-  'routes/products.$handle.tsx',
-  'routes/search.tsx',
-  'routes/quiz.tsx',
   'routes/recovery/**',
 ];
 

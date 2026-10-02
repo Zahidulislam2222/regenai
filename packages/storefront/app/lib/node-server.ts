@@ -252,7 +252,7 @@ function createApplication(options: NodeRuntimeOptions, clientDirectory: string)
         return servePublicFile(request, inspected.pathname, clientDirectory, options.settings.nodeServer.maxStaticFileBytes);
       }
       const canonicalUrl = new URL(raw.target, options.settings.canonicalOrigin);
-      let body = request.body;
+      let body: ReadableStream<Uint8Array> | null = request.body;
       if (body && request.method !== 'GET' && request.method !== 'HEAD') {
         let bodyBytes = 0;
         body = body.pipeThrough(new TransformStream<Uint8Array, Uint8Array>({
@@ -310,11 +310,11 @@ function createApplication(options: NodeRuntimeOptions, clientDirectory: string)
         },
       };
       raw.handlerStarted?.();
-      const workerTask = app.fetch(
+      const workerTask = Promise.resolve(app.fetch(
           canonicalRequest,
           options.env,
           executionContext as unknown as ExecutionContext,
-        ).catch(() => {
+        )).catch(() => {
           logSafeError('requestFailed');
           return jsonResponse(500, 'An unexpected error occurred');
         });

@@ -1,0 +1,109 @@
+{
+  "categories": [
+    {
+      "slug": "release",
+      "filter": "Release",
+      "label": "01 / RELEASE",
+      "title": "Slow the pace.",
+      "body": "Explore compact tools shaped for a moment of pause after a demanding day.",
+      "image": "/media/pulse.png",
+      "alt": "Blue Pulse One form study"
+    },
+    {
+      "slug": "move",
+      "filter": "Move",
+      "label": "02 / MOVE",
+      "title": "Keep moving.",
+      "body": "Browse portable forms designed around simple, everyday movement routines.",
+      "image": "/media/bands.png",
+      "alt": "Blue and bone Range Kit form study"
+    },
+    {
+      "slug": "reset",
+      "filter": "Reset",
+      "label": "03 / RESET",
+      "title": "Make space to reset.",
+      "body": "Find objects imagined for a quieter transition between activity and rest.",
+      "image": "/media/wrap.png",
+      "alt": "Restore Wrap form study"
+    }
+  ],
+  "stories": [
+    {
+      "slug": "making-pulse-one",
+      "eyebrow": "DESIGN NOTES / 01",
+      "title": "Making Pulse One",
+      "summary": "From a Blender form study to an object you can inspect on screen.",
+      "image": "/media/pulse.png",
+      "alt": "Original blue Pulse One render",
+      "paragraphs": [
+        "Pulse One began as a study in silhouette: a rounded contact head, a clean cylindrical body and a grip with a distinct visual rhythm. The original model was built in Blender, then prepared as a lightweight web asset.",
+        "An interactive view lets visitors turn the form and notice details that a single photograph might miss. A still image remains available when motion is reduced or 3D rendering is unavailable.",
+        "This is a design study. Performance, materials, manufacturing details and availability need physical validation before they can be described as product facts."
+      ]
+    },
+    {
+      "slug": "a-calmer-product-page",
+      "eyebrow": "DESIGN NOTES / 02",
+      "title": "A calmer way to explore",
+      "summary": "Why the collection puts clear choices and honest details ahead of noise.",
+      "image": "/media/lab.webp",
+      "alt": "Calm interior used in the RegenAI design direction",
+      "paragraphs": [
+        "A useful product page should answer simple questions first: what is the object, what choices are available and what is still unknown. We designed the collection around those decisions rather than urgency or unsupported promises.",
+        "The visual language uses warm neutral space and a strong blue accent so the form stays easy to see. Supporting information is grouped close to the product instead of scattered across the page.",
+        "As real merchandise is finalized, photographs, specifications, prices and availability will come from the product source of truth."
+      ]
+    },
+    {
+      "slug": "how-the-finder-works",
+      "eyebrow": "DESIGN NOTES / 03",
+      "title": "How the finder works",
+      "summary": "A simple preference guide with results you can understand.",
+      "image": "/media/roller.png",
+      "alt": "Original Form Roller render",
+      "paragraphs": [
+        "The finder starts with three choices: where you want to focus, what your day looks like and the kind of routine you prefer. It then ranks the collection using a fixed set of product attributes.",
+        "Each result explains why it appeared. The answers stay on the page and are not saved as a personal profile or sent to an AI service.",
+        "The finder helps you browse forms and routines. It does not assess a condition or recommend treatment."
+      ]
+    }
+  ],
+  "ui": {
+    "categoriesEyebrow": "EXPLORE BY ROUTINE",
+    "categoriesTitle": "Find your way in.",
+    "categoriesIntro": "Three starting points for browsing the collection.",
+    "categoryAction": "Explore",
+    "journalEyebrow": "FROM THE STUDIO",
+    "journalTitle": "The thinking behind the form.",
+    "journalAll": "All design notes",
+    "journalLeadAction": "Read the story",
+    "questionsEyebrow": "GOOD TO KNOW",
+    "questionsTitle": "Questions, answered clearly.",
+    "journalPageEyebrow": "REGENAI / DESIGN NOTES",
+    "journalPageTitle": "Ideas behind the objects.",
+    "journalPageIntro": "A closer look at the product forms, digital craft and decisions shaping the collection.",
+    "journalCardAction": "Read article",
+    "journalMoreAction": "Explore more design notes",
+    "productDesignTitle": "Design direction",
+    "productDesignDetail": "The image shows an original form study. Materials, performance, included items and available options have not been confirmed.",
+    "productAvailability": "In development · Ordering opens after product details and availability are confirmed.",
+    "productDesignAction": "Explore the design notes",
+    "cartTitle": "Good things take care.",
+    "cartBody": "Ordering is not open while product details, inventory and fulfillment are being confirmed."
+  },
+  "questions": [
+    {
+      "question": "Can I place an order now?",
+      "answer": "Ordering is not open while product specifications, inventory and fulfillment are being finalized. You can explore the collection and design notes in the meantime."
+    },
+    {
+      "question": "Are these medical devices?",
+      "answer": "No medical purpose, certification or clinical performance is claimed for the current product studies. The finder is a browsing guide, not a diagnosis."
+    },
+    {
+      "question": "How are finder results chosen?",
+      "answer": "Results follow the preferences you select and the attributes listed for each form. The matching rules are deterministic and your answers stay in this page."
+    }
+  ]
+}
