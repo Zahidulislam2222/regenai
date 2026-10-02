@@ -12,6 +12,11 @@ export default defineConfig({
     environment: 'happy-dom',
     globals: true,
     setupFiles: ['./tests/setup.ts'],
+    server: {
+      deps: {
+        inline: ['@shopify/hydrogen', 'react-router'],
+      },
+    },
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

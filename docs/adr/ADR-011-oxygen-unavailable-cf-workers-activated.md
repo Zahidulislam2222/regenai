@@ -1,5 +1,8 @@
 # ADR-011 — Oxygen unavailable on dev stores; Cloudflare Workers fallback activated
 
+> Planning update (2026-09-21): historical decision preserved. Current hosting, eligibility, runtime, cost and security assumptions must be checked against [PROJECT_PLAN.md](../../PROJECT_PLAN.md). Its audited findings supersede conflicting blanket claims here; no infrastructure migration has been performed.
+
+
 **Status:** Accepted
 **Date:** 2026-04-20 (Day 10 remediation)
 **Amends:** ADR-004 (Oxygen primary + Cloudflare Pages fallback documented)

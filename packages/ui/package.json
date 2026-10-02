@@ -9,7 +9,9 @@
     "url": "https://github.com/Zahidulislam2222/regenai.git",
     "directory": "packages/ui"
   },
-  "publishConfig": { "access": "public" },
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -23,8 +25,14 @@
     "./styles.css": "./dist/styles.css",
     "./tokens": "./dist/tokens.js"
   },
-  "files": ["dist", "README.md", "LICENSE"],
-  "sideEffects": ["*.css"],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "*.css"
+  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
@@ -57,8 +65,15 @@
     "tailwind-merge": "^3.0.0"
   },
   "devDependencies": {
+    "@storybook/addon-a11y": "10.6.0",
+    "@storybook/addon-docs": "10.6.0",
+    "@storybook/react": "10.6.0",
+    "@storybook/react-vite": "10.6.0",
+    "@tailwindcss/vite": "4.2.2",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
+    "storybook": "10.6.0",
+    "tailwindcss": "4.2.2",
     "tsup": "^8.3.0",
     "typescript": "^5.6.0"
   }

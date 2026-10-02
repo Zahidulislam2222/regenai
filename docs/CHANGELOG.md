@@ -4,6 +4,21 @@ All notable changes to RegenAI documented here. Follows [Keep a Changelog](https
 
 ## [Unreleased]
 
+### Added — 2026-09-24
+- Public documentation set: `docs/ARCHITECTURE.md`, `docs/RELIABILITY.md` (99.9% availability target, 99.0% floor, SLIs, error budget, DR, incident response), `docs/SECURITY-MODEL.md` (threat model, controls, known gaps), `docs/PRIVACY.md`, `docs/COMPLIANCE.md`, `docs/ACCESSIBILITY.md`, `docs/README.md` index.
+- Rewritten `docs/SCALABILITY.md`: capacity model for 10k / 100k / 1M+ concurrent sessions with provider limits verified against official Shopify and Cloudflare documentation.
+- Root `SECURITY.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`; GitHub issue templates and pull-request template.
+- READMEs for the merchant app (`packages/app`) and Shopify Functions (`packages/app/extensions`).
+
+### Changed — 2026-09-24
+- Root, storefront and design-system READMEs rewritten to match the current code and evidence (storefront README previously contained the stock Hydrogen template; design-system README overstated npm publication, Storybook coverage and RTL support).
+- Availability objective raised from 99.0% to a 99.9% target with a 99.0% floor.
+- Roadmap restructured into milestones and phases for public readers.
+
+### Fixed — 2026-09-24
+- `packages/app/Cargo.toml` comment stated a ~1.5 MB Function size cap; Shopify's documented limit is 256 kB.
+- `packages/app/package.json` description no longer lists features that do not exist yet.
+
 ## [0.1.0] — Week 1 foundation (Days 1–7) — 2026-04-20
 
 ### Added

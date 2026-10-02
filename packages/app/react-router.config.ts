@@ -8,6 +8,6 @@ export default {
     // manifest paths (both must agree on `build/client/.vite/manifest.json`).
     // Without this flag: client output goes to `dist/` while SSR phase
     // looks in `build/`, causing ENOENT at build time.
-    unstable_viteEnvironmentApi: true,
+    v8_viteEnvironmentApi: true,
   },
 } satisfies Config;

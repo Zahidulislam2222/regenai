@@ -1,6 +1,7 @@
 import * as serverBuild from 'virtual:react-router/server-build';
 import {createRequestHandler, storefrontRedirect} from '@shopify/hydrogen';
-import {createHydrogenRouterContext} from '~/lib/context';
+import {createHydrogenRouterContext, type HydrogenExecutionContext} from '~/lib/context';
+import {logSafeError} from '~/lib/safe-logger.server';
 
 /**
  * Export a fetch handler in module format.
@@ -9,7 +10,7 @@ export default {
   async fetch(
     request: Request,
     env: Env,
-    executionContext: ExecutionContext,
+    executionContext: HydrogenExecutionContext,
   ): Promise<Response> {
     try {
       const hydrogenContext = await createHydrogenRouterContext(
@@ -24,17 +25,14 @@ export default {
        */
       const handleRequest = createRequestHandler({
         build: serverBuild,
-        mode: process.env.NODE_ENV,
+        mode: hydrogenContext.settings.mode,
         getLoadContext: () => hydrogenContext,
       });
 
       const response = await handleRequest(request);
 
       if (hydrogenContext.session.isPending) {
-        response.headers.set(
-          'Set-Cookie',
-          await hydrogenContext.session.commit(),
-        );
+        response.headers.append('Set-Cookie', await hydrogenContext.session.commit());
       }
 
       if (response.status === 404) {
@@ -51,8 +49,8 @@ export default {
       }
 
       return response;
-    } catch (error) {
-      console.error(error);
+    } catch {
+      logSafeError('requestFailed');
       return new Response('An unexpected error occurred', {status: 500});
     }
   },

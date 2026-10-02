@@ -1,59 +1,63 @@
 import {createHydrogenContext} from '@shopify/hydrogen';
 import {AppSession} from '~/lib/session';
 import {CART_QUERY_FRAGMENT} from '~/lib/fragments';
+import {loadStorefrontSettings} from '~/lib/settings.server';
 
-// Define the additional context object
-const additionalContext = {
-  // Additional context for custom properties, CMS clients, 3P SDKs, etc.
-  // These will be available as both context.propertyName and context.get(propertyContext)
-  // Example of complex objects that could be added:
-  // cms: await createCMSClient(env),
-  // reviews: await createReviewsClient(env),
-} as const;
-
-// Automatically augment HydrogenAdditionalContext with the additional context type
-type AdditionalContextType = typeof additionalContext;
+type AdditionalContextType = {settings: ReturnType<typeof loadStorefrontSettings>};
+export type HydrogenExecutionContext = Pick<ExecutionContext, 'waitUntil'> & {cache?: Cache};
 
 declare global {
   interface HydrogenAdditionalContext extends AdditionalContextType {}
 }
 
 /**
- * Creates Hydrogen context for React Router 7.9.x
+ * Creates Hydrogen context with validated server-side settings.
  * Returns HydrogenRouterContextProvider with hybrid access patterns
  * */
 export async function createHydrogenRouterContext(
   request: Request,
   env: Env,
-  executionContext: ExecutionContext,
+  executionContext: HydrogenExecutionContext,
 ) {
-  /**
-   * Open a cache instance in the worker and a custom session instance.
-   */
-  if (!env?.SESSION_SECRET) {
-    throw new Error('SESSION_SECRET environment variable is not set');
-  }
+  const settings = loadStorefrontSettings(env);
 
   const waitUntil = executionContext.waitUntil.bind(executionContext);
   const [cache, session] = await Promise.all([
-    caches.open('hydrogen'),
-    AppSession.init(request, [env.SESSION_SECRET]),
+    executionContext.cache ?? caches.open(settings.cache.namespace),
+    AppSession.init(request, settings.session),
   ]);
 
   const hydrogenContext = createHydrogenContext(
     {
-      env,
+      env: {
+        ...env,
+        SESSION_SECRET: settings.session.secret,
+        PUBLIC_STOREFRONT_API_TOKEN: settings.storefrontApiToken,
+        PRIVATE_STOREFRONT_API_TOKEN:
+          settings.privateStorefrontApiToken ?? env.PRIVATE_STOREFRONT_API_TOKEN,
+        PUBLIC_STORE_DOMAIN: settings.shopDomain,
+        PUBLIC_STOREFRONT_ID: settings.storefrontId,
+        PUBLIC_CUSTOMER_ACCOUNT_API_CLIENT_ID:
+          settings.customerAccount.enabled
+            ? settings.customerAccount.clientId
+            : '',
+        PUBLIC_CHECKOUT_DOMAIN: settings.checkoutDomain,
+        SHOP_ID: settings.customerAccount.enabled ? settings.customerAccount.shopId : '',
+      },
       request,
       cache,
       waitUntil,
+      logErrors: false,
       session,
       // Or detect from URL path based on locale subpath, cookies, or any other strategy
-      i18n: {language: 'EN', country: 'US'},
+      storefront: {apiVersion: settings.storefrontApiVersion},
+      customerAccount: {apiVersion: settings.customerAccount.apiVersion},
+      i18n: settings.locale,
       cart: {
         queryFragment: CART_QUERY_FRAGMENT,
       },
     },
-    additionalContext,
+    {settings},
   );
 
   return hydrogenContext;

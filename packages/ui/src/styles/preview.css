@@ -1,6 +1,8 @@
 /* Storybook preview — inlines the same brand tokens as storefront's tailwind.css @theme block,
    so component stories render with the clinical-modern aesthetic without depending on the
    storefront's build. */
+@import "tailwindcss";
+@source "../components/ui";
 
 :root {
   --color-bone: #F8F6F1;

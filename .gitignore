@@ -4,6 +4,14 @@
 !.env.example
 *.pem
 *.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+.npmrc
+.aws/
+.credentials/
+.secrets/
 
 # Node
 node_modules/
@@ -59,3 +67,22 @@ docs/RESUME.md
 tmp/
 temp/
 *.tmp
+
+# Private recovery and project memory
+memory/
+CREDENTIALS.md
+PROJECT-DOSSIER.md
+tests/manual/
+assets/source/
+
+# Local browser review tooling and evidence
+**/tests/manual/
+.playwright-mcp/
+
+# Machine-local agent configuration and document linkage
+.claude/
+.codex/
+my-project-view/.doc-id
+
+# Local connector setup
+.mcp.json

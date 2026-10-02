@@ -13,12 +13,11 @@ const preview: Preview = {
       options: {runOnly: {type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag22aa']}},
     },
     backgrounds: {
-      default: 'bone',
-      values: [
-        {name: 'bone', value: '#F8F6F1'},
-        {name: 'card', value: '#FFFFFF'},
-        {name: 'dark', value: '#0F1419'},
-      ],
+      options: {
+        bone: {name: 'bone', value: '#F8F6F1'},
+        card: {name: 'card', value: '#FFFFFF'},
+        dark: {name: 'dark', value: '#0F1419'},
+      },
     },
     options: {
       storySort: {
@@ -26,6 +25,7 @@ const preview: Preview = {
       },
     },
   },
+  initialGlobals: {backgrounds: {value: 'bone'}},
 };
 
 export default preview;

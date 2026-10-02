@@ -4,7 +4,9 @@
  * /pages/styleguide is noindex via meta tag (see route).
  */
 
-export const loader = () => {
+import type {Route} from './+types/robots[.]txt';
+
+export const loader = ({context}: Route.LoaderArgs) => {
   const body = [
     'User-agent: *',
     'Allow: /',
@@ -14,7 +16,7 @@ export const loader = () => {
     'Disallow: /account/',
     'Disallow: /pages/styleguide',
     '',
-    'Sitemap: https://regenai.com/sitemap.xml',
+    `Sitemap: ${new URL('/sitemap.xml', context.settings.canonicalOrigin).toString()}`,
     '',
   ].join('\n');
 

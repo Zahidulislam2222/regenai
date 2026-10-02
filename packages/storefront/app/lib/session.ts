@@ -4,6 +4,7 @@ import {
   type SessionStorage,
   type Session,
 } from 'react-router';
+import type {StorefrontSettings} from '~/lib/settings.server';
 
 /**
  * This is a custom session implementation for your Hydrogen shop.
@@ -21,14 +22,19 @@ export class AppSession implements HydrogenSession {
     this.#session = session;
   }
 
-  static async init(request: Request, secrets: string[]) {
+  static async init(
+    request: Request,
+    settings: StorefrontSettings['session'],
+  ) {
     const storage = createCookieSessionStorage({
       cookie: {
-        name: 'session',
-        httpOnly: true,
-        path: '/',
-        sameSite: 'lax',
-        secrets,
+        name: settings.cookieName,
+        httpOnly: settings.httpOnly,
+        path: settings.path,
+        sameSite: settings.sameSite,
+        secure: settings.secure,
+        maxAge: settings.maxAgeSeconds,
+        secrets: [settings.secret],
       },
     });
 

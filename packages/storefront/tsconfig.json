@@ -37,6 +37,7 @@
       "~/*": ["app/*"]
     },
     "noEmit": true,
+    "allowImportingTsExtensions": true,
     "rootDirs": [".", "./.react-router/types"],
     "incremental": true,
     "composite": false,

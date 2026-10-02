@@ -1,4 +1,5 @@
-import {data, type LoaderFunctionArgs, useLoaderData} from 'react-router';
+import {data, useLoaderData} from 'react-router';
+import type {Route} from './+types/admin.reviews';
 import {
   Page,
   Layout,
@@ -39,7 +40,7 @@ interface ReviewRow {
   fda_class: string | null;
 }
 
-export async function loader({context}: LoaderFunctionArgs) {
+export async function loader({context}: Route.LoaderArgs) {
   const env = context.cloudflare.env;
   let rows: ReviewRow[] = [];
   let error: string | null = null;

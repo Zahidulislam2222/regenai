@@ -18,6 +18,6 @@
     "baseUrl": "./src",
     "paths": { "@/*": ["*"] }
   },
-  "include": ["src/**/*", "src/**/*.tsx"],
+  "include": ["src/**/*", ".storybook/**/*.ts"],
   "exclude": ["node_modules", "dist", "storybook-static"]
 }

@@ -1,48 +1,64 @@
-# RegenAI Roadmap
+# Roadmap
 
-Phase structure at a glance. Master build plan: [`PROJECT_PLAN.md`](../PROJECT_PLAN.md) (20 sections, 105 days).
+Updated 2026-09-24. Task-level acceptance criteria and dependencies live in the [master plan](../PROJECT_PLAN.md). Current evidence lives in [BUILD-STATUS.md](BUILD-STATUS.md). Phases are ordered by dependency; dates are not promised.
 
-## Phase 1 — Storefront + custom app + Functions + ML (Days 1–45)
+## Where the project is
 
-| Milestone | Status | Tag |
+| Milestone | Outcome | Status |
 |---|---|---|
-| Foundation scaffold | ✅ | `v0.1-week1-foundation` (Day 7) |
-| Discovery (PLP + PDP + cart) | 🚧 Days 8–14 | `v0.2-week2-discovery` |
-| Plus features (B2B + Markets + Checkout Extensibility) | 📅 Days 15–21 | `v0.3-week3-plus-features` |
-| Custom subscription engine + B2B portal + affiliate | 📅 Days 22–28 | `v0.4-week4-subscriptions` |
-| Data pipeline + ML recommendations + observability | 📅 Days 29–35 | `v0.5-week5-ml-observability` |
-| Quality / security / i18n / SEO / compliance-as-code | 📅 Days 36–42 | `v0.6-week6-quality` |
-| Docs + case-study site + Loom + release | 📅 Days 43–45 | `v1.0-phase1-complete` |
+| **M1 — Visual storefront** | Original 3D product design, catalog, finder, bag; live for review | **Done** — live at https://regenai.zahidul-islam.com |
+| **M2 — Integrated Shopify store** | Real development-store catalog, cart, accounts and test checkout through Hydrogen; secured merchant app; verified Functions | In progress |
+| **M3 — Production-grade platform** | M2 plus security, privacy, accessibility, observability, reliability and scale evidence; backups and rollback drilled | Planned |
 
-## Phase 2 — Sleep / Mental / Stress / Meditation + mobile + community (Days 46–75)
+## Phases
 
-- React Native / Expo companion app
-- BLE multi-device pairing + Apple HealthKit / Google Fit OAuth
-- Community platform (Supabase) + OpenAI Moderation + crisis flagging
-- Cross-vertical ML v2 (cohort recommendations)
-- +40 SKUs across sleep / mental wellness / stress relief / smart fitness / meditation
-- `v2.0-phase2-complete` (Day 75)
+### Phase A — Frontend ✅
+Selected visual design, original Blender assets, Three.js product inspection, accessible shopping flow, live deployment with rollback.
 
-## Phase 3 — Nutrition / AI monitoring / Home gym / Women's health / Anti-aging / Platform layer (Days 76–105)
+### Phase B — Foundation and Shopify integration 🔄
+- Repair full-workspace build, typecheck and lint
+- Finish the Node server adapter for self-hosted Hydrogen (settings, bounded public cache, safe logging — built, integration pending)
+- Port the visual storefront into Hydrogen routes with real Storefront API data
+- Real cart, Customer Account API sign-in, sandbox checkout on a development store
+- Dependency advisory remediation; masked CI checks made honest
 
-- DSHEA-compliant supplement catalog + custom cadence engine
-- Biomarker lab integrations (Quest / InsideTracker / Function Health — scaffolded, contracts out-of-scope)
-- CGM-adjacent + smart rings + at-home biomarker kits
-- Home gym smart equipment (mirror / cables / bike)
-- Women's health track with US state-by-state data residency (post-Dobbs)
-- Anti-aging / longevity protocols (DSHEA-compliant, no Rx peptides)
-- Multi-tenant B2B SaaS admin (white-label recommendation engine for clinics)
-- Shopify POS integration for physical retail
-- Telehealth partner scaffolds (Ro / Hims-adjacent)
-- `v3.0-phase3-complete` (Day 105)
+### Phase C — Merchant app and Shopify Functions
+- Close security release blockers SEC-01 to SEC-04 ([SECURITY-MODEL.md](SECURITY-MODEL.md)): token encryption, per-shop authorization, atomic OAuth state, isolated environments
+- Webhook intake with HMAC verification, queue, idempotency and dead-letter replay
+- Shopify mandatory privacy webhooks
+- Revalidate the four Functions against the current API version and run store activation tests (unit tests and WASM size already verified)
 
-## Post-105 (out of Phase 1 scope)
+### Phase D — Commerce features
+B2B pricing and company accounts, Shopify Markets (US/EU currencies and languages), subscriptions, checkout extensions — each enabled only after plan/capability verification.
 
-- Convert Partner Plus Dev Store to real Plus ($2,500/mo)
-- Real customer acquisition + paid ads
-- Real supplier / manufacturing / 3PL partnerships
-- Real clinical partnerships + telehealth contracts
-- Real FDA 510(k) filings for RegenAI-branded devices
-- Real EU MDR authorized representative
-- Real App Store / Google Play public releases (Apple Dev $99/year + Google Play $25 one-time)
-- Real Statsig / paid Snowflake / paid Segment upgrade
+### Phase E — Recommendations and data
+Deterministic recommendation baseline first. Optional AI recommendations only behind server-side configuration, with evaluation, disclosure and no sensitive inputs.
+
+### Phase P — Production readiness
+| Area | Deliverable |
+|---|---|
+| Security | OWASP ASVS L2 control mapping, negative auth/tenant tests, DAST, external penetration test before launch |
+| Privacy & legal | Processor register, consent where needed, rights handling, legal review — see [COMPLIANCE.md](COMPLIANCE.md) |
+| Accessibility | Manual screen-reader journeys, zoom/reflow, CI axe gates — see [ACCESSIBILITY.md](ACCESSIBILITY.md) |
+| SEO & AI search | Server-rendered HTML, structured data, sitemaps, canonical URLs, correct status codes |
+| Performance | Budgets for JS, images and 3D assets; Core Web Vitals p75 targets |
+| Observability | Metrics, redacted logs, traces, external uptime probes, burn-rate alerts |
+| Reliability | 99.9% availability target with 99.0% floor, error-budget policy, runbooks, restore drills — see [RELIABILITY.md](RELIABILITY.md) |
+
+### Phase S — Scale (10k → 100k → 1M+ concurrent users)
+| Step | Deliverable |
+|---|---|
+| S1 | Workload model and k6 scenarios with failing CI thresholds |
+| S2 | Stateless storefront proven on multiple instances behind a load balancer |
+| S3 | Cache coalescing, backpressure, timeouts/retry budgets, durable job queue |
+| S4 | Measured per-instance throughput and horizontal-scaling test |
+| S5 | Tier T1/T2 infrastructure templates (multi-host, autoscaling) |
+| S6 | Tier T3 design: multi-region origin, failover, launch-day playbook, provider capacity review |
+
+Details and math: [SCALABILITY.md](SCALABILITY.md).
+
+### Phase F — Release engineering
+Candidate-revision CI, staged deploys, parity checks, backup/restore, rollback drills, public verification.
+
+## Future backlog (not scheduled)
+Mobile app (sharing the `@regenai/ui` component API), wearable/BLE integrations, clinician-facing features, community features and white-label deployment. These are ideas, not commitments, and each would need its own privacy and regulatory review.
