@@ -96,9 +96,15 @@ describe('storefront settings boundary', () => {
     await expect(accountStatusWhenEnabled(settings.customerAccount.enabled, isLoggedIn)).resolves.toBe(false);
     expect(isLoggedIn).not.toHaveBeenCalled();
     expect(() => loadStorefrontSettings(validInput({CUSTOMER_ACCOUNT_ENABLED: 'true'})))
+      .toThrow('Invalid or missing setting: CUSTOMER_ACCOUNT_ENABLED');
+    expect(() => loadStorefrontSettings(validInput({
+      CUSTOMER_ACCOUNT_ENABLED: 'true',
+      PUBLIC_CANONICAL_ORIGIN: 'https://store.example.test',
+    })))
       .toThrow('Invalid or missing setting: PUBLIC_CUSTOMER_ACCOUNT_API_CLIENT_ID');
     expect(loadStorefrontSettings(validInput({
       CUSTOMER_ACCOUNT_ENABLED: 'true',
+      PUBLIC_CANONICAL_ORIGIN: 'https://store.example.test',
       PUBLIC_CUSTOMER_ACCOUNT_API_CLIENT_ID: 'test-client-id',
       SHOP_ID: 'test-shop-id',
     })).customerAccount.enabled).toBe(true);

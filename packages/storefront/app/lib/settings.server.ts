@@ -319,6 +319,9 @@ export function loadStorefrontSettings(input: SettingsInput): StorefrontSettings
     'CUSTOMER_ACCOUNT_API_VERSION',
   );
   const accountEnabled = flag(input, 'CUSTOMER_ACCOUNT_ENABLED', false);
+  if (accountEnabled && origin.protocol !== 'https:') {
+    invalid('CUSTOMER_ACCOUNT_ENABLED');
+  }
   const customerAccount: CustomerAccountSettings = accountEnabled
     ? (() => {
         const clientId = required(input, 'PUBLIC_CUSTOMER_ACCOUNT_API_CLIENT_ID');

@@ -14,6 +14,10 @@ const recoveryRoutes = layout('routes/recovery/layout.tsx', [
   route('journal/:slug', 'routes/recovery/journal-article.tsx'),
   route('policies/:policy', 'routes/recovery/policy.tsx'),
   route('cart', 'routes/cart.tsx'),
+  route('account', 'routes/account/index.tsx'),
+  route('account/login', 'routes/account/login.tsx'),
+  route('account/authorize', 'routes/account/authorize.tsx'),
+  route('account/logout', 'routes/account/logout.tsx'),
   route('*', 'routes/recovery/not-found.tsx'),
 ]);
 
