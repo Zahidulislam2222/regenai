@@ -1,5 +1,6 @@
 # Secrets & env
 .env
+.dev.vars*
 .env.*
 !.env.example
 *.pem
@@ -18,6 +19,7 @@ node_modules/
 .pnpm-store/
 dist/
 build/
+.build-verify/
 .next/
 .remix/
 .cache/

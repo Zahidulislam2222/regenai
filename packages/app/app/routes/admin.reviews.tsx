@@ -11,6 +11,7 @@ import {
   EmptyState,
   Banner,
 } from '@shopify/polaris';
+import {authenticatedShop, reviewQueueLimit} from '~/lib/merchant-auth';
 
 /**
  * Clinician review dashboard — first admin-app route for Day 15.
@@ -40,28 +41,26 @@ interface ReviewRow {
   fda_class: string | null;
 }
 
-export async function loader({context}: Route.LoaderArgs) {
+export async function loader({context, request}: Route.LoaderArgs) {
   const env = context.cloudflare.env;
+  if (!env?.DB) throw new Response('Merchant database unavailable', {status: 503});
+  const shop = await authenticatedShop(env.DB, request);
+  if (!shop) throw new Response('Merchant authentication required', {status: 401});
   let rows: ReviewRow[] = [];
   let error: string | null = null;
 
-  if (!env?.DB) {
-    error = 'D1 binding "DB" is not configured. Run: wrangler d1 create regenai-app';
-  } else {
-    try {
-      const result = await env.DB.prepare(
-        `SELECT id, product_handle, product_title, submitter_id,
+  try {
+    const result = await env.DB.prepare(
+      `SELECT id, product_handle, product_title, submitter_id,
                 submitted_at, status, claim_summary, evidence_level, fda_class
          FROM clinician_review_queue
-         WHERE status = 'pending'
+         WHERE status = 'pending' AND shop = ?
          ORDER BY submitted_at DESC
-         LIMIT 50`,
-      ).all<ReviewRow>();
-      rows = result.results ?? [];
-    } catch (err) {
-      // D1 will error if migrations haven't run yet — surface a helpful message.
-      error = err instanceof Error ? err.message : 'D1 query failed';
-    }
+         LIMIT ?`,
+    ).bind(shop, reviewQueueLimit(env)).all<ReviewRow>();
+    rows = result.results ?? [];
+  } catch {
+    error = 'Review queue is temporarily unavailable.';
   }
 
   return data({rows, error});

@@ -6,8 +6,6 @@
  * Day 20+ can swap to a library if the surface grows.
  */
 
-const SHOPIFY_API_VERSION = '2026-01';
-
 /**
  * Constant-time compare — guards the HMAC check against timing attacks.
  * Workers expose `crypto.subtle.timingSafeEqual` on recent compat dates;
@@ -21,6 +19,7 @@ function timingSafeEqual(a: Uint8Array, b: Uint8Array): boolean {
 }
 
 function hexToBytes(hex: string): Uint8Array {
+  if (!/^[a-fA-F0-9]{64}$/.test(hex)) return new Uint8Array(0);
   const bytes = new Uint8Array(hex.length / 2);
   for (let i = 0; i < bytes.length; i++) {
     bytes[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
@@ -36,12 +35,13 @@ export async function verifyOauthHmac(
   searchParams: URLSearchParams,
   apiSecret: string,
 ): Promise<boolean> {
-  const hmac = searchParams.get('hmac');
-  if (!hmac) return false;
+  const hmacs = searchParams.getAll('hmac');
+  if (hmacs.length !== 1) return false;
+  const hmac = hmacs[0];
 
   const sorted = [...searchParams.entries()]
     .filter(([k]) => k !== 'hmac' && k !== 'signature')
-    .sort(([a], [b]) => a.localeCompare(b))
+    .sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0)
     .map(([k, v]) => `${k}=${v}`)
     .join('&');
 
@@ -94,12 +94,15 @@ export function buildInstallUrl({
   appUrl: string;
   state: string;
 }): string {
+  const appOrigin = new URL(appUrl);
+  if (appOrigin.protocol !== 'https:' || appOrigin.pathname !== '/' || appOrigin.search || appOrigin.hash) {
+    throw new Error('Invalid Shopify app URL');
+  }
   const params = new URLSearchParams({
     client_id: apiKey,
     scope: scopes,
-    redirect_uri: `${appUrl}/auth/callback`,
+    redirect_uri: new URL('/auth/callback', appOrigin).toString(),
     state,
-    'grant_options[]': 'per-user',
   });
   return `https://${shop}/admin/oauth/authorize?${params.toString()}`;
 }
@@ -121,12 +124,22 @@ export async function exchangeCodeForToken({
     body: JSON.stringify({client_id: apiKey, client_secret: apiSecret, code}),
   });
   if (!res.ok) return null;
-  return (await res.json()) as {access_token: string; scope: string};
+  try {
+    const payload: unknown = await res.json();
+    if (!payload || typeof payload !== 'object') return null;
+    const candidate = payload as Record<string, unknown>;
+    if (typeof candidate.access_token !== 'string' || !candidate.access_token ||
+        typeof candidate.scope !== 'string') return null;
+    return {access_token: candidate.access_token, scope: candidate.scope};
+  } catch {
+    return null;
+  }
 }
 
 export function isValidShopDomain(shop: string | null): shop is string {
   if (!shop) return false;
-  return /^[a-zA-Z0-9][a-zA-Z0-9-]*\.myshopify\.com$/.test(shop);
+  const suffix = '.myshopify.com';
+  if (!shop.toLowerCase().endsWith(suffix)) return false;
+  const label = shop.slice(0, -suffix.length);
+  return label.length <= 63 && /^[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$/.test(label);
 }
-
-export const SHOPIFY = {API_VERSION: SHOPIFY_API_VERSION} as const;

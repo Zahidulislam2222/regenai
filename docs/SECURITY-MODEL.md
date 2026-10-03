@@ -48,10 +48,10 @@ These are tracked openly. The merchant app and Hydrogen integration **must not b
 
 | ID | Gap | Severity | Required fix |
 |---|---|---|---|
-| SEC-01 | Merchant OAuth access tokens are stored without the application-level encryption described in the schema comment | Release blocker | Encrypt tokens at rest (AES-GCM, key in secret store, rotation procedure) and test that no plaintext token is persisted |
-| SEC-02 | Merchant admin review route has no per-request authentication and no shop scoping | Release blocker | Authenticate every request with Shopify session tokens; add shop predicate to every query; negative unauthenticated and cross-tenant tests |
-| SEC-03 | OAuth `state` stored in Workers KV, which is eventually consistent — read-then-delete is not atomic | Release blocker | Move one-time state to a strongly consistent store (e.g. Durable Object or D1 transaction) |
-| SEC-04 | Preview, staging and production share the same D1/KV bindings | Release blocker | Separate resources per environment; never run migrations against shared data |
+| SEC-01 | Existing remote merchant tokens may be plaintext | Release blocker | Local callback encrypts new writes with shop-bound AES-GCM; configure remote secret, rotate legacy tokens and prove remote ciphertext before release |
+| SEC-02 | Deployed merchant review route lacks proven per-request auth and shop scoping | Release blocker | Local standalone-app repair uses an expiring opaque browser session and shop-bound list/detail queries; local 401/404 HTTP checks passed. Deploy and independently verify before real use. An embedded app would instead require Shopify ID tokens. |
+| SEC-03 | Deployed OAuth `state` previously used eventually consistent KV | Release blocker | Local repair uses browser-bound D1 state consumed by one `DELETE ... RETURNING`; local D1 and negative tests passed. Migrate remote D1 and verify before release. |
+| SEC-04 | Historical preview/staging bindings pointed at production D1/KV | Release blocker | Source bindings removed so those environments fail closed; provision and verify isolated databases before preview/staging deployments |
 | SEC-05 | `Strict-Transport-Security` header not present on live frontend responses | Medium | Enable HSTS at the edge after confirming all subdomains serve HTTPS |
 | SEC-06 | Dependency advisories: at the last audit (2026-09-21) 0 critical, 45 high, 13 moderate, 5 low, many in development tooling | High | Reachability review; targeted upgrades; CI gate on new high/critical |
 | SEC-07 | Some CI jobs mask failures (`continue-on-error`, `\|\| true`) | Medium | Remove masks so a red check means a real failure |

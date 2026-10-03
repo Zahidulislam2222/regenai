@@ -1,9 +1,10 @@
 import {redirect, type LoaderFunctionArgs} from 'react-router';
 import {buildInstallUrl, isValidShopDomain} from '~/lib/shopify';
+import {authConfig, createOauthState} from '~/lib/merchant-auth';
 
 /**
  * OAuth install entry point. Merchant hits /auth/install?shop=X.myshopify.com.
- * We generate a random state, stash it in KV, then redirect to the Shopify
+ * We generate a browser-bound random state in D1, then redirect to the Shopify
  * authorize URL. The callback verifies state + HMAC, exchanges code for
  * token, stores token in D1.
  */
@@ -17,17 +18,12 @@ export async function loader({request, context}: LoaderFunctionArgs) {
   }
 
   if (!env?.SHOPIFY_API_KEY || !env?.SHOPIFY_API_SECRET) {
-    return new Response(
-      'Missing SHOPIFY_API_KEY or SHOPIFY_API_SECRET. Set via `wrangler secret put`.',
-      {status: 500},
-    );
+    return new Response('Merchant authorization unavailable', {status: 503});
   }
-  if (!env?.SESSIONS) {
-    return new Response('KV binding "SESSIONS" not configured', {status: 500});
-  }
+  if (!env?.DB) return new Response('Merchant database unavailable', {status: 503});
 
-  const state = crypto.randomUUID();
-  await env.SESSIONS.put(`oauth:state:${state}`, shop, {expirationTtl: 600});
+  const {stateSeconds} = authConfig(env);
+  const {state, setCookie} = await createOauthState(env.DB, shop, stateSeconds);
 
   const installUrl = buildInstallUrl({
     shop,
@@ -36,5 +32,5 @@ export async function loader({request, context}: LoaderFunctionArgs) {
     appUrl: env.SHOPIFY_APP_URL,
     state,
   });
-  return redirect(installUrl);
+  return redirect(installUrl, {headers: {'Set-Cookie': setCookie}});
 }

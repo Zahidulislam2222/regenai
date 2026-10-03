@@ -4,12 +4,15 @@
 declare global {
   interface Env {
     DB: D1Database;
-    SESSIONS: KVNamespace;
     SHOPIFY_APP_URL: string;
     SHOPIFY_API_SCOPES: string;
     // Secrets (set via `wrangler secret put`, never in wrangler.toml):
     SHOPIFY_API_KEY?: string;
     SHOPIFY_API_SECRET?: string;
+    SHOPIFY_TOKEN_ENC_KEY?: string;
+    SHOPIFY_OAUTH_STATE_TTL_SECONDS: string;
+    SHOPIFY_SESSION_TTL_SECONDS: string;
+    REVIEW_QUEUE_LIMIT: string;
     SENTRY_APP_DSN?: string;
   }
 }
