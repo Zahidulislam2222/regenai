@@ -48,7 +48,7 @@ describe('BoundedHydrogenCache', () => {
     expect(storedKey).not.toContain('test-storefront-token');
     expect(JSON.stringify({body: Array.from(storedValue.body), headers: storedValue.headers})).not.toContain('test-storefront-token');
     expect(JSON.stringify({body: Array.from(storedValue.body), headers: storedValue.headers})).not.toContain('cart+buyer+variables');
-    await expect(cache.keys()).rejects.toThrow(/unsupported/);
+    await expect(cache.keys()).rejects.toHaveProperty('message', expect.stringMatching(/unsupported/));
     expect(errorSpy).not.toHaveBeenCalled();
     setSpy.mockRestore();
     errorSpy.mockRestore();
@@ -154,7 +154,7 @@ describe('BoundedHydrogenCache', () => {
     expect(await cache.match(longRequest)).toBeUndefined();
 
     const rangeRequest = new Request('https://shopify.dev/?range', {headers: {Range: 'bytes=0-1'}});
-    await expect(cache.put(rangeRequest, publicResponse())).rejects.toThrow(/range/);
+    await expect(cache.put(rangeRequest, publicResponse())).rejects.toHaveProperty('message', expect.stringMatching(/range/));
     expect(await cache.match(rangeRequest)).toBeUndefined();
 
     const cookieRequest = new Request('https://shopify.dev/?cookie', {headers: {Cookie: 'session=fake'}});
@@ -165,7 +165,7 @@ describe('BoundedHydrogenCache', () => {
     expect(await cache.match(authRequest)).toBeUndefined();
 
     const mutation = new Request('https://shopify.dev/?mutation', {method: 'POST', body: 'test'});
-    await expect(cache.put(mutation, publicResponse())).rejects.toThrow(/non-GET/);
+    await expect(cache.put(mutation, publicResponse())).rejects.toHaveProperty('message', expect.stringMatching(/non-GET/));
   });
 
   it('does not retain entries whose response header metadata exceeds the cap', async () => {

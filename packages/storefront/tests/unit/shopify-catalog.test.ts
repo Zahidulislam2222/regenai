@@ -77,8 +77,8 @@ describe('Shopify catalog ownership and mapping', () => {
 
   it('rejects incomplete pagination and never falls back to fixture data', async () => {
     const query = vi.fn().mockResolvedValue({products: {nodes: [], pageInfo: {hasNextPage: true, endCursor: 'same'}}});
-    await expect(listShopifyProducts(query, limits)).rejects.toThrow('Invalid Shopify catalog cursor');
-    await expect(listShopifyProducts(async () => {throw new Error('API unavailable');}, limits)).rejects.toThrow('API unavailable');
+    await expect(listShopifyProducts(query, limits)).rejects.toHaveProperty('message', expect.stringContaining('Invalid Shopify catalog cursor'));
+    await expect(listShopifyProducts(async () => {throw new Error('API unavailable');}, limits)).rejects.toHaveProperty('message', expect.stringContaining('API unavailable'));
   });
 
   it('limits direct lookup to owned handles and respects missing Shopify products', async () => {
