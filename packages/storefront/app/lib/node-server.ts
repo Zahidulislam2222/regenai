@@ -124,6 +124,18 @@ function reservedAssetPath(pathname: string): boolean {
   return pathname === '/favicon.svg' || pathname.startsWith('/assets/') || pathname.startsWith('/media/');
 }
 
+function protectHtmlResponse(response: Response): Response {
+  const contentType = response.headers.get('content-type')?.split(';', 1)[0].trim().toLowerCase();
+  if (contentType !== 'text/html') return response;
+  const headers = new Headers(response.headers);
+  headers.set('cache-control', 'private, no-store, no-transform');
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
 function sanitizeResponseStream(
   response: Response,
   deadlineSignal: AbortSignal,
@@ -330,7 +342,7 @@ function createApplication(options: NodeRuntimeOptions, clientDirectory: string)
         void response.body?.cancel().catch(() => undefined);
         return sanitizeResponseStream(jsonResponse(413, 'Payload too large'), requestSignal, clearDeadline);
       }
-      return sanitizeResponseStream(response, requestSignal, clearDeadline);
+      return sanitizeResponseStream(protectHtmlResponse(response), requestSignal, clearDeadline);
     },
   };
 }

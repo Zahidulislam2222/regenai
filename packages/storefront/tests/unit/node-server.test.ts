@@ -130,6 +130,30 @@ describe('Node Fetch runtime boundary', () => {
     });
   });
 
+  it('prevents edge HTML rewriting without changing JSON cache policy', async () => {
+    const worker: TestWorker = {
+      async fetch(request) {
+        if (new URL(request.url).pathname === '/api') {
+          return Response.json({ok: true}, {headers: {'cache-control': 'public, max-age=60'}});
+        }
+        return new Response('<!doctype html><html><body>Concept</body></html>', {
+          headers: {'content-type': 'text/html; charset=utf-8',
+            'content-security-policy': "default-src 'self'"},
+        });
+      },
+    };
+    const {runtime, port} = await startRuntime(worker);
+    runtimes.push(runtime);
+
+    const html = await runRequest(port);
+    expect(html.status).toBe(200);
+    expect(html.headers['cache-control']).toBe('private, no-store, no-transform');
+    expect(html.headers['content-security-policy']).toBe("default-src 'self'");
+    const json = await runRequest(port, {path: '/api'});
+    expect(json.status).toBe(200);
+    expect(json.headers['cache-control']).toBe('public, max-age=60');
+  });
+
   it.each([
     '/assets/%2e%2e/private.txt',
     '/assets/%2f..%2fprivate.txt',
