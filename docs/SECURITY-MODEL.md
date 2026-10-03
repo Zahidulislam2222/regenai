@@ -19,7 +19,7 @@ Updated 2026-09-24. Related: [SECURITY.md](../SECURITY.md) (vulnerability report
 
 | Threat | Example against RegenAI | Primary controls |
 |---|---|---|
-| **Spoofing** | Forged OAuth callback or forged Shopify webhook | HMAC verification of OAuth callbacks (implemented) and webhooks (planned); OAuth `state` check; shop-domain validation |
+| **Spoofing** | Forged OAuth callback or forged Shopify webhook | OAuth and local webhook raw-body HMAC verification; OAuth `state` check; shop-domain validation. Remote delivery verification remains due |
 | **Tampering** | Injected script on the storefront; poisoned dependency | Strict Content Security Policy; no third-party scripts; lockfile + Dependabot + SBOM; CodeQL; branch protection |
 | **Repudiation** | Merchant disputes an approval in the review queue | Schema has reviewer ID and timestamp columns; decision recording and audit logging planned |
 | **Information disclosure** | Cached personalised page served to another buyer; one merchant reading another's data; secrets in logs or Git | Public-only cache policy with isolation tests; per-shop query scoping (gap — see §4); log redaction; secret scanning |
@@ -52,10 +52,10 @@ These are tracked openly. The merchant app and Hydrogen integration **must not b
 | SEC-02 | Stored legacy merchant bundle lacks proven per-request auth and shop scoping | Release blocker | Its known public URLs are disabled. Local standalone-app repair uses an expiring opaque browser session and shop-bound list/detail queries; local 401/404 HTTP checks passed. Deploy and independently verify before real use. An embedded app would instead require Shopify ID tokens. |
 | SEC-03 | Deployed OAuth `state` previously used eventually consistent KV | Release blocker | Local repair uses browser-bound D1 state consumed by one `DELETE ... RETURNING`; local D1 and negative tests passed. Migrate remote D1 and verify before release. |
 | SEC-04 | Historical preview/staging bindings pointed at production D1/KV | Release blocker | Source bindings removed so those environments fail closed; provision and verify isolated databases before preview/staging deployments |
-| SEC-05 | `Strict-Transport-Security` header not present on live frontend responses | Medium | Enable HSTS at the edge after confirming all subdomains serve HTTPS |
+| SEC-05 | HSTS response-header gap | Observed resolved for main/staging | Public HTTPS HEAD checks on 2026-10-04 returned `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload` on both frontend hosts. The wider domain/subdomain TLS policy has not been audited. |
 | SEC-06 | Dependency advisories: at the last audit (2026-09-21) 0 critical, 45 high, 13 moderate, 5 low, many in development tooling | High | Reachability review; targeted upgrades; CI gate on new high/critical |
 | SEC-07 | Some CI jobs mask failures (`continue-on-error`, `\|\| true`) | Medium | Remove masks so a red check means a real failure |
-| SEC-08 | Webhook lifecycle incomplete | Release blocker | Local `app/uninstalled` handler now verifies raw-body HMAC, deduplicates by delivery ID, and atomically revokes older shop tokens/sessions; local HTTP and D1 tests passed. Remote subscription, delivery proof, privacy topics, reconciliation and failure recovery remain due. |
+| SEC-08 | Webhook lifecycle incomplete | Release blocker | Local uninstall and three privacy topics now verify raw-body HMAC and pass D1/HTTP checks. Customer requests queue for authenticated merchant action; redactions are shop-scoped. Remote migrations/subscriptions/delivery proof, stale-install handling, reconciliation and failure recovery remain due. |
 | SEC-09 | No rate limiting, audit log or admin MFA enforcement in the merchant app | Planned | Implement per OWASP ASVS Level 2 mapping |
 
 ## 5. Security programme — planned

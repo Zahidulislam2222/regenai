@@ -2,7 +2,7 @@
 
 The backend of RegenAI: a standalone Shopify merchant app on Cloudflare Workers, plus three deployable Shopify Functions written in Rust. A fourth discount-stacking crate remains experimental.
 
-> **Status: local security repair, not redeployed.** The prior development Worker's production and preview `workers.dev` URLs were disabled and verified on 2026-10-04. The current authentication and uninstall-webhook repairs have local tests but need isolated remote data, secret validation, migration, subscription, full review and release checks before merchant use.
+> **Status: local security and privacy repair, not redeployed.** The prior development Worker's production and preview `workers.dev` URLs were disabled and verified on 2026-10-04. Authentication, uninstall and privacy webhook paths passed local tests and loopback HTTP checks. Isolated remote data, secrets, migrations, Shopify subscriptions, full review and release checks remain required before merchant use.
 
 ## What it does
 
@@ -13,7 +13,8 @@ The backend of RegenAI: a standalone Shopify merchant app on Cloudflare Workers,
 | Product-claim review queue — intended for staff to review product-copy changes before publishing | `app/routes/admin.reviews.tsx`, `app/routes/admin.review-detail.tsx` | Local list/detail require opaque merchant session and bound shop query; submission and approval remain planned |
 | Shopify API helpers | `app/lib/shopify.ts` | Built |
 | App uninstall webhook | `app/routes/webhooks.app-uninstalled.ts` | Locally built and HTTP-tested; not subscribed or deployed |
-| Orders and mandatory privacy webhooks | — | Planned |
+| Privacy webhooks and merchant queue | `app/routes/webhooks.privacy.ts`, `app/routes/admin.privacy.tsx` | Three topics built and locally HTTP-tested; subscriptions are configured privately but unreleased, and remote delivery unverified |
+| Orders | — | Planned |
 | Shopify Functions | [`extensions/`](extensions/README.md) | Three current-schema crates in an inactive draft; store activation unverified |
 
 ## Stack
@@ -25,7 +26,7 @@ The backend of RegenAI: a standalone Shopify merchant app on Cloudflare Workers,
 
 ## Data model
 
-Defined in [`migrations/0001_initial.sql`](migrations/0001_initial.sql), [`migrations/0002_merchant_auth.sql`](migrations/0002_merchant_auth.sql), and [`migrations/0003_webhook_deliveries.sql`](migrations/0003_webhook_deliveries.sql):
+Defined in [`migrations/`](migrations/), including six ordered migrations through `0006_privacy_resolution.sql`:
 
 | Table | Purpose |
 |---|---|
@@ -35,6 +36,7 @@ Defined in [`migrations/0001_initial.sql`](migrations/0001_initial.sql), [`migra
 | `clinician_review_queue` | Product-copy changes awaiting review, with status, reviewer and evidence metadata |
 | `protocol_tracker` | Future adherence tracking (not used by any route yet) |
 | `webhook_deliveries` | Signed delivery IDs and payload digests for idempotency; no raw webhook payloads stored |
+| `privacy_requests` | Shop-scoped action queue; email-only contact is encrypted until handled |
 
 Every table carries a `shop` column; every query must filter by the authenticated shop.
 
@@ -56,11 +58,12 @@ From `packages/app`:
 
 ## Configuration
 
-Worker bindings and non-secret variables live in `wrangler.toml`; typed limits live in `app/lib/merchant-config.ts`. Secrets (`SHOPIFY_API_KEY`, `SHOPIFY_API_SECRET`, `SHOPIFY_TOKEN_ENC_KEY`) are set with `wrangler secret put`, never committed. Preview and staging have no D1 binding until isolated databases are provisioned. The production encryption key is prepared privately but has not been configured remotely; the merchant app must not be redeployed before that and the migration are verified. The current Shopify app config has no uninstall webhook subscription yet.
+Worker bindings and non-secret variables live in `wrangler.toml`; typed limits live in `app/lib/merchant-config.ts`. Secrets (`SHOPIFY_API_KEY`, `SHOPIFY_API_SECRET`, `SHOPIFY_TOKEN_ENC_KEY`) are set with `wrangler secret put`, never committed. Preview and staging have no D1 binding until isolated databases are provisioned. The production encryption key is prepared privately but has not been configured remotely; the merchant app must not be redeployed before that and all six migrations are verified. The ignored Shopify app config now declares relative uninstall and privacy webhook subscriptions, but its application URL still points to Shopify's default page; no app version release or real delivery has been made.
+The tracked [`shopify.app.example.toml`](shopify.app.example.toml) documents the required subscriptions and safe placeholder URLs for a fresh clone. The real linked app configuration remains ignored.
 
 ## Scaling notes
 
-Workers scale automatically. D1 is single-threaded per database, so write-heavy work (webhook bursts) goes through a queue and idempotent batch workers. See [SCALABILITY.md](../../docs/SCALABILITY.md).
+Workers scale automatically. D1 is single-threaded per database; a durable queue and burst handling remain planned for higher webhook volume. See [SCALABILITY.md](../../docs/SCALABILITY.md).
 
 ## Related
 

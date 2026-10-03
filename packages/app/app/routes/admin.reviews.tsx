@@ -73,6 +73,9 @@ export default function AdminReviewsRoute() {
   return (
     <Page title="Clinician review queue" subtitle="Pending product-copy reviews awaiting clinician sign-off">
       <Layout>
+        <Layout.Section>
+          <a href="/admin/privacy">Open privacy request queue</a>
+        </Layout.Section>
         {error ? (
           <Layout.Section>
             <Banner tone="warning" title="D1 database not ready">

@@ -22,3 +22,7 @@ export function reviewQueueLimit(env: Env): number {
 export function webhookMaxBodyBytes(env: Env): number {
   return boundedInteger(env.SHOPIFY_WEBHOOK_MAX_BODY_BYTES, 128, 1048576);
 }
+
+export function privacyDeadlineDays(env: Env): number {
+  return boundedInteger(env.PRIVACY_REQUEST_DEADLINE_DAYS, 1, 90);
+}

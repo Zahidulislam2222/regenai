@@ -1,0 +1,26 @@
+# Copy to the ignored shopify.app.toml and set the real app identity and URL.
+# This example is never deployable as-is.
+client_id = "test-client-id"
+application_url = "https://app.example.test"
+embedded = false
+name = "RegenAI Merchant Sandbox"
+
+[webhooks]
+api_version = "2026-10"
+
+[[webhooks.subscriptions]]
+topics = ["app/uninstalled"]
+uri = "/webhooks/app-uninstalled"
+
+[[webhooks.subscriptions]]
+compliance_topics = ["customers/data_request", "customers/redact", "shop/redact"]
+uri = "/webhooks/privacy"
+
+[access_scopes]
+scopes = "read_products"
+
+[auth]
+redirect_urls = ["https://app.example.test/auth/callback"]
+
+[build]
+automatically_update_urls_on_dev = true

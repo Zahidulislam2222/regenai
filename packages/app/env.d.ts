@@ -14,6 +14,7 @@ declare global {
     SHOPIFY_SESSION_TTL_SECONDS: string;
     REVIEW_QUEUE_LIMIT: string;
     SHOPIFY_WEBHOOK_MAX_BODY_BYTES: string;
+    PRIVACY_REQUEST_DEADLINE_DAYS: string;
     SENTRY_APP_DSN?: string;
   }
 }

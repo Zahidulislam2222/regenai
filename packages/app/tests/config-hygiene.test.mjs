@@ -52,7 +52,16 @@ test('webhook body limit is provided to every Worker environment', () => {
       config.split(`[env.${name}.vars]`)[1]?.split('\n[')[0])]) {
     assert.ok(section, 'Worker environment is missing');
     assert.match(section, /^SHOPIFY_WEBHOOK_MAX_BODY_BYTES = "65536"$/m);
+    assert.match(section, /^PRIVACY_REQUEST_DEADLINE_DAYS = "30"$/m);
   }
+});
+
+test('merchant app example declares the signed webhook routes without a real app identity', () => {
+  const config = file('../shopify.app.example.toml');
+  assert.match(config, /^client_id = "test-client-id"$/m);
+  assert.match(config, /^application_url = "https:\/\/app\.example\.test"$/m);
+  assert.match(config, /topics = \["app\/uninstalled"\][\s\S]*uri = "\/webhooks\/app-uninstalled"/);
+  assert.match(config, /compliance_topics = \["customers\/data_request", "customers\/redact", "shop\/redact"\][\s\S]*uri = "\/webhooks\/privacy"/);
 });
 
 test('obvious secrets and plaintext token persistence cannot enter app source', () => {
