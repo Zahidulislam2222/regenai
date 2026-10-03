@@ -1,7 +1,8 @@
 import raw from './recovery-editorial.json';
 
 type Category = {slug: string; filter: string; label: string; title: string; body: string; image: string; alt: string};
-export type Story = {slug: string; eyebrow: string; title: string; summary: string; image: string; alt: string; paragraphs: string[]};
+export type Story = {slug: string; eyebrow: string; title: string; summary: string; image: string;
+  alt: string; paragraphs: string[]; shopifyParagraphs?: string[]};
 type Question = {id: string; question: string; answer: string};
 
 function hasText(value: unknown): value is string {
@@ -33,7 +34,10 @@ function validateStories(value: unknown): Story[] {
     const item = entry as Story;
     if (!/^[a-z0-9-]+$/.test(item.slug) || slugs.has(item.slug) || !hasText(item.eyebrow) ||
       !hasText(item.title) || !hasText(item.summary) || !hasMedia(item.image) || !hasText(item.alt) ||
-      !Array.isArray(item.paragraphs) || item.paragraphs.length < 2 || !item.paragraphs.every(hasText)) {
+      !Array.isArray(item.paragraphs) || item.paragraphs.length < 2 || !item.paragraphs.every(hasText) ||
+      (item.shopifyParagraphs !== undefined &&
+        (!Array.isArray(item.shopifyParagraphs) || item.shopifyParagraphs.length < 2 ||
+          !item.shopifyParagraphs.every(hasText)))) {
       throw new Error('Invalid editorial content');
     }
     slugs.add(item.slug);
@@ -85,6 +89,12 @@ export const editorial = {
   comparisonLimit: validateComparisonLimit(raw.comparisonLimit),
   ui: validateUi(raw.ui),
 };
+
+export function selectJournalStory(story: Story, source: 'shopify' | 'fixture'): Story {
+  return source === 'shopify' && story.shopifyParagraphs
+    ? {...story, paragraphs: story.shopifyParagraphs}
+    : story;
+}
 
 function validateUi(value: Record<string, unknown>): typeof raw.ui {
   if (!value || Object.values(value).some((entry) => !hasText(entry))) {

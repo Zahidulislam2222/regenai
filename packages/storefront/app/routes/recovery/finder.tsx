@@ -3,6 +3,7 @@ import {FinderView} from '~/features/recovery/Experience';
 import {ShopifyFinderView} from '~/features/recovery/ShopifyCatalogViews';
 import {listShopifyProducts} from '~/lib/shopify-catalog.server';
 import {site} from '~/content/recovery';
+import {editorial} from '~/content/recovery-editorial';
 import type {Route} from './+types/finder';
 
 export async function loader({context}: Route.LoaderArgs) {
@@ -18,9 +19,10 @@ export async function loader({context}: Route.LoaderArgs) {
   }
 }
 
-export const meta: MetaFunction = () => [
+export const meta: MetaFunction<typeof loader> = ({data}) => [
   {title: 'Recovery finder — RegenAI'},
-  {name: 'description', content: site.finder.intro},
+  {name: 'description', content: data?.source === 'shopify'
+    ? editorial.ui.shopifyFinderInviteBody : site.finder.intro},
 ];
 
 export default function RecoveryFinderRoute() {

@@ -59,12 +59,17 @@
       "slug": "how-the-finder-works",
       "eyebrow": "DESIGN NOTES / 03",
       "title": "How the finder works",
-      "summary": "A simple preference guide with results you can understand.",
+      "summary": "A clear way to browse the current collection.",
       "image": "/media/roller.png",
       "alt": "Original Form Roller render",
       "paragraphs": [
         "The finder starts with three choices: where you want to focus, what your day looks like and the kind of routine you prefer. It then ranks the collection using a fixed set of product attributes.",
         "Each result explains why it appeared. The answers stay on the page and are not saved as a personal profile or sent to an AI service.",
+        "The finder helps you browse forms and routines. It does not assess a condition or recommend treatment."
+      ],
+      "shopifyParagraphs": [
+        "The published finder groups the six current design concepts by their Shopify product type. Choose a type to narrow the page; the collection also has separate design category links.",
+        "Your selected type stays on this page. It is not saved as a personal profile or sent to an AI service.",
         "The finder helps you browse forms and routines. It does not assess a condition or recommend treatment."
       ]
     }

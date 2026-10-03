@@ -500,7 +500,7 @@ main:focus {
   color: var(--muted);
 }
 .hero-bottom {
-  margin-top: 78px;
+  margin-top: clamp(78px, calc(284px - 14vw), 130px);
 }
 .hero-bottom > span {
   font-size: 8px;
@@ -1979,7 +1979,7 @@ main:focus {
     right: 10%;
   }
   .hero-bottom {
-    margin-top: 55px;
+    margin-top: 110px;
   }
   .ritual-bottom {
     padding-left: 18%;

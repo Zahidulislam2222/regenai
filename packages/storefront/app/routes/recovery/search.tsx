@@ -1,4 +1,4 @@
-import type {MetaFunction} from 'react-router';
+import type {MetaFunction, ShouldRevalidateFunction} from 'react-router';
 import {site} from '~/content/recovery';
 import {RecoveryCatalogView} from './catalog-view';
 import {useLoaderData} from 'react-router';
@@ -6,6 +6,9 @@ import type {Route} from './+types/search';
 import {listShopifyProducts} from '~/lib/shopify-catalog.server';
 import {ShopifyCatalogView} from '~/features/recovery/ShopifyCatalogViews';
 import {getConceptEditorial} from '~/lib/concept-editorial.server';
+import {shouldRevalidateCatalog} from '~/lib/catalog-revalidation';
+
+export const shouldRevalidate: ShouldRevalidateFunction = shouldRevalidateCatalog;
 
 export async function loader({context}: Route.LoaderArgs) {
   if (context.settings.catalogSource === 'fixture') return {source: 'fixture' as const};

@@ -182,9 +182,24 @@ describe('recovery experience SSR and browser hydration', () => {
     await waitFor(() =>
       expect(document.querySelector('.recovery-app')).toHaveClass('motion-paused'),
     );
+    expect(screen.queryByRole('button', {name: 'Enable motion'})).toBeNull();
     const steps = view.container.querySelectorAll('.inspection-step');
     expect(steps.length).toBe(3);
     for (const step of steps) expect(step).not.toHaveAttribute('aria-hidden', 'true');
+  });
+
+  it('lets a visitor pause and resume motion when reduced motion is not requested', async () => {
+    vi.spyOn(window, 'matchMedia').mockReturnValue({
+      matches: false,
+      addEventListener: () => undefined,
+      removeEventListener: () => undefined,
+    } as unknown as MediaQueryList);
+    renderPreview();
+    const pause = await screen.findByRole('button', {name: 'Pause motion'});
+    fireEvent.click(pause);
+    expect(document.querySelector('.recovery-app')).toHaveClass('motion-paused');
+    fireEvent.click(screen.getByRole('button', {name: 'Enable motion'}));
+    expect(document.querySelector('.recovery-app')).not.toHaveClass('motion-paused');
   });
 
   it('keeps ordering closed while offering product design notes', () => {

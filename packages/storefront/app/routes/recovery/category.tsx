@@ -1,10 +1,13 @@
 import {redirect, useLoaderData} from 'react-router';
-import type {MetaFunction} from 'react-router';
+import type {MetaFunction, ShouldRevalidateFunction} from 'react-router';
 import type {Route} from './+types/category';
 import {getDesignCategoryByHandle, site} from '~/content/recovery';
 import {ShopifyCatalogView} from '~/features/recovery/ShopifyCatalogViews';
 import {getConceptEditorial, selectDesignCategoryProducts} from '~/lib/concept-editorial.server';
 import {listShopifyProducts} from '~/lib/shopify-catalog.server';
+import {shouldRevalidateCatalog} from '~/lib/catalog-revalidation';
+
+export const shouldRevalidate: ShouldRevalidateFunction = shouldRevalidateCatalog;
 
 export async function loader({context, params}: Route.LoaderArgs) {
   const category = getDesignCategoryByHandle(params.categoryHandle);

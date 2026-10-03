@@ -7,7 +7,7 @@ import {site} from '../../content/recovery';
 import {editorial} from '../../content/recovery-editorial';
 import {BagProvider} from './Bag';
 
-export type RecoveryMotionState = {paused: boolean; toggle: () => void};
+export type RecoveryMotionState = {paused: boolean; reduced: boolean; toggle: () => void};
 
 export function useRecoveryMotion(): RecoveryMotionState {
   const [manualPause, setManualPause] = useState(false);
@@ -21,7 +21,8 @@ export function useRecoveryMotion(): RecoveryMotionState {
     query.addEventListener('change', update);
     return () => query.removeEventListener('change', update);
   }, []);
-  return {paused: manualPause || reduced, toggle: () => setManualPause((value) => !value)};
+  return {paused: manualPause || reduced, reduced,
+    toggle: () => setManualPause((value) => !value)};
 }
 
 export function Mark() {
@@ -37,7 +38,7 @@ export function Mark() {
   );
 }
 
-function Header({paused, toggle, sandboxCartQuantity}: RecoveryMotionState & {
+function Header({paused, reduced, toggle, sandboxCartQuantity}: RecoveryMotionState & {
   sandboxCartQuantity?: number | null;
 }) {
   const [mobile, setMobile] = useState(false);
@@ -59,13 +60,13 @@ function Header({paused, toggle, sandboxCartQuantity}: RecoveryMotionState & {
         ))}
       </nav>
       <div className="header-actions">
-        <button
+        {!reduced && <button
           className="icon-button motion-toggle"
           onClick={toggle}
           aria-label={paused ? 'Enable motion' : 'Pause motion'}
         >
           {paused ? <Play size={16} /> : <Pause size={16} />}
-        </button>
+        </button>}
         <Link className="icon-button" to="/search" aria-label={ui.search_products_c65cb6}>
           <Search size={19} />
         </Link>
@@ -149,6 +150,7 @@ function Footer() {
 export function RecoveryShell({
   children,
   paused,
+  reduced,
   toggle,
   bagEnabled = true,
   sandboxCartQuantity,
@@ -158,7 +160,8 @@ export function RecoveryShell({
         <a className="skip-link" href="#main-content">
           {ui.skip_to_main_content_c887f1}
         </a>
-        <Header paused={paused} toggle={toggle} sandboxCartQuantity={sandboxCartQuantity} />
+        <Header paused={paused} reduced={reduced} toggle={toggle}
+          sandboxCartQuantity={sandboxCartQuantity} />
         <main id="main-content" tabIndex={-1}>
           {children}
         </main>

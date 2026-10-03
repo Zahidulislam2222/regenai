@@ -1,7 +1,10 @@
 import {useEffect, useRef} from 'react';
-import {Outlet, useLoaderData, useLocation} from 'react-router';
+import {Outlet, useLoaderData, useLocation, type ShouldRevalidateFunction} from 'react-router';
 import {RecoveryShell, useRecoveryMotion} from '~/features/recovery/RecoveryShell';
+import {shouldRevalidateCatalog} from '~/lib/catalog-revalidation';
 import type {Route} from './+types/layout';
+
+export const shouldRevalidate: ShouldRevalidateFunction = shouldRevalidateCatalog;
 
 export async function loader({context}: Route.LoaderArgs) {
   if (!context.settings.sandboxCheckoutEnabled) return {sandboxCartQuantity: undefined};
