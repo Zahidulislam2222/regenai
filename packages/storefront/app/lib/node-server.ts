@@ -2,7 +2,7 @@ import {createReadStream} from 'node:fs';
 import {realpath, stat} from 'node:fs/promises';
 import {createServer, type IncomingMessage, type Server, type ServerResponse} from 'node:http';
 import {Readable} from 'node:stream';
-import {resolve, sep} from 'node:path';
+import {basename, resolve, sep} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {getRequestListener} from '@hono/node-server';
 import {Hono} from 'hono';
@@ -86,6 +86,17 @@ function jsonResponse(status: number, body: string): Response {
   });
 }
 
+function acceptsGzip(request: Request): boolean {
+  return request.headers.get('accept-encoding')?.split(',').some((entry) => {
+    const [name, ...parameters] = entry.split(';').map((part) => part.trim().toLowerCase());
+    if (name !== 'gzip') return false;
+    const quality = parameters.find((part) => /^q\s*=/.test(part));
+    if (!quality) return true;
+    const match = /^q\s*=\s*(0(?:\.\d{0,3})?|1(?:\.0{0,3})?)$/.exec(quality);
+    return match !== null && Number(match[1]) > 0;
+  }) ?? false;
+}
+
 async function servePublicFile(
   request: Request,
   pathname: string,
@@ -104,16 +115,36 @@ async function servePublicFile(
     const metadata = await stat(actualPath);
     if (!metadata.isFile() || metadata.size > maxFileBytes) return jsonResponse(404, 'Not found');
     const mime = getMimeType(actualPath) ?? 'application/octet-stream';
+    const immutable = /(?:^|[.-])[a-f0-9]{8,}(?:[.-]|$)/i.test(basename(actualPath));
+    const compressibleModel = immutable && pathname.endsWith('.glb');
+    let servedPath = actualPath;
+    let servedSize = metadata.size;
+    let compressed = false;
+    if (compressibleModel && acceptsGzip(request)) {
+      try {
+        const sidecar = await realpath(`${actualPath}.gz`);
+        if (sidecar.startsWith(`${trustedRoot}${sep}`)) {
+          const sidecarMetadata = await stat(sidecar);
+          if (sidecarMetadata.isFile() && sidecarMetadata.size <= maxFileBytes) {
+            servedPath = sidecar;
+            servedSize = sidecarMetadata.size;
+            compressed = true;
+          }
+        }
+      } catch { /* An optional sidecar cannot block the original asset. */ }
+    }
     const headers = new Headers({
       'content-type': mime,
-      'content-length': String(metadata.size),
+      'content-length': String(servedSize),
       'x-content-type-options': 'nosniff',
-      'cache-control': /(?:^|[.-])[a-f0-9]{8,}(?:[.-]|$)/i.test(actualPath)
+      'cache-control': immutable
         ? 'public, max-age=31536000, immutable'
         : 'public, max-age=0, must-revalidate',
     });
+    if (compressibleModel) headers.set('vary', 'Accept-Encoding');
+    if (compressed) headers.set('content-encoding', 'gzip');
     if (request.method === 'HEAD') return new Response(null, {status: 200, headers});
-    const body = Readable.toWeb(createReadStream(actualPath)) as ReadableStream<Uint8Array>;
+    const body = Readable.toWeb(createReadStream(servedPath)) as ReadableStream<Uint8Array>;
     return new Response(body, {status: 200, headers});
   } catch {
     return jsonResponse(404, 'Not found');

@@ -6,6 +6,7 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {request as httpRequest, type IncomingHttpHeaders} from 'node:http';
 import type {AddressInfo} from 'node:net';
+import {gzipSync, gunzipSync} from 'node:zlib';
 import {createNodeRuntime} from '../../app/lib/node-server';
 import {loadStorefrontSettings, type StorefrontSettings} from '../../app/lib/settings.server';
 
@@ -41,7 +42,7 @@ function runRequest(port: number, options: {
   method?: string;
   headers?: IncomingHttpHeaders;
   body?: string;
-} = {}): Promise<{status: number; headers: IncomingHttpHeaders; body: string}> {
+} = {}): Promise<{status: number; headers: IncomingHttpHeaders; body: string; rawBody: Buffer}> {
   return new Promise((resolveRequest, rejectRequest) => {
     const request = httpRequest({
       host: '127.0.0.1',
@@ -54,11 +55,15 @@ function runRequest(port: number, options: {
       response.on('data', (chunk: Buffer) => chunks.push(chunk));
       response.on('aborted', () => rejectRequest(new Error('HTTP response aborted')));
       response.on('error', rejectRequest);
-      response.on('end', () => resolveRequest({
-        status: response.statusCode ?? 0,
-        headers: response.headers,
-        body: Buffer.concat(chunks).toString('utf8'),
-      }));
+      response.on('end', () => {
+        const rawBody = Buffer.concat(chunks);
+        resolveRequest({
+          status: response.statusCode ?? 0,
+          headers: response.headers,
+          body: rawBody.toString('utf8'),
+          rawBody,
+        });
+      });
     });
     request.on('error', rejectRequest);
     if (options.body) request.write(options.body);
@@ -188,6 +193,56 @@ describe('Node Fetch runtime boundary', () => {
     expect(asset.headers['cache-control']).toContain('immutable');
     expect((await runRequest(port, {path: '/assets/.env'})).status).toBe(404);
     expect((await runRequest(port, {path: '/assets/app-abcdef123456.css', method: 'POST'})).status).toBe(405);
+    expect(worker.fetch).not.toHaveBeenCalled();
+  });
+
+  it('serves a hashed GLB sidecar only to clients accepting gzip', async () => {
+    const clientDirectory = await mkdtemp(join(tmpdir(), 'regenai-node-client-'));
+    temporaryDirectories.push(clientDirectory);
+    await mkdir(join(clientDirectory, 'media'));
+    const model = Buffer.from('test-only-model-geometry');
+    const compressed = gzipSync(model);
+    await writeFile(join(clientDirectory, 'media', 'pulse-12345678.glb'), model);
+    await writeFile(join(clientDirectory, 'media', 'pulse-12345678.glb.gz'), compressed);
+    await writeFile(join(clientDirectory, 'media', 'pulse.glb'), model);
+    await writeFile(join(clientDirectory, 'media', 'pulse.glb.gz'), compressed);
+    const worker = {fetch: vi.fn(async () => new Response('should not route'))};
+    const {runtime, port} = await startRuntime(worker, clientDirectory);
+    runtimes.push(runtime);
+
+    const path = '/media/pulse-12345678.glb';
+    const raw = await runRequest(port, {path});
+    expect(raw.status).toBe(200);
+    expect(raw.rawBody).toEqual(model);
+    expect(raw.headers['cache-control']).toContain('immutable');
+    expect(raw.headers.vary).toBe('Accept-Encoding');
+    expect(raw.headers['content-encoding']).toBeUndefined();
+
+    const zipped = await runRequest(port, {path, headers: {'Accept-Encoding': 'gzip, br'}});
+    expect(zipped.status).toBe(200);
+    expect(zipped.rawBody).toEqual(compressed);
+    expect(gunzipSync(zipped.rawBody)).toEqual(model);
+    expect(zipped.headers['content-encoding']).toBe('gzip');
+    expect(zipped.headers['content-length']).toBe(String(compressed.length));
+    expect(zipped.headers['content-type']).toBe(raw.headers['content-type']);
+
+    const disabled = await runRequest(port, {path, headers: {'Accept-Encoding': 'gzip;q=0, br'}});
+    expect(disabled.rawBody).toEqual(model);
+    expect(disabled.headers['content-encoding']).toBeUndefined();
+    const spacedQuality = await runRequest(port, {path, headers: {'Accept-Encoding': 'gzip; q = 0'}});
+    expect(spacedQuality.rawBody).toEqual(model);
+    expect(spacedQuality.headers['content-encoding']).toBeUndefined();
+    const head = await runRequest(port, {path, method: 'HEAD', headers: {'Accept-Encoding': 'gzip'}});
+    expect(head.status).toBe(200);
+    expect(head.rawBody).toHaveLength(0);
+    expect(head.headers['content-length']).toBe(String(compressed.length));
+    expect(head.headers['content-encoding']).toBe('gzip');
+
+    const unversioned = await runRequest(port, {path: '/media/pulse.glb',
+      headers: {'Accept-Encoding': 'gzip'}});
+    expect(unversioned.rawBody).toEqual(model);
+    expect(unversioned.headers['content-encoding']).toBeUndefined();
+    expect(unversioned.headers['cache-control']).toContain('must-revalidate');
     expect(worker.fetch).not.toHaveBeenCalled();
   });
 
