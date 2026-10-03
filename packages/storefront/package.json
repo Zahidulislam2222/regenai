@@ -16,7 +16,7 @@
     "test:unit": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
-    "test:a11y": "playwright test tests/a11y",
+    "test:a11y": "playwright test --config playwright.a11y.config.ts",
     "test:visual": "percy exec -- playwright test tests/visual",
     "test:watch": "vitest",
     "dev:frontend": "vite --config vite.frontend.config.ts",
