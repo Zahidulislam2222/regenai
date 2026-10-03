@@ -4,6 +4,8 @@
 
 import {test, expect} from '@playwright/test';
 
+test.use({contextOptions: {reducedMotion: 'reduce'}});
+
 test('home page responds with 200 and semantic HTML', async ({page}) => {
   const response = await page.goto('/');
   expect(response?.status()).toBeLessThan(400);
