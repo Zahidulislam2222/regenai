@@ -9,7 +9,7 @@ const [task, ...extraArgs] = process.argv.slice(2);
 
 let child;
 
-if (task === 'build' || task === 'dev') {
+if (task === 'build' || task === 'dev' || task === 'codegen') {
   const require = createRequire(import.meta.url);
   const shopifyPackage = require.resolve('@shopify/cli/package.json', {
     paths: [storefrontDirectory],
@@ -19,7 +19,7 @@ if (task === 'build' || task === 'dev') {
     shopifyCli,
     'hydrogen',
     task,
-    '--codegen',
+    ...(task === 'codegen' ? [] : ['--codegen']),
     '--path',
     storefrontDirectory,
     ...extraArgs.filter((argument) => argument !== '--'),

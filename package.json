@@ -20,6 +20,7 @@
   "scripts": {
     "dev": "node scripts/run-storefront.mjs dev",
     "build": "node scripts/run-storefront.mjs build",
+    "codegen": "node scripts/run-storefront.mjs codegen",
     "lint": "npm --workspaces --if-present run lint",
     "typecheck": "npm --workspaces --if-present run typecheck",
     "test": "npm --workspaces --if-present run test && npm run test:catalog-seed && npm run test:build-context",
