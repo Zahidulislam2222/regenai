@@ -1,0 +1,26 @@
+{
+  "sourceCurrency": "USD",
+  "currency": "USD",
+  "vendor": "RegenAI concept studio",
+  "handlePrefix": "regenai-concept-",
+  "skuPrefix": "RGN-DEMO-",
+  "markerKey": "regenai_seed_key",
+  "markerPrefix": "regenai-concept-v1:",
+  "tags": ["regenai-concept", "not-for-sale-demo"],
+  "descriptionNotice": "Illustrative product concept for a portfolio demo. Not manufactured or available for sale. Specifications, materials, safety and performance have not been validated.",
+  "imageAltTemplate": "Illustrative render of {name}",
+  "optionNames": {
+    "pulse": "Kit",
+    "roller": "Size",
+    "bands": "Set",
+    "wrap": "Size",
+    "balls": "Set",
+    "sensor": "Mount"
+  },
+  "expectedIds": ["pulse", "roller", "bands", "wrap", "balls", "sensor"],
+  "headlessPublicationName": "Regenai Headless",
+  "headlessAppTitle": "Headless",
+  "requestTimeoutMs": 20000,
+  "mediaPollAttempts": 8,
+  "mediaPollDelayMs": 1500
+}
