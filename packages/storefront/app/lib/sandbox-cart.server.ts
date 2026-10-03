@@ -76,6 +76,35 @@ export function validateSandboxRemove(lineIds: unknown, currentCart: unknown): s
   return [lineIds[0]];
 }
 
+export function validateSandboxUpdate(
+  lines: unknown,
+  currentCart: unknown,
+  products: ShopifyCatalogProduct[],
+  limits: CartLimits,
+): {id: string; quantity: number}[] {
+  if (!Array.isArray(lines) || lines.length !== 1) throw new Error('Invalid sandbox line update');
+  const input = object(lines[0]);
+  if (!input || Object.keys(input).some((key) => !['id', 'quantity'].includes(key)) ||
+      typeof input.id !== 'string' || !Number.isSafeInteger(input.quantity) ||
+      Number(input.quantity) < 1 || Number(input.quantity) > limits.maxLineQuantity) {
+    throw new Error('Invalid sandbox line update');
+  }
+  const current = existingLines(currentCart);
+  const owned = ownedVariants(products, false);
+  if (current.some((line) => !owned.has(line.merchandiseId))) {
+    throw new Error('Cart contains a non-sandbox line');
+  }
+  const target = current.find((line) => line.id === input.id);
+  if (!target) throw new Error('Unknown sandbox line');
+  const quantity = Number(input.quantity);
+  if (quantity > target.quantity && !ownedVariants(products, true).has(target.merchandiseId)) {
+    throw new Error('Variant is unavailable in this sandbox');
+  }
+  const total = current.reduce((sum, line) => sum + line.quantity, 0) - target.quantity + quantity;
+  if (total > limits.maxTotalQuantity) throw new Error('Sandbox quantity limit exceeded');
+  return [{id: target.id, quantity}];
+}
+
 export function sandboxCartIsOwned(cart: unknown, products: ShopifyCatalogProduct[]): boolean {
   try {
     const owned = ownedVariants(products, false);

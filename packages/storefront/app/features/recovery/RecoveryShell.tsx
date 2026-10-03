@@ -4,6 +4,7 @@ import * as Dialog from '@radix-ui/react-dialog';
 import {ArrowUpRight, Menu, Pause, Play, Search, X} from 'lucide-react';
 import {ui} from '../../content/recovery-ui';
 import {site} from '../../content/recovery';
+import {editorial} from '../../content/recovery-editorial';
 import {BagProvider} from './Bag';
 
 export type RecoveryMotionState = {paused: boolean; toggle: () => void};
@@ -36,7 +37,9 @@ export function Mark() {
   );
 }
 
-function Header({paused, toggle}: RecoveryMotionState) {
+function Header({paused, toggle, sandboxCartQuantity}: RecoveryMotionState & {
+  sandboxCartQuantity?: number | null;
+}) {
   const [mobile, setMobile] = useState(false);
 
   return (
@@ -66,6 +69,12 @@ function Header({paused, toggle}: RecoveryMotionState) {
         <Link className="icon-button" to="/search" aria-label={ui.search_products_c65cb6}>
           <Search size={19} />
         </Link>
+        {sandboxCartQuantity !== undefined && <Link className="bag-button" to="/cart"
+          aria-label={sandboxCartQuantity === null ? editorial.ui.shopifyCartLink
+            : `${editorial.ui.shopifyCartLink}, ${sandboxCartQuantity} ${editorial.ui.shopifyCartCountLabel}`}>
+          {editorial.ui.shopifyCartLink}
+          {sandboxCartQuantity !== null && <span aria-hidden="true">{sandboxCartQuantity}</span>}
+        </Link>}
         <Link className="header-availability" to="/policies/delivery">Availability <ArrowUpRight size={16} /></Link>
         <Dialog.Root open={mobile} onOpenChange={setMobile}>
           <Dialog.Trigger className="icon-button mobile-trigger" aria-label={ui.open_navigation_0ed77f}>
@@ -142,13 +151,14 @@ export function RecoveryShell({
   paused,
   toggle,
   bagEnabled = true,
-}: RecoveryMotionState & {children: ReactNode; bagEnabled?: boolean}) {
+  sandboxCartQuantity,
+}: RecoveryMotionState & {children: ReactNode; bagEnabled?: boolean; sandboxCartQuantity?: number | null}) {
   const content = (
       <div className={`recovery-app ${paused ? 'motion-paused' : ''}`}>
         <a className="skip-link" href="#main-content">
           {ui.skip_to_main_content_c887f1}
         </a>
-        <Header paused={paused} toggle={toggle} />
+        <Header paused={paused} toggle={toggle} sandboxCartQuantity={sandboxCartQuantity} />
         <main id="main-content" tabIndex={-1}>
           {children}
         </main>

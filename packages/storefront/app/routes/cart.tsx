@@ -8,6 +8,7 @@ import {
   sandboxCartIsOwned,
   validateSandboxAdd,
   validateSandboxRemove,
+  validateSandboxUpdate,
   validatedSandboxCheckoutUrl,
 } from '~/lib/sandbox-cart.server';
 
@@ -27,6 +28,8 @@ export async function loader({context}: Route.LoaderArgs) {
   return {
     enabled: true as const,
     cart,
+    maxLineQuantity: context.settings.sandboxCart.maxLineQuantity,
+    maxTotalQuantity: context.settings.sandboxCart.maxTotalQuantity,
     checkoutUrl: validatedSandboxCheckoutUrl(cart?.checkoutUrl, context.settings.checkoutDomain),
   };
 }
@@ -45,14 +48,18 @@ export async function action({request, context}: Route.ActionArgs) {
   } catch {
     throw new Response('Invalid cart request.', {status: 400});
   }
-  if (intent !== CartForm.ACTIONS.LinesAdd && intent !== CartForm.ACTIONS.LinesRemove) {
+  if (intent !== CartForm.ACTIONS.LinesAdd && intent !== CartForm.ACTIONS.LinesUpdate &&
+      intent !== CartForm.ACTIONS.LinesRemove) {
     throw new Response('Unsupported sandbox cart action.', {status: 400});
   }
   const current = await context.cart.get();
+  const products = await listShopifyProducts(
+    (document, options) => context.storefront.query(document, options), context.settings.catalog);
+  if (!sandboxCartIsOwned(current, products)) {
+    throw new Response('Cart contains items outside this sandbox.', {status: 400});
+  }
   let result;
   if (intent === CartForm.ACTIONS.LinesAdd) {
-    const products = await listShopifyProducts(
-      (document, options) => context.storefront.query(document, options), context.settings.catalog);
     let lines;
     try {
       lines = validateSandboxAdd(inputs.lines, current, products, context.settings.sandboxCart);
@@ -60,6 +67,14 @@ export async function action({request, context}: Route.ActionArgs) {
       throw new Response('Invalid or unavailable sandbox line.', {status: 400});
     }
     result = await context.cart.addLines(lines);
+  } else if (intent === CartForm.ACTIONS.LinesUpdate) {
+    let lines;
+    try {
+      lines = validateSandboxUpdate(inputs.lines, current, products, context.settings.sandboxCart);
+    } catch {
+      throw new Response('Invalid sandbox line update.', {status: 400});
+    }
+    result = await context.cart.updateLines(lines);
   } else {
     let lineIds;
     try {
@@ -78,5 +93,6 @@ export async function action({request, context}: Route.ActionArgs) {
 
 export default function CartRoute() {
   const result = useLoaderData<typeof loader>();
-  return result.enabled ? <ShopifySandboxCartView cart={result.cart} checkoutUrl={result.checkoutUrl} /> : <CartView />;
+  return result.enabled ? <ShopifySandboxCartView cart={result.cart} checkoutUrl={result.checkoutUrl}
+    maxLineQuantity={result.maxLineQuantity} maxTotalQuantity={result.maxTotalQuantity} /> : <CartView />;
 }

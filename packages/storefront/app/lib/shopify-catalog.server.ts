@@ -29,7 +29,7 @@ export type ShopifyCatalogProduct = {
   complete: boolean;
 };
 
-type CatalogLimits = {pageSize: number; maxPages: number; variantLimit: number; imageLimit: number};
+type CatalogLimits = {pageSize: number; maxPages: number; variantLimit: number; imageLimit: number; imageMaxWidth: number};
 type CatalogQuery = (document: string, options: {variables: Record<string, unknown>}) => Promise<unknown>;
 
 const PRODUCT_FIELDS = `
@@ -40,7 +40,7 @@ const PRODUCT_FIELDS = `
   productType
   tags
   availableForSale
-  featuredImage { url altText width height }
+  featuredImage { url(transform: {maxWidth: $imageMaxWidth, preferredContentType: WEBP}) altText width height }
   options { name values }
   variants(first: $variantLimit) {
     nodes {
@@ -55,7 +55,7 @@ const PRODUCT_FIELDS = `
 `;
 
 const CATALOG_QUERY = `#graphql
-  query RegenaiCatalog($first: Int!, $after: String, $variantLimit: Int!) {
+  query RegenaiCatalog($first: Int!, $after: String, $variantLimit: Int!, $imageMaxWidth: Int!) {
     products(first: $first, after: $after) {
       nodes { ${PRODUCT_FIELDS} }
       pageInfo { hasNextPage endCursor }
@@ -64,11 +64,11 @@ const CATALOG_QUERY = `#graphql
 `;
 
 const PRODUCT_QUERY = `#graphql
-  query RegenaiProduct($handle: String!, $variantLimit: Int!, $imageLimit: Int!) {
+  query RegenaiProduct($handle: String!, $variantLimit: Int!, $imageLimit: Int!, $imageMaxWidth: Int!) {
     product(handle: $handle) {
       ${PRODUCT_FIELDS}
       images(first: $imageLimit) {
-        nodes { url altText width height }
+        nodes { url(transform: {maxWidth: $imageMaxWidth, preferredContentType: WEBP}) altText width height }
         pageInfo { hasNextPage }
       }
     }
@@ -173,7 +173,8 @@ export async function listShopifyProducts(query: CatalogQuery, limits: CatalogLi
   let after: string | null = null;
   for (let page = 0; page < limits.maxPages; page += 1) {
     const response = record(await query(CATALOG_QUERY, {
-      variables: {first: limits.pageSize, after, variantLimit: limits.variantLimit},
+      variables: {first: limits.pageSize, after, variantLimit: limits.variantLimit,
+        imageMaxWidth: limits.imageMaxWidth},
     }));
     const connection = record(response?.products);
     const pageInfo = record(connection?.pageInfo);
@@ -201,6 +202,7 @@ export async function getShopifyProduct(query: CatalogQuery, handle: string | un
   if (!handle || !handle.startsWith(seedConfig.handlePrefix) || !/^[a-z0-9-]+$/.test(handle)) return null;
   const response = record(await query(PRODUCT_QUERY, {variables: {
     handle, variantLimit: limits.variantLimit, imageLimit: limits.imageLimit,
+    imageMaxWidth: limits.imageMaxWidth,
   }}));
   if (!response || !Object.hasOwn(response, 'product')) throw new Error('Invalid Shopify product response');
   const product = mapShopifyProduct(response.product);

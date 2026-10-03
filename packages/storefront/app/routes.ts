@@ -12,6 +12,8 @@ const recoveryRoutes = layout('routes/recovery/layout.tsx', [
   route('quiz', 'routes/recovery/finder.tsx'),
   route('about', 'routes/recovery/about.tsx'),
   route('evidence', 'routes/recovery/evidence.tsx'),
+  route('help', 'routes/recovery/help.tsx'),
+  route('contact', 'routes/recovery/contact.tsx'),
   route('journal', 'routes/recovery/journal.tsx'),
   route('journal/:slug', 'routes/recovery/journal-article.tsx'),
   route('policies/:policy', 'routes/recovery/policy.tsx'),

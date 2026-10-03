@@ -1,6 +1,7 @@
 import {CartForm, type CartReturn} from '@shopify/hydrogen';
-import {ArrowUpRight} from 'lucide-react';
+import {ArrowUpRight, Minus, Plus} from 'lucide-react';
 import {Link} from 'react-router';
+import {editorial} from '~/content/recovery-editorial';
 
 function amount(value: {amount: string; currencyCode: string} | null | undefined): string {
   if (!value) return 'Price unavailable';
@@ -8,11 +9,14 @@ function amount(value: {amount: string; currencyCode: string} | null | undefined
     .format(Number(value.amount));
 }
 
-export function ShopifySandboxCartView({cart, checkoutUrl}: {
+export function ShopifySandboxCartView({cart, checkoutUrl, maxLineQuantity, maxTotalQuantity}: {
   cart: CartReturn | null;
   checkoutUrl: string | null;
+  maxLineQuantity: number;
+  maxTotalQuantity: number;
 }) {
   const lines = cart?.lines?.nodes ?? [];
+  const totalQuantity = lines.reduce((sum, line) => sum + line.quantity, 0);
   return (
     <section className="page narrow">
       <p className="eyebrow">LOCAL DEVELOPMENT STORE / TEST ORDERS ONLY</p>
@@ -30,10 +34,29 @@ export function ShopifySandboxCartView({cart, checkoutUrl}: {
             return <article className="cart-line" key={line.id}>
               {variant?.image?.url && <img src={variant.image.url}
                 alt={variant.image.altText || product?.title || 'Concept image'} width={96} height={96} />}
-              <div><h2>{product?.title || 'Concept'}</h2><p>{variant?.title} · Qty {line.quantity}</p>
+              <div><h2>{product?.title || 'Concept'}</h2><p>{variant?.title}</p>
+                <div className="shopify-cart-quantity" role="group"
+                  aria-label={`${editorial.ui.shopifyCartQuantity}: ${product?.title || 'Concept'}`}>
+                  <CartForm route="/cart" action={CartForm.ACTIONS.LinesUpdate}
+                    inputs={{lines: [{id: line.id, quantity: line.quantity - 1}]}}>
+                    {(fetcher) => <button type="submit" aria-label={`${editorial.ui.shopifyCartDecrease} ${product?.title || 'Concept'}`}
+                      disabled={line.quantity <= 1 || fetcher.state !== 'idle'}><Minus size={15} /></button>}
+                  </CartForm>
+                  <span aria-label={editorial.ui.shopifyCartQuantity}>{line.quantity}</span>
+                  <CartForm route="/cart" action={CartForm.ACTIONS.LinesUpdate}
+                    inputs={{lines: [{id: line.id, quantity: line.quantity + 1}]}}>
+                    {(fetcher) => <button type="submit" aria-label={`${editorial.ui.shopifyCartIncrease} ${product?.title || 'Concept'}`}
+                      disabled={line.quantity >= maxLineQuantity || totalQuantity >= maxTotalQuantity || fetcher.state !== 'idle'}>
+                      <Plus size={15} />
+                    </button>}
+                  </CartForm>
+                </div>
                 <p>{amount(line.cost?.totalAmount)}</p></div>
               <CartForm route="/cart" action={CartForm.ACTIONS.LinesRemove} inputs={{lineIds: [line.id]}}>
-                <button type="submit">Remove</button>
+                {(fetcher) => <button type="submit" disabled={fetcher.state !== 'idle'}
+                  aria-label={`${editorial.ui.shopifyCartRemove} ${product?.title || 'Concept'}`}>
+                  {editorial.ui.shopifyCartRemove}
+                </button>}
               </CartForm>
             </article>;
           })}</div>

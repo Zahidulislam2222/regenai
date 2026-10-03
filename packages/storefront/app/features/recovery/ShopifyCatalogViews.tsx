@@ -2,11 +2,13 @@ import {useState} from 'react';
 import {Link, useSearchParams} from 'react-router';
 import {ArrowLeft, ArrowUpRight, Plus, Search, SlidersHorizontal} from 'lucide-react';
 import {CartForm} from '@shopify/hydrogen';
-import {site} from '~/content/recovery';
+import {getDesignCategoryHandle, site} from '~/content/recovery';
 import {editorial} from '~/content/recovery-editorial';
+import {CategoryExplore, HomeQuestions, JournalFeature} from './Editorial';
 import type {ConceptEditorial} from '~/lib/concept-editorial.server';
 import type {CatalogVariant, ShopifyCatalogProduct} from '~/lib/shopify-catalog.server';
-import {Inspection, ProductVisual} from './Experience';
+import {Inspection, LabFilm, ProductVisual} from './Experience';
+import {Mark} from './RecoveryShell';
 
 function money(variant: CatalogVariant | undefined): string | null {
   if (!variant?.price) return null;
@@ -53,10 +55,11 @@ function ProductCard({product, index, comparison}: {product: ShopifyCatalogProdu
   );
 }
 
-function ShopifyComparison({products, concepts, remove}: {
+function ShopifyComparison({products, concepts, remove, sandboxCartEnabled}: {
   products: ShopifyCatalogProduct[];
   concepts: Record<string, ConceptEditorial | null>;
   remove: (id: string) => void;
+  sandboxCartEnabled: boolean;
 }) {
   if (!products.length) return null;
   const unknown = editorial.ui.shopifyCompareUnknown;
@@ -69,14 +72,16 @@ function ShopifyComparison({products, concepts, remove}: {
     {label: editorial.ui.shopifyComparePrice, value: (product: ShopifyCatalogProduct) =>
       product.complete ? money(product.variants[0]) ?? unknown : unknown},
     {label: editorial.ui.shopifyCompareAvailability, value: (product: ShopifyCatalogProduct) =>
-      product.availableForSale ? editorial.ui.shopifyCompareAvailable : editorial.ui.shopifyCompareUnavailable},
+      product.complete && product.availableForSale && product.variants.some((variant) => variant.availableForSale)
+        ? sandboxCartEnabled ? editorial.ui.shopifySandboxCompareAvailable : editorial.ui.shopifyCompareAvailable
+        : editorial.ui.shopifyCompareUnavailable},
     ...specs.map((label) => ({label, value: (product: ShopifyCatalogProduct) =>
       concepts[product.id]?.specs.find((spec) => spec.label === label)?.value ?? unknown})),
   ];
   return <section className="shopify-comparison" aria-labelledby="shopify-comparison-title">
     <div className="section-heading"><div><p className="eyebrow">{editorial.ui.shopifyCompareEyebrow}</p>
       <h2 id="shopify-comparison-title">{editorial.ui.shopifyCompareTitle}</h2></div></div>
-    <p>{editorial.ui.shopifyCompareDisclosure}</p>
+    <p>{sandboxCartEnabled ? editorial.ui.shopifySandboxCompareDisclosure : editorial.ui.shopifyCompareDisclosure}</p>
     {products.length < 2 ? <p role="status">{editorial.ui.shopifyComparePrompt}</p> : null}
     <p className="shopify-comparison-scroll-hint">{editorial.ui.shopifyCompareScrollHint}</p>
     <div className="shopify-comparison-scroll">
@@ -114,8 +119,9 @@ export function ShopifyHomeView({products, sceneProduct, paused}: {
           <Link className="button" to="/collections/all">Explore the collection <ArrowUpRight size={19} /></Link>
         </div>
         <div className="hero-object">
-          {sceneProduct ? <ProductVisual paused={paused} /> : heroProduct?.image ? <img src={heroProduct.image.url}
+          {sceneProduct ? <ProductVisual paused={paused} poster={sceneProduct.image?.url} posterPriority /> : heroProduct?.image ? <img src={heroProduct.image.url}
             alt={heroProduct.image.altText || `${heroProduct.name} concept render`}
+            loading="eager" {...{fetchpriority: 'high'}}
             width={heroProduct.image.width ?? 1000} height={heroProduct.image.height ?? 1000} />
             : <p className="empty-state">The Shopify concept collection is being prepared.</p>}
           {heroProduct && <Link className="hero-product-label" to={`/products/${heroProduct.handle}`}>
@@ -130,16 +136,36 @@ export function ShopifyHomeView({products, sceneProduct, paused}: {
           <ProductCard key={product.id} product={product} index={index} />)}</div>
           : <div className="empty-state"><h3>Collection coming into view</h3><p>No RegenAI concepts are published to this storefront yet.</p></div>}
       </section>
-      {sceneProduct && <Inspection paused={paused} productHref={`/products/${sceneProduct.handle}`} />}
+      <CategoryExplore catalogMode="shopify" />
+      {sceneProduct && <Inspection paused={paused} productHref={`/products/${sceneProduct.handle}`}
+        poster={sceneProduct.image?.url} />}
+      <section className="section ritual-section">
+        <div className="ritual-index"><Mark /><p className="eyebrow">OUR APPROACH</p></div>
+        <h2>{site.home.approachTitle}</h2>
+        <div className="ritual-bottom"><p>{site.home.approachBody}</p>
+          <Link className="button button-outline" to="/about">Explore our approach <ArrowUpRight size={18} /></Link></div>
+      </section>
+      <LabFilm paused={paused} />
+      <JournalFeature />
+      <section className="finder-invitation section shopify-finder-invitation">
+        <div><p className="eyebrow">{editorial.ui.shopifyFinderInviteEyebrow}</p>
+          <h2>{editorial.ui.shopifyFinderInviteTitle}</h2>
+          <p>{editorial.ui.shopifyFinderInviteBody}</p>
+          <Link className="button" to="/quiz">{editorial.ui.shopifyFinderInviteAction} <ArrowUpRight size={18} /></Link>
+        </div>
+      </section>
+      <HomeQuestions />
     </>
   );
 }
 
-export function ShopifyCatalogView({products, concepts = {}, search = false, categoryTitle}: {
+export function ShopifyCatalogView({products, concepts = {}, search = false, categoryTitle,
+  sandboxCartEnabled = false}: {
   products: ShopifyCatalogProduct[];
   concepts?: Record<string, ConceptEditorial | null>;
   search?: boolean;
   categoryTitle?: string;
+  sandboxCartEnabled?: boolean;
 }) {
   const [params, setParams] = useSearchParams();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -172,10 +198,11 @@ export function ShopifyCatalogView({products, concepts = {}, search = false, cat
     <section className="page catalog-page">
       <p className="eyebrow">{categoryTitle ? site.designCategory.eyebrow : 'THE EVERYDAY COLLECTION'} / SHOPIFY SANDBOX</p>
       <div className="catalog-heading"><h1>{categoryTitle ? `${categoryTitle} ${site.designCategory.titleSuffix}` : search ? 'Find your next ritual.' : 'Room for recovery.'}</h1>
-        <p>Original design studies. Ordering is closed while the sandbox is being verified.</p></div>
+        <p>{sandboxCartEnabled ? editorial.ui.shopifySandboxCollectionNotice
+          : 'Original design studies. Ordering is closed while the sandbox is being verified.'}</p></div>
       <nav className="catalog-design-nav" aria-label={site.designCategory.navLabel}>
         <Link to="/collections/all" aria-current={!categoryTitle ? 'page' : undefined}>All tools</Link>
-        {site.categories.slice(1).map((name) => <Link key={name} to={`/collections/${name.toLowerCase().replace(/\s+/g, '-')}`}
+        {site.categories.slice(1).map((name) => <Link key={name} to={`/collections/${getDesignCategoryHandle(name)}`}
           aria-current={categoryTitle === name ? 'page' : undefined}>{name}</Link>)}
       </nav>
       <div className="catalog-toolbar">
@@ -190,8 +217,10 @@ export function ShopifyCatalogView({products, concepts = {}, search = false, cat
           </select></label>
       </div>
       <div className="results-summary"><span role="status">{filtered.length} {filtered.length === 1 ? 'tool' : 'tools'} to explore</span>
-        <span>DESIGN STUDIES / ORDERING NOT OPEN</span></div>
-      <ShopifyComparison products={selectedProducts} concepts={concepts} remove={toggleComparison} />
+        <span>{sandboxCartEnabled ? editorial.ui.shopifySandboxCollectionStatus
+          : 'DESIGN STUDIES / ORDERING NOT OPEN'}</span></div>
+      <ShopifyComparison products={selectedProducts} concepts={concepts} remove={toggleComparison}
+        sandboxCartEnabled={sandboxCartEnabled} />
       {filtered.length ? <div className="product-grid">{filtered.map((product, index) =>
         <ProductCard key={product.id} product={product} index={index} comparison={{
           selected: selectedIds.includes(product.id),
@@ -278,7 +307,7 @@ export function ShopifyProductView({product, concept, related, sandboxCartEnable
                 {fetcher.state === 'idle' ? 'Add to sandbox cart' : 'Adding…'}
               </button>}
             </CartForm>}
-          {sandboxCartEnabled && <Link to="/cart">View sandbox cart</Link>}
+          {sandboxCartEnabled && <Link className="shopify-view-cart-link" to="/cart">View sandbox cart</Link>}
           <Link className="button full" to="/evidence">Read the concept evidence <ArrowUpRight size={19} /></Link>
           <div className="product-accordions">
             {concept && <details open>

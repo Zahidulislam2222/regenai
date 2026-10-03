@@ -1,7 +1,7 @@
 import {describe, expect, it, vi} from 'vitest';
 import {getShopifyProduct, listShopifyProducts, mapShopifyProduct} from '../../app/lib/shopify-catalog.server';
 
-const limits = {pageSize: 2, maxPages: 3, variantLimit: 10, imageLimit: 8};
+const limits = {pageSize: 2, maxPages: 3, variantLimit: 10, imageLimit: 8, imageMaxWidth: 800};
 const ownedProduct = (overrides: Record<string, unknown> = {}) => ({
   id: 'gid://shopify/Product/101',
   handle: 'regenai-concept-pulse',
@@ -91,6 +91,8 @@ describe('Shopify catalog ownership and mapping', () => {
     query.mockResolvedValue({product: ownedProduct()});
     await expect(getShopifyProduct(query, 'regenai-concept-pulse', limits)).resolves.toMatchObject({name: 'Pulse One'});
     expect(query.mock.lastCall?.[0]).toContain('images(first: $imageLimit)');
+    expect(query.mock.lastCall?.[0]).toContain('preferredContentType: WEBP');
     expect(query.mock.lastCall?.[1].variables.imageLimit).toBe(8);
+    expect(query.mock.lastCall?.[1].variables.imageMaxWidth).toBe(800);
   });
 });

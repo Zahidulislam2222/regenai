@@ -8,6 +8,8 @@ import {
   ScrollRestoration,
   useRouteError,
   useRouteLoaderData,
+  useLocation,
+  useMatches,
   type ShouldRevalidateFunction,
 } from 'react-router';
 import type {Route} from './+types/root';
@@ -17,6 +19,7 @@ import {serializePublicSettings} from '~/lib/settings.shared';
 import {RecoveryShell, useRecoveryMotion} from '~/features/recovery/RecoveryShell';
 import {RecoveryErrorContent} from '~/features/recovery/RecoveryErrorContent';
 import recoveryStyles from '~/features/recovery/recovery.css?url';
+import {canonicalPath} from '~/content/recovery';
 
 export type RootLoader = typeof loader;
 
@@ -63,6 +66,9 @@ export function Layout({children}: {children?: React.ReactNode}) {
   const nonce = useNonce();
   const data = useRouteLoaderData<RootLoader>('root');
   const publicEnv = data?.publicEnv;
+  const {pathname} = useLocation();
+  const routeData = useMatches().at(-1)?.data;
+  const path = canonicalPath(pathname, routeData);
 
   return (
     <html lang={publicEnv?.locale.language.toLowerCase() ?? 'en'} dir="ltr">
@@ -70,6 +76,7 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <meta name="theme-color" content="#1e3a5f" />
+        {publicEnv && path ? <link rel="canonical" href={new URL(path, publicEnv.canonicalOrigin).toString()} /> : null}
         <Meta />
         <Links />
       </head>

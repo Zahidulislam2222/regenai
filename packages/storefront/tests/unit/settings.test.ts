@@ -47,6 +47,9 @@ describe('storefront settings boundary', () => {
       .toThrow('Invalid or missing setting: SANDBOX_CART_MAX_LINES');
     expect(loadStorefrontSettings(validInput({CATALOG_PAGE_SIZE: '80'})).catalog.pageSize).toBe(80);
     expect(loadStorefrontSettings(validInput({CATALOG_IMAGE_LIMIT: '8'})).catalog.imageLimit).toBe(8);
+    expect(loadStorefrontSettings(validInput({CATALOG_IMAGE_MAX_WIDTH: '960'})).catalog.imageMaxWidth).toBe(960);
+    expect(() => loadStorefrontSettings(validInput({CATALOG_IMAGE_MAX_WIDTH: '0'})))
+      .toThrow('Invalid or missing setting: CATALOG_IMAGE_MAX_WIDTH');
     expect(() => loadStorefrontSettings(validInput({CATALOG_IMAGE_LIMIT: '0'})))
       .toThrow('Invalid or missing setting: CATALOG_IMAGE_LIMIT');
     expect(() => loadStorefrontSettings(validInput({CATALOG_MAX_PAGES: '0'})))
@@ -177,6 +180,7 @@ describe('storefront settings boundary', () => {
       'CATALOG_MAX_PAGES',
       'CATALOG_VARIANT_LIMIT',
       'CATALOG_IMAGE_LIMIT',
+      'CATALOG_IMAGE_MAX_WIDTH',
       'PUBLIC_STORE_DOMAIN',
       'PUBLIC_CHECKOUT_DOMAIN',
       'PUBLIC_STOREFRONT_API_TOKEN',

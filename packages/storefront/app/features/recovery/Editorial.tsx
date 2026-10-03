@@ -2,7 +2,7 @@ import {ArrowLeft, ArrowUpRight} from 'lucide-react';
 import {Link} from 'react-router';
 import {editorial, type Story} from '../../content/recovery-editorial';
 
-export function CategoryExplore() {
+export function CategoryExplore({catalogMode = 'fixture'}: {catalogMode?: 'fixture' | 'shopify'}) {
   return (
     <section className="editorial-section category-explore" aria-labelledby="category-explore-title">
       <div className="editorial-heading">
@@ -15,7 +15,8 @@ export function CategoryExplore() {
           <Link
             className={`category-explore-card category-explore-${category.slug}`}
             key={category.slug}
-            to={`/collections/all?category=${encodeURIComponent(category.filter)}`}
+            to={catalogMode === 'shopify' ? `/collections/${category.slug}`
+              : `/collections/all?category=${encodeURIComponent(category.filter)}`}
           >
             <span className="eyebrow">{category.label}</span>
             <img src={category.image} alt={category.alt} loading="lazy" width="1000" height="1000" />

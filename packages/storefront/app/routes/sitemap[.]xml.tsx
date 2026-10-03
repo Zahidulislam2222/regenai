@@ -1,19 +1,26 @@
 import type {Route} from './+types/sitemap[.]xml';
-import {editorial} from '~/content/recovery-editorial';
+import {designCategoryPaths, indexableStaticPaths, journalPaths, products as fixtureProducts} from '~/content/recovery';
+import {listShopifyProducts} from '~/lib/shopify-catalog.server';
 
-const staticPaths = [
-  '/',
-  '/collections/all',
-  '/about',
-  '/evidence',
-  '/journal',
-];
-
-export function loader({context}: Route.LoaderArgs) {
+export async function loader({context}: Route.LoaderArgs) {
   const origin = context.settings.canonicalOrigin;
+  let productHandles: string[];
+  if (context.settings.catalogSource === 'shopify') {
+    try {
+      const catalog = await listShopifyProducts(
+        (document, options) => context.storefront.query(document, options), context.settings.catalog);
+      productHandles = catalog.map((product) => product.handle);
+    } catch {
+      throw new Response('Sitemap temporarily unavailable', {status: 503});
+    }
+  } else {
+    productHandles = fixtureProducts.map((product) => product.id);
+  }
   const paths = [
-    ...staticPaths,
-    ...editorial.stories.map(({slug}) => `/journal/${slug}`),
+    ...indexableStaticPaths,
+    ...designCategoryPaths(),
+    ...productHandles.map((handle) => `/products/${handle}`),
+    ...journalPaths(),
   ];
   const urls = paths.map((path) => `  <url><loc>${new URL(path, origin).toString().replaceAll('&', '&amp;')}</loc></url>`);
   return new Response(

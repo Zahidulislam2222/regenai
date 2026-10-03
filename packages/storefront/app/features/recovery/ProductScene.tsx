@@ -3,15 +3,20 @@ import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {recoverySettings} from '../../config/recovery';
+import {ui} from '../../content/recovery-ui';
 
 export default function ProductScene({
   paused = false,
   progress = 0,
   angle = 0,
+  poster = recoverySettings.scene.poster,
+  posterPriority = false,
 }: {
   paused?: boolean;
   progress?: number;
   angle?: number;
+  poster?: string;
+  posterPriority?: boolean;
 }) {
   const host = useRef<HTMLDivElement>(null);
   const state = useRef({paused, progress, angle});
@@ -168,8 +173,10 @@ export default function ProductScene({
     <div className="product-scene" data-scene-ready={ready}>
       <img
         className={ready ? 'scene-poster scene-poster-hidden' : 'scene-poster'}
-        src={recoverySettings.scene.poster}
-        alt="Pulse One, an original blue percussion-device concept"
+        src={poster}
+        loading={posterPriority ? 'eager' : 'lazy'}
+        {...(posterPriority ? {fetchpriority: 'high'} : {})}
+        alt={ui.pulse_one_device_concept_674487}
         width="1000"
         height="1000"
       />

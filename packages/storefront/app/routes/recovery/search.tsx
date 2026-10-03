@@ -15,6 +15,7 @@ export async function loader({context}: Route.LoaderArgs) {
       context.settings.catalog,
     );
     return {source: 'shopify' as const, products,
+      sandboxCartEnabled: context.settings.sandboxCheckoutEnabled,
       concepts: Object.fromEntries(products.map((product) => [product.id, getConceptEditorial(product)]))};
   } catch {
     throw new Response('Catalog temporarily unavailable', {status: 503});
@@ -30,6 +31,7 @@ export const meta: MetaFunction = () => [
 export default function RecoverySearchRoute() {
   const data = useLoaderData<typeof loader>();
   return data.source === 'shopify'
-    ? <ShopifyCatalogView products={data.products} concepts={data.concepts} search />
+    ? <ShopifyCatalogView products={data.products} concepts={data.concepts} search
+      sandboxCartEnabled={data.sandboxCartEnabled} />
     : <RecoveryCatalogView search />;
 }

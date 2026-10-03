@@ -37,12 +37,14 @@ import {RecoveryErrorContent} from './RecoveryErrorContent';
 import {CategoryExplore, HomeQuestions, JournalArticleView, JournalFeature, JournalIndexView} from './Editorial';
 export {RecoveryShell, useRecoveryMotion} from './RecoveryShell';
 const ProductScene = lazy(() => import('./ProductScene'));
-function ScenePoster() {
+function ScenePoster({src = recoverySettings.scene.poster, priority = false}: {src?: string; priority?: boolean}) {
   return (
     <div className="product-scene">
       <img
         className="scene-poster"
-        src={recoverySettings.scene.poster}
+        src={src}
+        loading={priority ? 'eager' : 'lazy'}
+        {...(priority ? {fetchpriority: 'high'} : {})}
         alt={ui.pulse_one_device_concept_674487}
         width="1000"
         height="1000"
@@ -54,10 +56,14 @@ export function ProductVisual({
   paused = false,
   progress = 0,
   angle = 0,
+  poster,
+  posterPriority = false,
 }: {
   paused?: boolean;
   progress?: number;
   angle?: number;
+  poster?: string;
+  posterPriority?: boolean;
 }) {
   const [clientReady, setClientReady] = useState(false);
 
@@ -65,11 +71,12 @@ export function ProductVisual({
     setClientReady(true);
   }, []);
 
-  if (paused || !clientReady) return <ScenePoster />;
+  if (paused || !clientReady) return <ScenePoster src={poster} priority={posterPriority} />;
 
   return (
-    <Suspense fallback={<ScenePoster />}>
-      <ProductScene paused={paused} progress={progress} angle={angle} />
+    <Suspense fallback={<ScenePoster src={poster} priority={posterPriority} />}>
+      <ProductScene paused={paused} progress={progress} angle={angle}
+        poster={poster} posterPriority={posterPriority} />
     </Suspense>
   );
 }
@@ -101,6 +108,8 @@ export function Experience() {
         <Route path="/cart" element={<CartView />} />
         <Route path="/about" element={<InfoView page="about" />} />
         <Route path="/evidence" element={<InfoView page="evidence" />} />
+        <Route path="/help" element={<InfoView page="help" />} />
+        <Route path="/contact" element={<InfoView page="contact" />} />
         <Route path="/journal" element={<JournalIndexView />} />
         <Route path="/journal/:slug" element={<PreviewJournalArticleRoute />} />
         <Route path="/policies/:policy" element={<PreviewPolicyRoute />} />
@@ -160,7 +169,7 @@ function PreviewProductRoute({paused}: {paused: boolean}) {
 
 function PreviewPolicyRoute() {
   const {policy} = useParams();
-  return policy === 'privacy' || policy === 'delivery' ? (
+  return policy === 'privacy' || policy === 'delivery' || policy === 'terms' ? (
     <InfoView page={policy} />
   ) : (
     <NotFoundView />
@@ -198,7 +207,7 @@ export function HomeView({paused}: {paused: boolean}) {
           <div className="orbit orbit-two" />
           <span className="object-cross cross-a">{ui._a318c2}</span>
           <span className="object-cross cross-b">{ui._a318c2}</span>
-          <ProductVisual paused={paused} />
+          <ProductVisual paused={paused} posterPriority />
           <div className="object-shadow" />
           <Link className="hero-product-label" to={`/products/${recoverySettings.scene.productId}`}>
             <span>
@@ -342,7 +351,7 @@ function ProductCard({
     </article>
   );
 }
-export function Inspection({paused, productHref}: {paused: boolean; productHref: string}) {
+export function Inspection({paused, productHref, poster}: {paused: boolean; productHref: string; poster?: string}) {
   const root = useRef<HTMLElement>(null);
   const [progress, setProgress] = useState(0);
   useEffect(() => {
@@ -387,7 +396,7 @@ export function Inspection({paused, productHref}: {paused: boolean; productHref:
           <div className="inspection-word" aria-hidden="true">
             {ui.pulse_64ab2b}
           </div>
-          <ProductVisual paused={paused} progress={progress} />
+          <ProductVisual paused={paused} progress={progress} poster={poster} />
           <div className="inspection-tag">
             <span className="status-dot" /> {site.inspection[active].label}
           </div>
@@ -424,7 +433,7 @@ export function Inspection({paused, productHref}: {paused: boolean; productHref:
     </section>
   );
 }
-function LabFilm({paused}: {paused: boolean}) {
+export function LabFilm({paused}: {paused: boolean}) {
   const video = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
   const [available, setAvailable] = useState(media.lab.videoAvailable);
@@ -928,6 +937,9 @@ export function InfoView({page}: {page: keyof typeof site.pages}) {
       <p className="eyebrow">{p.eyebrow}</p>
       <h1>{p.title}</h1>
       <p className="info-intro">{p.body}</p>
+      {p.action && <a className="button" href={p.action.href} target="_blank" rel="noopener noreferrer">
+        {p.action.label}<ArrowUpRight size={18} />
+      </a>}
       <div className="info-sections">
         {p.sections.map(([title, body], i) => (
           <article key={title}>

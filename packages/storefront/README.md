@@ -4,8 +4,8 @@ The customer-facing frontend of RegenAI. It contains two things that share compo
 
 | Part | Entry | Status |
 |---|---|---|
-| **Visual recovery storefront** — static React build with Three.js product scenes, catalog, search/filter, 6 product pages, recovery finder, demo bag and info pages | `vite.frontend.config.ts`, `preview/`, `app/features/recovery/` | **Live** at https://regenai.zahidul-islam.com |
-| **Hydrogen storefront** — server-rendered Shopify storefront (real catalog, cart, accounts) | `server.ts` (Workers), `server.node.ts` (Node), `app/routes/` | **In progress** — route migration and Node adapter not yet passing full gates |
+| **Visual recovery storefront** — static React build with Three.js product scenes, catalog, search/filter, 6 read-only product pages, recovery finder and info pages | `vite.frontend.config.ts`, `preview/`, `app/features/recovery/` | **Live design-study preview** at https://regenai.zahidul-islam.com; cart ordering is closed |
+| **Hydrogen storefront** — server-rendered Shopify storefront (six published concept products and guarded local sandbox cart) | `server.ts` (Workers), `server.node.ts` (Node), `app/routes/` | **Local F1 candidate** — desktop/mobile shopping flow passes; older closed-ordering version is on isolated staging; account and test checkout remain gated |
 
 ## Commands
 
@@ -45,7 +45,8 @@ tests/e2e, tests/a11y/   Playwright suites
 
 ## Behaviour notes
 
-- The demo bag is stored only in the browser (`localStorage`, key `regenai:demo-bag:v1`); nothing is sent to a server.
+- The preview bundle includes a local-only demo bag implementation (`localStorage`, key `regenai:demo-bag:v1`), but its current public product pages expose no Add action and the cart page states that ordering is closed.
+- The Hydrogen cart uses Shopify's development store only behind explicit loopback sandbox settings; its line changes are sent to Shopify and its checkout link is restricted to the configured checkout host.
 - Recovery-finder answers stay in page memory and are not saved or sent.
 - 3D scenes respect `prefers-reduced-motion`, can be paused, and fall back to still images if WebGL or a model fails.
 

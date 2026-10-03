@@ -908,6 +908,13 @@ main:focus {
   align-items: center;
   gap: 25px;
 }
+.shopify-finder-invitation {
+  grid-template-columns: 1fr;
+  background: var(--sage);
+}
+.shopify-finder-invitation > div {
+  max-width: 700px;
+}
 .finder-invitation h2 {
   font-size: clamp(37px, 4vw, 62px);
   margin-top: 24px;
@@ -1408,6 +1415,83 @@ main:focus {
   color: var(--muted);
   font-size: 11px;
 }
+.shopify-view-cart-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 8px;
+  padding: 10px 0;
+}
+.cart-lines {
+  margin-top: 36px;
+  border-top: 1px solid var(--line);
+}
+.cart-line {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 22px;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--line);
+}
+.cart-line > img {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+  background: #e5e8e0;
+}
+.cart-line h2 {
+  font-size: 23px;
+  font-weight: 500;
+}
+.cart-line p {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.cart-line > form > button {
+  min-height: 36px;
+  text-decoration: underline;
+  font-size: 12px;
+}
+.shopify-cart-quantity {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  margin-top: 14px;
+  border: 1px solid var(--line);
+}
+.shopify-cart-quantity button,
+.shopify-cart-quantity span {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  font: 12px var(--mono);
+}
+.shopify-cart-quantity button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.cart-total {
+  margin: 28px 0;
+  font-size: 18px;
+  font-weight: 500;
+}
+@media (max-width: 520px) {
+  .cart-line {
+    grid-template-columns: 84px minmax(0, 1fr);
+    gap: 12px 16px;
+  }
+  .cart-line > img {
+    width: 84px;
+    height: 84px;
+  }
+  .cart-line > form:last-child {
+    grid-column: 2;
+    justify-self: start;
+  }
+}
 .pdp-price {
   display: flex;
   gap: 18px;
@@ -1669,6 +1753,9 @@ main:focus {
   max-width: 670px;
   margin-top: 35px;
   color: var(--muted);
+}
+.info-page > .button {
+  margin-top: 24px;
 }
 .info-sections {
   margin: 65px 0;

@@ -1,4 +1,6 @@
 import rawCatalog from './recovery-catalog.json';
+import {editorial} from './recovery-editorial';
+import {pages} from './recovery-pages';
 export interface RecoveryProduct {
   id: string;
   name: string;
@@ -148,91 +150,46 @@ export const site = {
     links: [
       {label: 'Our approach', to: '/about'},
       {label: 'Evidence & transparency', to: '/evidence'},
+      {label: 'Help & FAQ', to: '/help'},
+      {label: 'Contact', to: '/contact'},
       {label: 'Privacy', to: '/policies/privacy'},
       {label: 'Delivery & returns', to: '/policies/delivery'},
+      {label: 'Demo terms', to: '/policies/terms'},
     ],
   },
-  pages: {
-    about: {
-      eyebrow: 'OUR APPROACH',
-      title: 'More intention.\nLess noise.',
-      body: 'RegenAI explores how thoughtfully designed recovery objects could fit into everyday life. The collection is in development.',
-      sections: [
-        [
-          'Designed around the everyday',
-          'The collection brings together original industrial-design studies, a clear product finder, and a calm place to explore the forms.',
-        ],
-        [
-          'Objects you can explore',
-          'The Pulse One form was modeled in Blender and can be explored interactively in your browser. The render shows a design direction; physical specifications are not yet confirmed.',
-        ],
-        [
-          'A work in progress, openly',
-          'Product specifications, inventory and fulfillment are being confirmed. Ordering remains closed until those details are available.',
-        ],
-      ],
-    },
-    evidence: {
-      eyebrow: 'EVIDENCE & TRANSPARENCY',
-      title: 'Clarity comes first.',
-      body: 'Good design is no substitute for evidence. Here is what has and has not been established.',
-      sections: [
-        [
-          'Original design studies, without medical claims',
-          'The current visuals represent original design studies. Physical specifications and performance have not been verified. We make no medical-device, clinical, review or health-outcome claims.',
-        ],
-        [
-          'How the finder works',
-          'It filters the local catalog by your selected body area and product category. It does not assess symptoms or provide medical advice.',
-        ],
-        [
-          'Before a real launch',
-          'Physical product validation, appropriate safety documentation, evidence review, approved policies and confirmed merchandise are required before ordering can open.',
-        ],
-      ],
-    },
-    privacy: {
-      eyebrow: 'PRIVACY',
-      title: 'Your pause is yours.',
-      body: 'Finder answers stay in the current browser session. They are not submitted or used to build a profile.',
-      sections: [
-        [
-          'What stays on this device',
-          'This page does not require an account to explore the collection.',
-        ],
-        [
-          'What is not stored',
-          'Finder answers stay in component memory for the current visit. They are not added to URLs, stored, or transmitted.',
-        ],
-        [
-          'A future live service',
-          'Before orders or accounts open, an owner-approved privacy policy and appropriate consent controls will be published.',
-        ],
-      ],
-    },
-    delivery: {
-      eyebrow: 'DELIVERY & RETURNS',
-      title: 'Explore freely.',
-      body: 'Ordering is not open while products and fulfillment are being confirmed.',
-      sections: [
-        [
-          'Prices and availability',
-          'Prices and availability will be published when merchandise is ready to order.',
-        ],
-        [
-          'No purchase is made',
-          'There is no payment form or order placement on these product pages.',
-        ],
-        [
-          'Before products go on sale',
-          'Real availability, delivery regions, costs, returns terms, warranty and product documentation must be supplied and verified.',
-        ],
-      ],
-    },
-  },
+  pages,
 };
 export function getDesignCategoryByHandle(handle: string | undefined): string | null {
-  return site.categories.slice(1).find((name) => name.toLowerCase().replace(/\s+/g, '-') === handle) ?? null;
+  return site.categories.slice(1).find((name) => getDesignCategoryHandle(name) === handle) ?? null;
+}
+export function getDesignCategoryHandle(category: string): string {
+  return category.toLowerCase().replace(/\s+/g, '-');
+}
+export const indexableStaticPaths = [
+  '/', '/collections/all', '/quiz', '/about', '/evidence', '/help', '/contact',
+  '/journal', '/policies/privacy', '/policies/delivery', '/policies/terms',
+] as const;
+export function designCategoryPaths(): string[] {
+  return site.categories.slice(1).map((category) => `/collections/${getDesignCategoryHandle(category)}`);
+}
+export function journalPaths(): string[] {
+  return editorial.stories.map(({slug}) => `/journal/${slug}`);
+}
+export function canonicalPath(pathname: string, routeData?: unknown): string | null {
+  const path = pathname === '/' ? '/' : pathname.replace(/\/+$/, '');
+  if ((indexableStaticPaths as readonly string[]).includes(path)) return path;
+  const category = /^\/collections\/([a-z0-9-]+)$/.exec(path);
+  if (category && getDesignCategoryByHandle(category[1])) return path;
+  if (journalPaths().includes(path)) return path;
+  const product = /^\/products\/([a-z0-9-]+)$/.exec(path);
+  if (product && routeData && typeof routeData === 'object' && 'product' in routeData) {
+    const item = routeData.product;
+    if (item && typeof item === 'object' &&
+      (('handle' in item && item.handle === product[1]) || ('id' in item && item.id === product[1]))) {
+      return path;
+    }
+  }
+  return null;
 }
 export const media = {
   lab: {

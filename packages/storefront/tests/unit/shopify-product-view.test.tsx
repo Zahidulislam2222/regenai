@@ -1,7 +1,7 @@
 import {fireEvent, render, screen, within} from '@testing-library/react';
 import {MemoryRouter} from 'react-router';
 import {describe, expect, it} from 'vitest';
-import {ShopifyCatalogView, ShopifyProductView} from '../../app/features/recovery/ShopifyCatalogViews';
+import {ShopifyCatalogView, ShopifyHomeView, ShopifyProductView} from '../../app/features/recovery/ShopifyCatalogViews';
 import type {ShopifyCatalogProduct} from '../../app/lib/shopify-catalog.server';
 
 const product: ShopifyCatalogProduct = {
@@ -23,11 +23,57 @@ const product: ShopifyCatalogProduct = {
 };
 
 describe('Shopify concept product page', () => {
+  it('links the paused Pulse inspection to its validated Shopify route and shows the poster', () => {
+    const view = render(<MemoryRouter><ShopifyHomeView products={[product]}
+      sceneProduct={product} paused /></MemoryRouter>);
+    expect(view.container.querySelectorAll('.scene-poster').length).toBe(2);
+    expect([...view.container.querySelectorAll<HTMLImageElement>('.scene-poster')]
+      .every((image) => image.getAttribute('src') === product.image?.url)).toBe(true);
+    expect(view.container.querySelector('.inspection-static')).toBeTruthy();
+    expect(view.container.querySelectorAll('.inspection-step').length).toBe(3);
+    expect(view.container.querySelector('.inspection-content > .text-link')?.getAttribute('href'))
+      .toBe('/products/regenai-concept-pulse');
+  });
+
+  it('keeps the Shopify homepage journey and verified category destinations', () => {
+    const view = render(<MemoryRouter><ShopifyHomeView products={[product]}
+      sceneProduct={product} paused /></MemoryRouter>);
+    const categoryLinks = [...view.container.querySelectorAll<HTMLAnchorElement>('.category-explore-card')]
+      .map((link) => link.getAttribute('href'));
+    expect(categoryLinks).toEqual(['/collections/release', '/collections/move', '/collections/reset']);
+    expect(view.container.querySelector('.ritual-section')).toBeTruthy();
+    expect(view.container.querySelector('.lab-film')).toBeTruthy();
+    expect(view.container.querySelector('.journal-feature')).toBeTruthy();
+    expect(view.container.querySelector('.home-questions')).toBeTruthy();
+    expect(screen.getByRole('link', {name: /Explore the finder/}).getAttribute('href')).toBe('/quiz');
+    expect(view.container.querySelector('a[href="/products/pulse"]')).toBeNull();
+  });
+
+  it('keeps unverified catalog imagery without a Pulse inspection', () => {
+    const view = render(<MemoryRouter><ShopifyHomeView products={[product]}
+      sceneProduct={null} paused={false} /></MemoryRouter>);
+    expect(view.container.querySelector('.hero-object img')?.getAttribute('src'))
+      .toBe(product.image?.url);
+    expect(view.container.querySelector('.inspection')).toBeNull();
+  });
+
   it('describes an empty verified design category accurately', () => {
     render(<MemoryRouter><ShopifyCatalogView products={[]} categoryTitle="Reset" /></MemoryRouter>);
     expect(screen.getByRole('heading', {name: 'Reset concepts.'})).toBeTruthy();
     expect(screen.getByText('No verified concepts are available in this design category yet.')).toBeTruthy();
     expect(screen.getByRole('link', {name: 'All tools'}).getAttribute('href')).toBe('/collections/all');
+  });
+
+  it('states the local test-order boundary consistently in collection and comparison', () => {
+    const available = {...product, availableForSale: true,
+      variants: [{...product.variants[0], availableForSale: true}]};
+    render(<MemoryRouter><ShopifyCatalogView products={[available]} sandboxCartEnabled /></MemoryRouter>);
+    expect(screen.getByText('Original design studies. Local development-store test orders only.'))
+      .toBeTruthy();
+    expect(screen.getByText('DESIGN STUDIES / TEST ORDERS ONLY')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', {name: 'Compare concept'}));
+    expect(screen.getByText('Available for local development-store test orders')).toBeTruthy();
+    expect(screen.queryByText('Ordering is closed while the sandbox is being verified.')).toBeNull();
   });
 
   it('selects available media and preserves the closed-commerce design disclosure', () => {
@@ -43,6 +89,14 @@ describe('Shopify concept product page', () => {
     expect(screen.getByText('Can I place an order now?')).toBeTruthy();
     expect(screen.queryByText('How are finder results chosen?')).toBeNull();
     expect(screen.queryByRole('button', {name: 'Add to sandbox cart'})).toBeNull();
+  });
+
+  it('keeps a sold-out Shopify variant out of the local sandbox cart', () => {
+    render(<MemoryRouter><ShopifyProductView product={product} related={[]}
+      sandboxCartEnabled concept={null} /></MemoryRouter>);
+    expect(screen.getByText('Unavailable')).toBeTruthy();
+    expect(screen.queryByRole('button', {name: 'Add to sandbox cart'})).toBeNull();
+    expect(screen.getByRole('link', {name: 'View sandbox cart'})).toBeTruthy();
   });
 
   it('compares Shopify facts and validated concept details across collection filters', () => {

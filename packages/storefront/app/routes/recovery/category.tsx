@@ -17,7 +17,8 @@ export async function loader({context, params}: Route.LoaderArgs) {
       (document, options) => context.storefront.query(document, options),
       context.settings.catalog,
     ));
-    return {category, products, concepts: Object.fromEntries(products.map((product) =>
+    return {category, products, sandboxCartEnabled: context.settings.sandboxCheckoutEnabled,
+      concepts: Object.fromEntries(products.map((product) =>
       [product.id, getConceptEditorial(product)]))};
   } catch {
     throw new Response('Catalog temporarily unavailable', {status: 503});
@@ -31,5 +32,6 @@ export const meta: MetaFunction = ({params}) => [
 
 export default function RecoveryCategoryRoute() {
   const data = useLoaderData<typeof loader>();
-  return <ShopifyCatalogView products={data.products} concepts={data.concepts} categoryTitle={data.category} />;
+  return <ShopifyCatalogView products={data.products} concepts={data.concepts}
+    categoryTitle={data.category} sandboxCartEnabled={data.sandboxCartEnabled} />;
 }
