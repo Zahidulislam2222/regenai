@@ -44,12 +44,12 @@ Updated 2026-09-24. Related: [SECURITY.md](../SECURITY.md) (vulnerability report
 
 ## 4. Known gaps and release blockers
 
-These are tracked openly. The merchant app and Hydrogen integration **must not be released to real merchants** until the release blockers are closed with tests and independent review. A development scaffold of the merchant app is currently deployed to a `workers.dev` URL; its review queue was empty when checked on 2026-09-24. It must be secured or taken offline before any real store installs it.
+These are tracked openly. The merchant app and Hydrogen integration **must not be released to real merchants** until the release blockers are closed with tests and independent review. The legacy merchant scaffold remains stored as a Cloudflare Worker, but its production and preview `workers.dev` URLs were disabled on 2026-10-04. Native inventory found no custom domain or zone route; API readback confirmed both route flags false and the former public URL returned HTTP 403. It remains unfit for merchant use until the local security repair is deployed and independently verified.
 
 | ID | Gap | Severity | Required fix |
 |---|---|---|---|
 | SEC-01 | Existing remote merchant tokens may be plaintext | Release blocker | Local callback encrypts new writes with shop-bound AES-GCM; configure remote secret, rotate legacy tokens and prove remote ciphertext before release |
-| SEC-02 | Deployed merchant review route lacks proven per-request auth and shop scoping | Release blocker | Local standalone-app repair uses an expiring opaque browser session and shop-bound list/detail queries; local 401/404 HTTP checks passed. Deploy and independently verify before real use. An embedded app would instead require Shopify ID tokens. |
+| SEC-02 | Stored legacy merchant bundle lacks proven per-request auth and shop scoping | Release blocker | Its known public URLs are disabled. Local standalone-app repair uses an expiring opaque browser session and shop-bound list/detail queries; local 401/404 HTTP checks passed. Deploy and independently verify before real use. An embedded app would instead require Shopify ID tokens. |
 | SEC-03 | Deployed OAuth `state` previously used eventually consistent KV | Release blocker | Local repair uses browser-bound D1 state consumed by one `DELETE ... RETURNING`; local D1 and negative tests passed. Migrate remote D1 and verify before release. |
 | SEC-04 | Historical preview/staging bindings pointed at production D1/KV | Release blocker | Source bindings removed so those environments fail closed; provision and verify isolated databases before preview/staging deployments |
 | SEC-05 | `Strict-Transport-Security` header not present on live frontend responses | Medium | Enable HSTS at the edge after confirming all subdomains serve HTTPS |

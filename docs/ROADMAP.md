@@ -1,6 +1,6 @@
 # Roadmap
 
-Updated 2026-10-04. Task-level acceptance criteria and dependencies live in the [master plan](../PROJECT_PLAN.md). Current evidence lives in [BUILD-STATUS.md](BUILD-STATUS.md). Phases are ordered by dependency; dates are not promised. Work is stopped after the current frontend release at the owner's request.
+Updated 2026-10-04. Task-level acceptance criteria and dependencies live in the [master plan](../PROJECT_PLAN.md). Current evidence lives in [BUILD-STATUS.md](BUILD-STATUS.md). Phases are ordered by dependency; dates are not promised. Work has resumed on the buyer and merchant sandbox phases.
 
 ## Current frontend-first phases
 
@@ -9,7 +9,7 @@ Updated 2026-10-04. Task-level acceptance criteria and dependencies live in the 
 | F1 — Shopping journey | Implemented for the concept demo; acceptance open | Six Shopify concept products, discovery and comparison are live; the enabled development-store cart passed the desktop/mobile 0→1→2→1→0 flow locally; public cart writes remain closed | Fresh F1 journey review and a real unavailable-variant browser case when a test variant exists |
 | F2 — Frontend completeness | Live review release verified; manual check open | Help/contact/policies, approved hero, source-specific finder copy, search, SEO and responsive checks; exact-image staging/main releases and independent source review passed | Full manual screen-reader journey and broader route-level visual acceptance |
 | B1 — Buyer platform | In progress | Test gateway and hosted checkout form verified; staging Account sign-in redirects to Shopify with PKCE and the registered callback; main Account and public carts remain closed | Explicitly approved development-store test order and Admin readback; buyer email/OTP login and logout; main account settings as needed |
-| B2 — Merchant platform | Due | Inactive sandbox app draft with three Functions exists | Install, OAuth/isolation, eligible Function activation and real sandbox behavior |
+| B2 — Merchant platform | In progress | Inactive sandbox app draft with three Functions exists; legacy Worker's production and preview public URLs are closed and verified | Install, OAuth/isolation, eligible Function activation and real sandbox behavior |
 | R1 — Production controls | Due | Bounded frontend security, accessibility and performance evidence exists | Full config/security audit, restore drill, monitoring and measured performance/reliability evidence |
 | R2 — Release and handoff | Due for full platform | The current frontend alone is released with local/live hash parity | Integrated buyer/merchant release, live rollback drill and final handoff |
 

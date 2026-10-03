@@ -45,7 +45,7 @@ The live build is a static single-page application served by an unprivileged, re
 
 | Part | Technology | Status |
 |---|---|---|
-| Embedded merchant app shell and OAuth install/callback | React Router 7 on Cloudflare Workers, Polaris | **Partial** — a development scaffold is deployed to a `workers.dev` URL; release-blocking security repairs required (see [SECURITY-MODEL.md](SECURITY-MODEL.md)); not for real stores |
+| Merchant app shell and OAuth install/callback | React Router 7 on Cloudflare Workers, Polaris | **Partial** — legacy scaffold remains stored but its known public URLs are disabled; repaired source is local only and release blockers remain (see [SECURITY-MODEL.md](SECURITY-MODEL.md)) |
 | Claim-review queue for product copy (`/admin/reviews`) | D1 table `clinician_review_queue` | **Partial** — read-only listing; no authentication or shop scoping yet; submission and approval flow planned |
 | Persistence | Cloudflare D1 (SQLite semantics), Workers KV for OAuth state | **Built** — schema in `migrations/0001_initial.sql`; environments not yet isolated |
 | Webhook intake | Shopify HMAC-verified webhooks → durable queue → idempotent workers | **Planned** |
@@ -86,7 +86,7 @@ Full threat model: [SECURITY-MODEL.md](SECURITY-MODEL.md). Data inventory: [PRIV
 |---|---|---|
 | Static frontend | One Docker container on a single VPS, Caddy reverse proxy, Cloudflare proxy | Replaced by the Hydrogen server once integrated |
 | Hydrogen storefront | Not deployed | Stateless Node containers behind a load balancer; public-page CDN caching; scales horizontally (see [SCALABILITY.md](SCALABILITY.md)) |
-| Merchant app | Development scaffold deployed to a `workers.dev` URL; environments share one D1 database and KV namespace | Isolated preview/staging/production D1 and KV; authenticated routes; Cloudflare Workers auto-scaling |
+| Merchant app | Legacy scaffold stored with production and preview `workers.dev` routes disabled; isolated remote environments and repaired source are not deployed | Isolated preview/staging/production data stores; authenticated routes; Cloudflare Workers auto-scaling |
 | Functions | Built locally | Released through Shopify CLI (`shopify app deploy`) |
 
 Releases are immutable: each frontend build goes to a new release directory, the previous release is retained, and rollback re-selects the previous release. Deploys follow a local-first rule — local is the source of truth, and every deployment ends with a byte-parity check between local artifact and live server.

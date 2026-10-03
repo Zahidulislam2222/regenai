@@ -12,6 +12,8 @@ name = "regenai-app"
 main = "./workers/app.ts"
 compatibility_date = "2026-04-01"
 compatibility_flags = ["nodejs_compat"]
+workers_dev = false
+preview_urls = false
 
 # Production D1 is the only remote data binding. Preview and staging are
 # intentionally unbound until isolated databases are allocated and migrated.
@@ -34,6 +36,8 @@ REVIEW_QUEUE_LIMIT = "50"
 # -----------------------------------------------------------------------
 [env.preview]
 name = "regenai-app-preview"
+workers_dev = true
+preview_urls = true
 
 [env.preview.vars]
 SHOPIFY_APP_URL = "https://regenai-app-preview.regenai-workers.workers.dev"
@@ -47,6 +51,8 @@ REVIEW_QUEUE_LIMIT = "50"
 # -----------------------------------------------------------------------
 [env.staging]
 name = "regenai-app-staging"
+workers_dev = true
+preview_urls = true
 
 [env.staging.vars]
 SHOPIFY_APP_URL = "https://regenai-app-staging.regenai-workers.workers.dev"
@@ -60,6 +66,8 @@ REVIEW_QUEUE_LIMIT = "50"
 # -----------------------------------------------------------------------
 [env.production]
 name = "regenai-app"
+workers_dev = false
+preview_urls = false
 
 [[env.production.d1_databases]]
 binding = "DB"

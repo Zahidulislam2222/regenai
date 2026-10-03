@@ -27,6 +27,24 @@ test('preview and staging never bind the production database', () => {
   assert.doesNotMatch(config, /SHOPIFY_TOKEN_ENC_KEY\s*=/);
 });
 
+test('legacy merchant Worker keeps public production routes disabled', () => {
+  const config = file('../wrangler.toml');
+  const root = config.split('\n[env.')[0];
+  const production = config.split('[env.production]')[1]?.split('\n[env.')[0];
+  assert.ok(production, 'production config missing');
+  assert.match(root, /^workers_dev = false$/m);
+  assert.match(root, /^preview_urls = false$/m);
+  assert.match(production, /^workers_dev = false$/m);
+  assert.match(production, /^preview_urls = false$/m);
+
+  for (const environment of ['preview', 'staging']) {
+    const section = config.split(`[env.${environment}]`)[1]?.split('\n[env.')[0];
+    assert.ok(section, `${environment} config missing`);
+    assert.match(section, /^workers_dev = true$/m);
+    assert.match(section, /^preview_urls = true$/m);
+  }
+});
+
 test('obvious secrets and plaintext token persistence cannot enter app source', () => {
   const roots = [new URL('../app/', import.meta.url), new URL('../workers/', import.meta.url)];
   const sourceFiles = (root) => readdirSync(root, {withFileTypes: true}).flatMap((entry) => {
