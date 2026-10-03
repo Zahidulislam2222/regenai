@@ -95,6 +95,23 @@
     "shopifyPriceLabel": "Illustrative development-store price",
     "shopifyRelatedTitle": "More concepts in this collection",
     "shopifyViewImage": "View image",
+    "shopifyCompareSelect": "Compare concept",
+    "shopifyCompareRemove": "Remove from comparison",
+    "shopifyCompareTitle": "Compare the concepts",
+    "shopifyCompareEyebrow": "Design studies / side by side",
+    "shopifyComparePrompt": "Choose concepts to see their design intentions side by side.",
+    "shopifyCompareScrollHint": "Scroll sideways to view each concept.",
+    "shopifyCompareDisclosure": "Illustrative designs and development-store prices. Physical specifications and ordering are not confirmed.",
+    "shopifyCompareCategory": "Design category",
+    "shopifyCompareType": "Shopify product type",
+    "shopifyCompareOptions": "Listed options",
+    "shopifyComparePrice": "First listed option price",
+    "shopifyCompareAvailability": "Storefront availability",
+    "shopifyCompareUnknown": "Not verified",
+    "shopifyCompareView": "View concept",
+    "shopifyCompareDetail": "Design detail",
+    "shopifyCompareAvailable": "Shopify marks this concept available; ordering is closed",
+    "shopifyCompareUnavailable": "Unavailable",
     "cartTitle": "Good things take care.",
     "cartBody": "Ordering is not open while product details, inventory and fulfillment are being confirmed."
   },
@@ -115,5 +132,6 @@
       "answer": "Results follow the preferences you select and the attributes listed for each form. The matching rules are deterministic and your answers stay in this page."
     }
   ],
-  "productQuestionIds": ["ordering", "medical"]
+  "productQuestionIds": ["ordering", "medical"],
+  "comparisonLimit": 2
 }

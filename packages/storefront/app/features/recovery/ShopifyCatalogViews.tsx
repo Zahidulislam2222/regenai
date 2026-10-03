@@ -25,7 +25,8 @@ function status(product: ShopifyCatalogProduct): string {
     ? 'Sandbox concept' : 'Unavailable';
 }
 
-function ProductCard({product, index}: {product: ShopifyCatalogProduct; index: number}) {
+function ProductCard({product, index, comparison}: {product: ShopifyCatalogProduct; index: number;
+  comparison?: {selected: boolean; disabled: boolean; toggle: () => void}}) {
   return (
     <article className="product-card">
       <Link to={`/products/${product.handle}`} className="product-card-image" aria-label={`Explore ${product.name}`}>
@@ -43,8 +44,56 @@ function ProductCard({product, index}: {product: ShopifyCatalogProduct; index: n
         </div>
         <span className="product-status">{status(product)}</span>
       </div>
+      {comparison && <button className="product-compare-button" type="button"
+        aria-pressed={comparison.selected} disabled={comparison.disabled} onClick={comparison.toggle}>
+        {comparison.selected ? editorial.ui.shopifyCompareRemove : editorial.ui.shopifyCompareSelect}
+      </button>}
     </article>
   );
+}
+
+function ShopifyComparison({products, concepts, remove}: {
+  products: ShopifyCatalogProduct[];
+  concepts: Record<string, ConceptEditorial | null>;
+  remove: (id: string) => void;
+}) {
+  if (!products.length) return null;
+  const unknown = editorial.ui.shopifyCompareUnknown;
+  const specs = [...new Set(products.flatMap((product) => concepts[product.id]?.specs.map(({label}) => label) ?? []))];
+  const rows = [
+    {label: editorial.ui.shopifyCompareCategory, value: (product: ShopifyCatalogProduct) => concepts[product.id]?.category ?? unknown},
+    {label: editorial.ui.shopifyCompareType, value: (product: ShopifyCatalogProduct) => product.kind || unknown},
+    {label: editorial.ui.shopifyCompareOptions, value: (product: ShopifyCatalogProduct) =>
+      product.options.map(({name, values}) => `${name}: ${values.join(', ')}`).join(' · ') || unknown},
+    {label: editorial.ui.shopifyComparePrice, value: (product: ShopifyCatalogProduct) =>
+      product.complete ? money(product.variants[0]) ?? unknown : unknown},
+    {label: editorial.ui.shopifyCompareAvailability, value: (product: ShopifyCatalogProduct) =>
+      product.availableForSale ? editorial.ui.shopifyCompareAvailable : editorial.ui.shopifyCompareUnavailable},
+    ...specs.map((label) => ({label, value: (product: ShopifyCatalogProduct) =>
+      concepts[product.id]?.specs.find((spec) => spec.label === label)?.value ?? unknown})),
+  ];
+  return <section className="shopify-comparison" aria-labelledby="shopify-comparison-title">
+    <div className="section-heading"><div><p className="eyebrow">{editorial.ui.shopifyCompareEyebrow}</p>
+      <h2 id="shopify-comparison-title">{editorial.ui.shopifyCompareTitle}</h2></div></div>
+    <p>{editorial.ui.shopifyCompareDisclosure}</p>
+    {products.length < 2 ? <p role="status">{editorial.ui.shopifyComparePrompt}</p> : null}
+    <p className="shopify-comparison-scroll-hint">{editorial.ui.shopifyCompareScrollHint}</p>
+    <div className="shopify-comparison-scroll">
+      <table>
+        <thead><tr><th scope="col">{editorial.ui.shopifyCompareDetail}</th>{products.map((product) =>
+          <th scope="col" key={product.id}>
+            {product.image && <img src={product.image.url} alt="" loading="lazy" width={100} height={100} />}
+            <strong>{product.name}</strong>
+            <Link to={`/products/${product.handle}`}>{editorial.ui.shopifyCompareView}</Link>
+            <button type="button" onClick={() => remove(product.id)}
+              aria-label={`${editorial.ui.shopifyCompareRemove}: ${product.name}`}>{editorial.ui.shopifyCompareRemove}</button>
+          </th>)}</tr></thead>
+        <tbody>{rows.map(({label, value}) => <tr key={label}><th scope="row">{label}</th>
+          {products.map((product) => <td key={product.id}>{value(product)}</td>)}
+        </tr>)}</tbody>
+      </table>
+    </div>
+  </section>;
 }
 
 export function ShopifyHomeView({products}: {products: ShopifyCatalogProduct[]}) {
@@ -79,8 +128,18 @@ export function ShopifyHomeView({products}: {products: ShopifyCatalogProduct[]})
   );
 }
 
-export function ShopifyCatalogView({products, search = false}: {products: ShopifyCatalogProduct[]; search?: boolean}) {
+export function ShopifyCatalogView({products, concepts = {}, search = false}: {
+  products: ShopifyCatalogProduct[];
+  concepts?: Record<string, ConceptEditorial | null>;
+  search?: boolean;
+}) {
   const [params, setParams] = useSearchParams();
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const selectedProducts = selectedIds.map((id) => products.find((product) => product.id === id))
+    .filter((product): product is ShopifyCatalogProduct => Boolean(product));
+  const toggleComparison = (id: string) => setSelectedIds((current) => current.includes(id)
+    ? current.filter((selected) => selected !== id)
+    : current.length < editorial.comparisonLimit ? [...current, id] : current);
   const query = (params.get('q') ?? '').trim().toLowerCase();
   const category = params.get('category') ?? 'All tools';
   const sort = params.get('sort') ?? 'featured';
@@ -119,8 +178,13 @@ export function ShopifyCatalogView({products, search = false}: {products: Shopif
       </div>
       <div className="results-summary"><span role="status">{filtered.length} {filtered.length === 1 ? 'tool' : 'tools'} to explore</span>
         <span>DESIGN STUDIES / ORDERING NOT OPEN</span></div>
+      <ShopifyComparison products={selectedProducts} concepts={concepts} remove={toggleComparison} />
       {filtered.length ? <div className="product-grid">{filtered.map((product, index) =>
-        <ProductCard key={product.id} product={product} index={index} />)}</div>
+        <ProductCard key={product.id} product={product} index={index} comparison={{
+          selected: selectedIds.includes(product.id),
+          disabled: selectedIds.length >= editorial.comparisonLimit && !selectedIds.includes(product.id),
+          toggle: () => toggleComparison(product.id),
+        }} />)}</div>
         : <div className="empty-state"><h2>No concepts found</h2><p>{products.length ? 'Try another search or clear the filters.' : 'No RegenAI concepts are published to this storefront yet.'}</p>
           {products.length > 0 && <button className="button" onClick={() => setParams({})}>Show the collection <ArrowUpRight size={18} /></button>}</div>}
     </section>

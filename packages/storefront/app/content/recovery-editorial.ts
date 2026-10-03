@@ -70,11 +70,19 @@ function validateProductQuestions(value: unknown, questions: Question[]): Questi
 
 const questions = validateQuestions(raw.questions);
 
+function validateComparisonLimit(value: unknown): number {
+  if (!Number.isInteger(value) || typeof value !== 'number' || value < 2 || value > 3) {
+    throw new Error('Invalid comparison limit');
+  }
+  return value;
+}
+
 export const editorial = {
   categories: validateCategories(raw.categories),
   stories: validateStories(raw.stories),
   questions,
   productQuestions: validateProductQuestions(raw.productQuestionIds, questions),
+  comparisonLimit: validateComparisonLimit(raw.comparisonLimit),
   ui: validateUi(raw.ui),
 };
 

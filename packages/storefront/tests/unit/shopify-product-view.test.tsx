@@ -1,7 +1,7 @@
-import {fireEvent, render, screen} from '@testing-library/react';
+import {fireEvent, render, screen, within} from '@testing-library/react';
 import {MemoryRouter} from 'react-router';
 import {describe, expect, it} from 'vitest';
-import {ShopifyProductView} from '../../app/features/recovery/ShopifyCatalogViews';
+import {ShopifyCatalogView, ShopifyProductView} from '../../app/features/recovery/ShopifyCatalogViews';
 import type {ShopifyCatalogProduct} from '../../app/lib/shopify-catalog.server';
 
 const product: ShopifyCatalogProduct = {
@@ -35,6 +35,34 @@ describe('Shopify concept product page', () => {
     expect(screen.getByText('Illustrative product; not for sale')).toBeTruthy();
     expect(screen.getByText('Can I place an order now?')).toBeTruthy();
     expect(screen.queryByText('How are finder results chosen?')).toBeNull();
+    expect(screen.queryByRole('button', {name: 'Add to sandbox cart'})).toBeNull();
+  });
+
+  it('compares Shopify facts and validated concept details across collection filters', () => {
+    const balls = {...product, id: 'gid://shopify/Product/102', handle: 'regenai-concept-balls',
+      name: 'Point Duo', kind: 'Mobility balls'};
+    const roller = {...product, id: 'gid://shopify/Product/103', handle: 'regenai-concept-roller',
+      name: 'Form Roller', kind: 'Mobility roller'};
+    render(<MemoryRouter><ShopifyCatalogView products={[product, balls, roller]} concepts={{
+      [product.id]: {summary: 'Study', detail: 'Study detail', notice: 'Unverified', category: 'Release',
+        specs: [{label: 'Design', value: 'Handheld concept'}]},
+      [balls.id]: null,
+      [roller.id]: null,
+    }} /></MemoryRouter>);
+    const select = screen.getAllByRole('button', {name: 'Compare concept'});
+    fireEvent.click(select[0]);
+    fireEvent.click(select[1]);
+    const table = within(screen.getByRole('region', {name: 'Compare the concepts'}));
+    expect(table.getByText('Pulse One')).toBeTruthy();
+    expect(table.getByText('Point Duo')).toBeTruthy();
+    expect(table.getByText('Handheld concept')).toBeTruthy();
+    expect(table.getAllByText('Not verified').length).toBeGreaterThan(0);
+    expect(screen.getByRole('button', {name: 'Compare concept'}).hasAttribute('disabled')).toBe(true);
+    fireEvent.change(screen.getByRole('searchbox', {name: 'Search products'}),
+      {target: {value: 'no match'}});
+    expect(within(screen.getByRole('region', {name: 'Compare the concepts'})).getByText('Point Duo')).toBeTruthy();
+    fireEvent.click(table.getByRole('button', {name: 'Remove from comparison: Pulse One'}));
+    expect(table.queryByText('Pulse One')).toBeNull();
     expect(screen.queryByRole('button', {name: 'Add to sandbox cart'})).toBeNull();
   });
 });
