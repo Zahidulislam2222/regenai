@@ -107,7 +107,7 @@ export function ErrorBoundary() {
   const motion = useRecoveryMotion();
   const notFound = isRouteErrorResponse(error) && error.status === 404;
   return (
-    <RecoveryShell {...motion}>
+    <RecoveryShell {...motion} bagEnabled={false}>
       <RecoveryErrorContent notFound={notFound} />
     </RecoveryShell>
   );

@@ -21,6 +21,27 @@ const validInput = (overrides: Record<string, string> = {}) => ({
 });
 
 describe('storefront settings boundary', () => {
+  it('keeps Shopify data and sandbox checkout behind separate validated settings', () => {
+    const defaults = loadStorefrontSettings(validInput());
+    expect(defaults.catalogSource).toBe('fixture');
+    expect(defaults.sandboxCheckoutEnabled).toBe(false);
+    const shopify = loadStorefrontSettings(validInput({CATALOG_SOURCE: 'shopify'}));
+    expect(shopify.catalogSource).toBe('shopify');
+    expect(shopify.sandboxCheckoutEnabled).toBe(false);
+    expect(loadStorefrontSettings(validInput({CATALOG_SOURCE: 'shopify', SANDBOX_CHECKOUT_ENABLED: 'true'}))
+      .sandboxCheckoutEnabled).toBe(true);
+    expect(() => loadStorefrontSettings(validInput({CATALOG_SOURCE: 'unknown'})))
+      .toThrow('Invalid or missing setting: CATALOG_SOURCE');
+    expect(() => loadStorefrontSettings(validInput({SANDBOX_CHECKOUT_ENABLED: 'true'})))
+      .toThrow('Invalid or missing setting: SANDBOX_CHECKOUT_ENABLED');
+    expect(() => loadStorefrontSettings(validInput({NODE_ENV: 'production', LOCAL_DEVELOPMENT: 'false',
+      PUBLIC_CANONICAL_ORIGIN: 'https://shop.example.test', CATALOG_SOURCE: 'shopify', SANDBOX_CHECKOUT_ENABLED: 'true'})))
+      .toThrow('Invalid or missing setting: SANDBOX_CHECKOUT_ENABLED');
+    expect(loadStorefrontSettings(validInput({CATALOG_PAGE_SIZE: '80'})).catalog.pageSize).toBe(80);
+    expect(() => loadStorefrontSettings(validInput({CATALOG_MAX_PAGES: '0'})))
+      .toThrow('Invalid or missing setting: CATALOG_MAX_PAGES');
+  });
+
   it('requires an explicit valid canonical origin and does not echo its value', () => {
     expect(() => loadStorefrontSettings(validInput({PUBLIC_CANONICAL_ORIGIN: 'https://user:private@example.test'})))
       .toThrow('Invalid or missing setting: PUBLIC_CANONICAL_ORIGIN');
@@ -133,6 +154,11 @@ describe('storefront settings boundary', () => {
     const example = read('.env.example');
     for (const setting of [
       'PUBLIC_CANONICAL_ORIGIN',
+      'CATALOG_SOURCE',
+      'SANDBOX_CHECKOUT_ENABLED',
+      'CATALOG_PAGE_SIZE',
+      'CATALOG_MAX_PAGES',
+      'CATALOG_VARIANT_LIMIT',
       'PUBLIC_STORE_DOMAIN',
       'PUBLIC_CHECKOUT_DOMAIN',
       'PUBLIC_STOREFRONT_API_TOKEN',

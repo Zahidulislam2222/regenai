@@ -1,6 +1,5 @@
 /** Single boundary for preview behavior; no provider or private env is imported. */
 export const recoverySettings = {
-  mode: 'local-demo',
   currency: 'USD',
   locale: 'en-US',
   storageKey: 'regenai:demo-bag:v1',

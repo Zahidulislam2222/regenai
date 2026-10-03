@@ -141,9 +141,9 @@ export function RecoveryShell({
   children,
   paused,
   toggle,
-}: RecoveryMotionState & {children: ReactNode}) {
-  return (
-    <BagProvider>
+  bagEnabled = true,
+}: RecoveryMotionState & {children: ReactNode; bagEnabled?: boolean}) {
+  const content = (
       <div className={`recovery-app ${paused ? 'motion-paused' : ''}`}>
         <a className="skip-link" href="#main-content">
           {ui.skip_to_main_content_c887f1}
@@ -154,6 +154,6 @@ export function RecoveryShell({
         </main>
         <Footer />
       </div>
-    </BagProvider>
   );
+  return bagEnabled ? <BagProvider>{content}</BagProvider> : content;
 }

@@ -3,7 +3,6 @@ import type {CartLineUpdateInput} from '@shopify/hydrogen/storefront-api-types';
 import {data, type MetaFunction} from 'react-router';
 import type {Route} from './+types/cart';
 import {CartView} from '~/features/recovery/Experience';
-import {recoverySettings} from '~/config/recovery';
 
 export const meta: MetaFunction = () => [
   {title: 'Ordering — RegenAI'},
@@ -12,13 +11,13 @@ export const meta: MetaFunction = () => [
 
 /** The concept bag stays local until a real cart provider is selected. */
 export async function loader({context}: Route.LoaderArgs) {
-  if (recoverySettings.mode === 'local-demo') return {cart: null};
+  if (!context.settings.sandboxCheckoutEnabled) return {cart: null};
   return {cart: await context.cart.get()};
 }
 
 export async function action(args: Route.ActionArgs) {
-  if (recoverySettings.mode === 'local-demo') {
-    throw new Response('Cart updates are unavailable in this concept experience.', {
+  if (!args.context.settings.sandboxCheckoutEnabled) {
+    throw new Response('Sandbox checkout is not enabled for this concept experience.', {
       status: 501,
     });
   }

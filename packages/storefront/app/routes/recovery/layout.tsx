@@ -6,7 +6,7 @@ export default function RecoveryLayout() {
   const motion = useRecoveryMotion();
 
   return (
-    <RecoveryShell {...motion}>
+    <RecoveryShell {...motion} bagEnabled={false}>
       <FocusMainOnNavigation />
       <Outlet context={motion} />
     </RecoveryShell>

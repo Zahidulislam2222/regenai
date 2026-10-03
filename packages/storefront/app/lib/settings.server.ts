@@ -3,6 +3,9 @@ import type {PublicStorefrontSettings, RuntimeMode} from './settings.shared';
 
 export type StorefrontSettings = {
   mode: RuntimeMode;
+  catalogSource: 'fixture' | 'shopify';
+  sandboxCheckoutEnabled: boolean;
+  catalog: {pageSize: number; maxPages: number; variantLimit: number};
   canonicalOrigin: string;
   secureCookies: boolean;
   shopDomain: string;
@@ -65,6 +68,11 @@ export type CustomerAccountSettings =
 type SettingsInput = Pick<HydrogenEnv, 'PUBLIC_STOREFRONT_API_TOKEN' | 'PUBLIC_STORE_DOMAIN' | 'PUBLIC_STOREFRONT_ID' | 'PUBLIC_CHECKOUT_DOMAIN' | 'SESSION_SECRET'> &
   Partial<Pick<HydrogenEnv, 'PRIVATE_STOREFRONT_API_TOKEN' | 'PUBLIC_CUSTOMER_ACCOUNT_API_CLIENT_ID' | 'SHOP_ID' | 'PUBLIC_CUSTOMER_ACCOUNT_API_URL'>> & {
   NODE_ENV?: string;
+  CATALOG_SOURCE?: string;
+  SANDBOX_CHECKOUT_ENABLED?: string;
+  CATALOG_PAGE_SIZE?: string;
+  CATALOG_MAX_PAGES?: string;
+  CATALOG_VARIANT_LIMIT?: string;
   PUBLIC_CANONICAL_ORIGIN?: string;
   STOREFRONT_API_VERSION?: string;
   CUSTOMER_ACCOUNT_ENABLED?: string;
@@ -103,7 +111,9 @@ const storefrontEnvironmentKeys: readonly (keyof SettingsInput)[] = [
   'PUBLIC_STOREFRONT_API_TOKEN', 'PUBLIC_STORE_DOMAIN', 'PUBLIC_STOREFRONT_ID',
   'PUBLIC_CHECKOUT_DOMAIN', 'SESSION_SECRET', 'PRIVATE_STOREFRONT_API_TOKEN',
   'PUBLIC_CUSTOMER_ACCOUNT_API_CLIENT_ID', 'SHOP_ID', 'PUBLIC_CUSTOMER_ACCOUNT_API_URL',
-  'NODE_ENV', 'PUBLIC_CANONICAL_ORIGIN', 'STOREFRONT_API_VERSION',
+  'NODE_ENV', 'CATALOG_SOURCE', 'SANDBOX_CHECKOUT_ENABLED',
+  'CATALOG_PAGE_SIZE', 'CATALOG_MAX_PAGES', 'CATALOG_VARIANT_LIMIT',
+  'PUBLIC_CANONICAL_ORIGIN', 'STOREFRONT_API_VERSION',
   'CUSTOMER_ACCOUNT_ENABLED', 'CUSTOMER_ACCOUNT_API_VERSION', 'HEADER_MENU_HANDLE',
   'FOOTER_MENU_HANDLE', 'HYDROGEN_CACHE_NAMESPACE', 'SESSION_COOKIE_NAME',
   'SESSION_COOKIE_MAX_AGE_SECONDS', 'ANALYTICS_ENABLED', 'SENTRY_ENABLED',
@@ -264,6 +274,16 @@ function parseDsn(value: string, name: string): string {
 
 export function loadStorefrontSettings(input: SettingsInput): StorefrontSettings {
   const mode = validRuntimeMode(input.NODE_ENV);
+  const catalogSource = input.CATALOG_SOURCE ?? 'fixture';
+  if (catalogSource !== 'fixture' && catalogSource !== 'shopify') invalid('CATALOG_SOURCE');
+  const sandboxCheckoutEnabled = flag(input, 'SANDBOX_CHECKOUT_ENABLED', false);
+  if (sandboxCheckoutEnabled && catalogSource !== 'shopify') invalid('SANDBOX_CHECKOUT_ENABLED');
+  if (sandboxCheckoutEnabled && mode === 'production') invalid('SANDBOX_CHECKOUT_ENABLED');
+  const catalog = {
+    pageSize: boundedInteger(input.CATALOG_PAGE_SIZE, 'CATALOG_PAGE_SIZE', 50, 1, 250),
+    maxPages: boundedInteger(input.CATALOG_MAX_PAGES, 'CATALOG_MAX_PAGES', 20, 1, 100),
+    variantLimit: boundedInteger(input.CATALOG_VARIANT_LIMIT, 'CATALOG_VARIANT_LIMIT', 100, 1, 250),
+  };
   const localDevelopment = flag(input, 'LOCAL_DEVELOPMENT', false);
   const originValue = required(input, 'PUBLIC_CANONICAL_ORIGIN');
   const origin = parseOrigin(originValue, 'PUBLIC_CANONICAL_ORIGIN');
@@ -365,6 +385,9 @@ export function loadStorefrontSettings(input: SettingsInput): StorefrontSettings
   if (cache.maxEntryBytes > cache.maxBytes) invalid('HYDROGEN_CACHE_MAX_ENTRY_BYTES');
   return {
     mode,
+    catalogSource,
+    sandboxCheckoutEnabled,
+    catalog,
     canonicalOrigin: origin.origin,
     secureCookies: secure,
     shopDomain,

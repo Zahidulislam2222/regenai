@@ -12,6 +12,11 @@ declare global {
   interface Env {
     SENTRY_STOREFRONT_DSN?: string;
     NODE_ENV?: string;
+    CATALOG_SOURCE?: string;
+  SANDBOX_CHECKOUT_ENABLED?: string;
+  CATALOG_PAGE_SIZE?: string;
+  CATALOG_MAX_PAGES?: string;
+  CATALOG_VARIANT_LIMIT?: string;
     PUBLIC_CANONICAL_ORIGIN?: string;
     STOREFRONT_API_VERSION?: string;
     CUSTOMER_ACCOUNT_ENABLED?: string;
