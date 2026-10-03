@@ -13,10 +13,13 @@ declare global {
     SENTRY_STOREFRONT_DSN?: string;
     NODE_ENV?: string;
     CATALOG_SOURCE?: string;
-  SANDBOX_CHECKOUT_ENABLED?: string;
-  CATALOG_PAGE_SIZE?: string;
-  CATALOG_MAX_PAGES?: string;
-  CATALOG_VARIANT_LIMIT?: string;
+    SANDBOX_CHECKOUT_ENABLED?: string;
+    CATALOG_PAGE_SIZE?: string;
+    CATALOG_MAX_PAGES?: string;
+    CATALOG_VARIANT_LIMIT?: string;
+    SANDBOX_CART_MAX_LINE_QUANTITY?: string;
+    SANDBOX_CART_MAX_TOTAL_QUANTITY?: string;
+    SANDBOX_CART_MAX_LINES?: string;
     PUBLIC_CANONICAL_ORIGIN?: string;
     STOREFRONT_API_VERSION?: string;
     CUSTOMER_ACCOUNT_ENABLED?: string;

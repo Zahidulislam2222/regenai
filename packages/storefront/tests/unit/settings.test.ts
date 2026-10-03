@@ -37,6 +37,14 @@ describe('storefront settings boundary', () => {
     expect(() => loadStorefrontSettings(validInput({NODE_ENV: 'production', LOCAL_DEVELOPMENT: 'false',
       PUBLIC_CANONICAL_ORIGIN: 'https://shop.example.test', CATALOG_SOURCE: 'shopify', SANDBOX_CHECKOUT_ENABLED: 'true'})))
       .toThrow('Invalid or missing setting: SANDBOX_CHECKOUT_ENABLED');
+    expect(loadStorefrontSettings(validInput({NODE_ENV: 'production', CATALOG_SOURCE: 'shopify',
+      SANDBOX_CHECKOUT_ENABLED: 'true'})).sandboxCheckoutEnabled).toBe(true);
+    expect(() => loadStorefrontSettings(validInput({CATALOG_SOURCE: 'shopify',
+      SANDBOX_CHECKOUT_ENABLED: 'true', PUBLIC_CANONICAL_ORIGIN: 'https://shop.example.test'})))
+      .toThrow('Invalid or missing setting: SANDBOX_CHECKOUT_ENABLED');
+    expect(loadStorefrontSettings(validInput()).sandboxCart.maxLineQuantity).toBe(4);
+    expect(() => loadStorefrontSettings(validInput({SANDBOX_CART_MAX_LINES: '0'})))
+      .toThrow('Invalid or missing setting: SANDBOX_CART_MAX_LINES');
     expect(loadStorefrontSettings(validInput({CATALOG_PAGE_SIZE: '80'})).catalog.pageSize).toBe(80);
     expect(() => loadStorefrontSettings(validInput({CATALOG_MAX_PAGES: '0'})))
       .toThrow('Invalid or missing setting: CATALOG_MAX_PAGES');

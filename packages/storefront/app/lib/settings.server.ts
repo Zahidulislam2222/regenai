@@ -6,6 +6,7 @@ export type StorefrontSettings = {
   catalogSource: 'fixture' | 'shopify';
   sandboxCheckoutEnabled: boolean;
   catalog: {pageSize: number; maxPages: number; variantLimit: number};
+  sandboxCart: {maxLineQuantity: number; maxTotalQuantity: number; maxLines: number};
   canonicalOrigin: string;
   secureCookies: boolean;
   shopDomain: string;
@@ -73,6 +74,9 @@ type SettingsInput = Pick<HydrogenEnv, 'PUBLIC_STOREFRONT_API_TOKEN' | 'PUBLIC_S
   CATALOG_PAGE_SIZE?: string;
   CATALOG_MAX_PAGES?: string;
   CATALOG_VARIANT_LIMIT?: string;
+  SANDBOX_CART_MAX_LINE_QUANTITY?: string;
+  SANDBOX_CART_MAX_TOTAL_QUANTITY?: string;
+  SANDBOX_CART_MAX_LINES?: string;
   PUBLIC_CANONICAL_ORIGIN?: string;
   STOREFRONT_API_VERSION?: string;
   CUSTOMER_ACCOUNT_ENABLED?: string;
@@ -113,6 +117,7 @@ const storefrontEnvironmentKeys: readonly (keyof SettingsInput)[] = [
   'PUBLIC_CUSTOMER_ACCOUNT_API_CLIENT_ID', 'SHOP_ID', 'PUBLIC_CUSTOMER_ACCOUNT_API_URL',
   'NODE_ENV', 'CATALOG_SOURCE', 'SANDBOX_CHECKOUT_ENABLED',
   'CATALOG_PAGE_SIZE', 'CATALOG_MAX_PAGES', 'CATALOG_VARIANT_LIMIT',
+  'SANDBOX_CART_MAX_LINE_QUANTITY', 'SANDBOX_CART_MAX_TOTAL_QUANTITY', 'SANDBOX_CART_MAX_LINES',
   'PUBLIC_CANONICAL_ORIGIN', 'STOREFRONT_API_VERSION',
   'CUSTOMER_ACCOUNT_ENABLED', 'CUSTOMER_ACCOUNT_API_VERSION', 'HEADER_MENU_HANDLE',
   'FOOTER_MENU_HANDLE', 'HYDROGEN_CACHE_NAMESPACE', 'SESSION_COOKIE_NAME',
@@ -278,7 +283,6 @@ export function loadStorefrontSettings(input: SettingsInput): StorefrontSettings
   if (catalogSource !== 'fixture' && catalogSource !== 'shopify') invalid('CATALOG_SOURCE');
   const sandboxCheckoutEnabled = flag(input, 'SANDBOX_CHECKOUT_ENABLED', false);
   if (sandboxCheckoutEnabled && catalogSource !== 'shopify') invalid('SANDBOX_CHECKOUT_ENABLED');
-  if (sandboxCheckoutEnabled && mode === 'production') invalid('SANDBOX_CHECKOUT_ENABLED');
   const catalog = {
     pageSize: boundedInteger(input.CATALOG_PAGE_SIZE, 'CATALOG_PAGE_SIZE', 50, 1, 250),
     maxPages: boundedInteger(input.CATALOG_MAX_PAGES, 'CATALOG_MAX_PAGES', 20, 1, 100),
@@ -287,6 +291,9 @@ export function loadStorefrontSettings(input: SettingsInput): StorefrontSettings
   const localDevelopment = flag(input, 'LOCAL_DEVELOPMENT', false);
   const originValue = required(input, 'PUBLIC_CANONICAL_ORIGIN');
   const origin = parseOrigin(originValue, 'PUBLIC_CANONICAL_ORIGIN');
+  if (sandboxCheckoutEnabled && (!localDevelopment || !isLoopback(origin.hostname))) {
+    invalid('SANDBOX_CHECKOUT_ENABLED');
+  }
   if (origin.protocol === 'http:' && (!localDevelopment || !isLoopback(origin.hostname))) {
     invalid('PUBLIC_CANONICAL_ORIGIN');
   }
@@ -388,6 +395,11 @@ export function loadStorefrontSettings(input: SettingsInput): StorefrontSettings
     catalogSource,
     sandboxCheckoutEnabled,
     catalog,
+    sandboxCart: {
+      maxLineQuantity: boundedInteger(input.SANDBOX_CART_MAX_LINE_QUANTITY, 'SANDBOX_CART_MAX_LINE_QUANTITY', 4, 1, 20),
+      maxTotalQuantity: boundedInteger(input.SANDBOX_CART_MAX_TOTAL_QUANTITY, 'SANDBOX_CART_MAX_TOTAL_QUANTITY', 12, 1, 100),
+      maxLines: boundedInteger(input.SANDBOX_CART_MAX_LINES, 'SANDBOX_CART_MAX_LINES', 6, 1, 50),
+    },
     canonicalOrigin: origin.origin,
     secureCookies: secure,
     shopDomain,

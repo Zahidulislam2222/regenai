@@ -22,7 +22,8 @@ export async function loader({params, context}: Route.LoaderArgs) {
       throw new Response('Product temporarily unavailable', {status: 503});
     }
     if (!product) throw new Response(null, {status: 404});
-    return {source: 'shopify' as const, product};
+    return {source: 'shopify' as const, product,
+      sandboxCartEnabled: context.settings.sandboxCheckoutEnabled};
   }
   const product = getDemoRecoveryProduct(params.handle);
   if (!product) throw new Response(null, {status: 404});
@@ -38,6 +39,7 @@ export default function RecoveryProductRoute() {
   const data = useLoaderData<typeof loader>();
   const {paused} = useRecoveryRouteMotion();
   return data.source === 'shopify'
-    ? <ShopifyProductView key={data.product.id} product={data.product} />
+    ? <ShopifyProductView key={data.product.id} product={data.product}
+      sandboxCartEnabled={data.sandboxCartEnabled} />
     : <ProductDetailView key={data.product.id} product={data.product} paused={paused} />;
 }

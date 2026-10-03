@@ -1,6 +1,7 @@
 import {useState} from 'react';
 import {Link, useSearchParams} from 'react-router';
 import {ArrowLeft, ArrowUpRight, Search, SlidersHorizontal} from 'lucide-react';
+import {CartForm} from '@shopify/hydrogen';
 import {site} from '~/content/recovery';
 import type {CatalogVariant, ShopifyCatalogProduct} from '~/lib/shopify-catalog.server';
 
@@ -143,7 +144,9 @@ export function ShopifyFinderView({products}: {products: ShopifyCatalogProduct[]
   );
 }
 
-export function ShopifyProductView({product}: {product: ShopifyCatalogProduct}) {
+export function ShopifyProductView({product, sandboxCartEnabled}: {
+  product: ShopifyCatalogProduct; sandboxCartEnabled: boolean;
+}) {
   const [selectedId, setSelectedId] = useState(product.variants[0]?.id);
   const selected = product.variants.find((variant) => variant.id === selectedId);
   const displayPrice = product.complete ? money(selected) : null;
@@ -160,13 +163,22 @@ export function ShopifyProductView({product}: {product: ShopifyCatalogProduct}) 
         <div className="product-details">
           <p className="eyebrow">SHOPIFY SANDBOX CONCEPT</p><h1>{product.name}</h1>
           <p className="product-description">{product.description}</p>
-          <p className="product-availability">{status(product)}. Ordering is closed during sandbox verification.</p>
+          <p className="product-availability">{status(product)}.
+            {sandboxCartEnabled ? ' Test orders only in the local development store.' : ' Ordering is closed during sandbox verification.'}</p>
           {product.variants.length > 1 && <label className="sort-select">Option
             <select value={selectedId} onChange={(event) => setSelectedId(event.target.value)}>
               {product.variants.map((variant) => <option key={variant.id} value={variant.id}>{variant.title}</option>)}
             </select></label>}
           <p>{selected?.selectedOptions.map((option) => `${option.name}: ${option.value}`).join(' · ')}</p>
           <p>{displayPrice ?? 'Price unavailable'}{selected && !selected.availableForSale ? ' · Unavailable' : ''}</p>
+          {sandboxCartEnabled && product.complete && selected?.availableForSale && selected.price &&
+            <CartForm route="/cart" action={CartForm.ACTIONS.LinesAdd}
+              inputs={{lines: [{merchandiseId: selected.id, quantity: 1}]}}>
+              {(fetcher) => <button className="button full" type="submit" disabled={fetcher.state !== 'idle'}>
+                {fetcher.state === 'idle' ? 'Add to sandbox cart' : 'Adding…'}
+              </button>}
+            </CartForm>}
+          {sandboxCartEnabled && <Link to="/cart">View sandbox cart</Link>}
           <Link className="button full" to="/evidence">Read the concept evidence <ArrowUpRight size={19} /></Link>
         </div>
       </div>
