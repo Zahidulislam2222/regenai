@@ -1,8 +1,10 @@
 import {useState} from 'react';
 import {Link, useSearchParams} from 'react-router';
-import {ArrowLeft, ArrowUpRight, Search, SlidersHorizontal} from 'lucide-react';
+import {ArrowLeft, ArrowUpRight, Plus, Search, SlidersHorizontal} from 'lucide-react';
 import {CartForm} from '@shopify/hydrogen';
 import {site} from '~/content/recovery';
+import {editorial} from '~/content/recovery-editorial';
+import type {ConceptEditorial} from '~/lib/concept-editorial.server';
 import type {CatalogVariant, ShopifyCatalogProduct} from '~/lib/shopify-catalog.server';
 
 function money(variant: CatalogVariant | undefined): string | null {
@@ -144,25 +146,43 @@ export function ShopifyFinderView({products}: {products: ShopifyCatalogProduct[]
   );
 }
 
-export function ShopifyProductView({product, sandboxCartEnabled}: {
-  product: ShopifyCatalogProduct; sandboxCartEnabled: boolean;
+export function ShopifyProductView({product, concept, related, sandboxCartEnabled}: {
+  product: ShopifyCatalogProduct;
+  concept: ConceptEditorial | null;
+  related: ShopifyCatalogProduct[];
+  sandboxCartEnabled: boolean;
 }) {
   const [selectedId, setSelectedId] = useState(product.variants[0]?.id);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
   const selected = product.variants.find((variant) => variant.id === selectedId);
   const displayPrice = product.complete ? money(selected) : null;
+  const galleryImages = product.images.length ? product.images : product.image ? [product.image] : [];
+  const activeImage = galleryImages[activeImageIndex] ?? galleryImages[0];
   return (
     <section className="page product-page">
       <Link to="/collections/all" className="back-link"><ArrowLeft size={16} />The collection</Link>
       <div className="product-layout">
-        <div className="product-gallery">
+        <div className="product-gallery shopify-product-gallery">
           <span className="eyebrow">{product.kind || 'RECOVERY OBJECT'} / CONCEPT COLLECTION</span>
-          {product.image ? <img src={product.image.url} alt={product.image.altText || `${product.name} concept render`}
-            width={product.image.width ?? 1000} height={product.image.height ?? 1000} />
+          {activeImage ? <img src={activeImage.url} alt={activeImage.altText || `${product.name} concept render`}
+            width={activeImage.width ?? 1000} height={activeImage.height ?? 1000} />
             : <p className="empty-state">Image unavailable</p>}
+          {galleryImages.length > 1 && <div className="shopify-gallery-thumbs" role="group" aria-label="Product images">
+            {galleryImages.map((image, index) => <button key={image.url} type="button"
+              aria-label={`${editorial.ui.shopifyViewImage} ${index + 1} of ${galleryImages.length}`}
+              aria-pressed={index === activeImageIndex} onClick={() => setActiveImageIndex(index)}>
+              <img src={image.url} alt="" loading="lazy" width={image.width ?? 100} height={image.height ?? 100} />
+            </button>)}
+          </div>}
         </div>
         <div className="product-details">
           <p className="eyebrow">SHOPIFY SANDBOX CONCEPT</p><h1>{product.name}</h1>
-          <p className="product-description">{product.description}</p>
+          <p className="product-description">{concept?.summary ?? product.description}</p>
+          {concept && <div className="shopify-concept-note">
+            <h2>{editorial.ui.shopifyDesignNoteTitle}</h2>
+            <p>{concept.detail}</p>
+            <p>{concept.notice}</p>
+          </div>}
           <p className="product-availability">{status(product)}.
             {sandboxCartEnabled ? ' Test orders only in the local development store.' : ' Ordering is closed during sandbox verification.'}</p>
           {product.variants.length > 1 && <label className="sort-select">Option
@@ -170,7 +190,10 @@ export function ShopifyProductView({product, sandboxCartEnabled}: {
               {product.variants.map((variant) => <option key={variant.id} value={variant.id}>{variant.title}</option>)}
             </select></label>}
           <p>{selected?.selectedOptions.map((option) => `${option.name}: ${option.value}`).join(' · ')}</p>
-          <p>{displayPrice ?? 'Price unavailable'}{selected && !selected.availableForSale ? ' · Unavailable' : ''}</p>
+          <p className="shopify-variant-price"><strong>{displayPrice ?? 'Price unavailable'}</strong>
+            {displayPrice && <span>{editorial.ui.shopifyPriceLabel}</span>}
+            {selected && !selected.availableForSale && <span>Unavailable</span>}
+          </p>
           {sandboxCartEnabled && product.complete && selected?.availableForSale && selected.price &&
             <CartForm route="/cart" action={CartForm.ACTIONS.LinesAdd}
               inputs={{lines: [{merchandiseId: selected.id, quantity: 1}]}}>
@@ -180,8 +203,29 @@ export function ShopifyProductView({product, sandboxCartEnabled}: {
             </CartForm>}
           {sandboxCartEnabled && <Link to="/cart">View sandbox cart</Link>}
           <Link className="button full" to="/evidence">Read the concept evidence <ArrowUpRight size={19} /></Link>
+          <div className="product-accordions">
+            {concept && <details open>
+              <summary>{editorial.ui.shopifySpecsTitle}<Plus size={17} aria-hidden="true" /></summary>
+              <p>{editorial.ui.shopifySpecsNotice}</p>
+              <dl>{concept.specs.map(({label, value}) => <div key={label}>
+                <dt>{label}</dt><dd>{value}</dd>
+              </div>)}</dl>
+            </details>}
+            {editorial.productQuestions.map(({id, question, answer}) => <details key={id}>
+              <summary>{question}<Plus size={17} aria-hidden="true" /></summary>
+              <p>{answer}</p>
+            </details>)}
+          </div>
         </div>
       </div>
+      {related.length > 0 && <>
+        <div className="section-heading related-heading">
+          <h2>{editorial.ui.shopifyRelatedTitle}</h2>
+          <Link to="/collections/all" className="text-link">The collection <ArrowUpRight size={18} /></Link>
+        </div>
+        <div className="product-grid shopify-related-grid">{related.map((item, index) =>
+          <ProductCard key={item.id} product={item} index={index} />)}</div>
+      </>}
     </section>
   );
 }

@@ -1,7 +1,7 @@
 import {describe, expect, it, vi} from 'vitest';
 import {getShopifyProduct, listShopifyProducts, mapShopifyProduct} from '../../app/lib/shopify-catalog.server';
 
-const limits = {pageSize: 2, maxPages: 3, variantLimit: 10};
+const limits = {pageSize: 2, maxPages: 3, variantLimit: 10, imageLimit: 8};
 const ownedProduct = (overrides: Record<string, unknown> = {}) => ({
   id: 'gid://shopify/Product/101',
   handle: 'regenai-concept-pulse',
@@ -11,6 +11,11 @@ const ownedProduct = (overrides: Record<string, unknown> = {}) => ({
   tags: ['regenai-concept', 'not-for-sale-demo'],
   availableForSale: false,
   featuredImage: {url: 'https://cdn.shopify.com/test.png', altText: 'Pulse render', width: 1200, height: 1200},
+  images: {nodes: [
+    {url: 'https://cdn.shopify.com/test.png', altText: 'Pulse render', width: 1200, height: 1200},
+    {url: 'https://cdn.shopify.com/alternate.png', altText: 'Alternate render', width: 900, height: 900},
+    {url: 'http://example.test/invalid.png', altText: 'Untrusted image', width: 900, height: 900},
+  ], pageInfo: {hasNextPage: false}},
   options: [{name: 'Kit', values: ['Core']}],
   variants: {nodes: [{
     id: 'gid://shopify/ProductVariant/201',
@@ -31,6 +36,10 @@ describe('Shopify catalog ownership and mapping', () => {
       name: 'Pulse One',
       availableForSale: false,
       image: {url: 'https://cdn.shopify.com/test.png', altText: 'Pulse render', width: 1200, height: 1200},
+      images: [
+        {url: 'https://cdn.shopify.com/test.png', altText: 'Pulse render', width: 1200, height: 1200},
+        {url: 'https://cdn.shopify.com/alternate.png', altText: 'Alternate render', width: 900, height: 900},
+      ],
       options: [{name: 'Kit', values: ['Core']}],
       variants: [{id: 'gid://shopify/ProductVariant/201', availableForSale: false,
         selectedOptions: [{name: 'Kit', value: 'Core'}], price: {amount: '49.00', currencyCode: 'USD'}}],
@@ -79,5 +88,9 @@ describe('Shopify catalog ownership and mapping', () => {
     await expect(getShopifyProduct(query, 'regenai-concept-pulse', limits)).resolves.toBeNull();
     query.mockResolvedValue({product: ownedProduct({tags: []})});
     await expect(getShopifyProduct(query, 'regenai-concept-pulse', limits)).resolves.toBeNull();
+    query.mockResolvedValue({product: ownedProduct()});
+    await expect(getShopifyProduct(query, 'regenai-concept-pulse', limits)).resolves.toMatchObject({name: 'Pulse One'});
+    expect(query.mock.lastCall?.[0]).toContain('images(first: $imageLimit)');
+    expect(query.mock.lastCall?.[1].variables.imageLimit).toBe(8);
   });
 });

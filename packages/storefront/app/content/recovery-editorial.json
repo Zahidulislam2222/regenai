@@ -89,21 +89,31 @@
     "productDesignDetail": "The image shows an original form study. Materials, performance, included items and available options have not been confirmed.",
     "productAvailability": "In development · Ordering opens after product details and availability are confirmed.",
     "productDesignAction": "Explore the design notes",
+    "shopifyDesignNoteTitle": "Design note",
+    "shopifySpecsTitle": "Illustrative design details",
+    "shopifySpecsNotice": "These are design intentions, not verified physical specifications. Materials, dimensions, safety and performance still need validation.",
+    "shopifyPriceLabel": "Illustrative development-store price",
+    "shopifyRelatedTitle": "More concepts in this collection",
+    "shopifyViewImage": "View image",
     "cartTitle": "Good things take care.",
     "cartBody": "Ordering is not open while product details, inventory and fulfillment are being confirmed."
   },
   "questions": [
     {
+      "id": "ordering",
       "question": "Can I place an order now?",
       "answer": "Ordering is not open while product specifications, inventory and fulfillment are being finalized. You can explore the collection and design notes in the meantime."
     },
     {
+      "id": "medical",
       "question": "Are these medical devices?",
       "answer": "No medical purpose, certification or clinical performance is claimed for the current product studies. The finder is a browsing guide, not a diagnosis."
     },
     {
+      "id": "finder",
       "question": "How are finder results chosen?",
       "answer": "Results follow the preferences you select and the attributes listed for each form. The matching rules are deterministic and your answers stay in this page."
     }
-  ]
+  ],
+  "productQuestionIds": ["ordering", "medical"]
 }

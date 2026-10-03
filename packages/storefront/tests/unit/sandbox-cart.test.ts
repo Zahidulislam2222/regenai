@@ -12,6 +12,7 @@ const product: ShopifyCatalogProduct = {
   id: 'gid://shopify/Product/1', handle: 'regenai-concept-pulse',
   name: 'Pulse', description: '', kind: 'Recovery', availableForSale: true,
   image: {url: 'https://cdn.shopify.com/image.png', altText: null, width: 100, height: 100},
+  images: [{url: 'https://cdn.shopify.com/image.png', altText: null, width: 100, height: 100}],
   options: [], complete: true,
   variants: [{id: variantId, title: 'Standard', availableForSale: true,
     selectedOptions: [], price: {amount: '10.00', currencyCode: 'USD'}}],

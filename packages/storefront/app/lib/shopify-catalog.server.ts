@@ -23,12 +23,13 @@ export type ShopifyCatalogProduct = {
   kind: string;
   availableForSale: boolean;
   image: CatalogImage | null;
+  images: CatalogImage[];
   options: {name: string; values: string[]}[];
   variants: CatalogVariant[];
   complete: boolean;
 };
 
-type CatalogLimits = {pageSize: number; maxPages: number; variantLimit: number};
+type CatalogLimits = {pageSize: number; maxPages: number; variantLimit: number; imageLimit: number};
 type CatalogQuery = (document: string, options: {variables: Record<string, unknown>}) => Promise<unknown>;
 
 const PRODUCT_FIELDS = `
@@ -63,8 +64,14 @@ const CATALOG_QUERY = `#graphql
 `;
 
 const PRODUCT_QUERY = `#graphql
-  query RegenaiProduct($handle: String!, $variantLimit: Int!) {
-    product(handle: $handle) { ${PRODUCT_FIELDS} }
+  query RegenaiProduct($handle: String!, $variantLimit: Int!, $imageLimit: Int!) {
+    product(handle: $handle) {
+      ${PRODUCT_FIELDS}
+      images(first: $imageLimit) {
+        nodes { url altText width height }
+        pageInfo { hasNextPage }
+      }
+    }
   }
 `;
 
@@ -138,6 +145,10 @@ export function mapShopifyProduct(value: unknown): ShopifyCatalogProduct | null 
       })
     : [];
   const featuredImage = image(source.featuredImage);
+  const imageNodes = record(source.images)?.nodes;
+  const images = [featuredImage, ...(Array.isArray(imageNodes) ? imageNodes.map(image) : [])]
+    .filter((value): value is CatalogImage => value !== null)
+    .filter((value, index, values) => values.findIndex((other) => other.url === value.url) === index);
   return {
     id: source.id,
     handle: source.handle,
@@ -146,6 +157,7 @@ export function mapShopifyProduct(value: unknown): ShopifyCatalogProduct | null 
     kind: typeof source.productType === 'string' ? source.productType : '',
     availableForSale: source.availableForSale === true,
     image: featuredImage,
+    images,
     options,
     variants,
     complete: Boolean(featuredImage && variants.length > 0 && Array.isArray(connection?.nodes) &&
@@ -187,7 +199,9 @@ export async function listShopifyProducts(query: CatalogQuery, limits: CatalogLi
 
 export async function getShopifyProduct(query: CatalogQuery, handle: string | undefined, limits: CatalogLimits): Promise<ShopifyCatalogProduct | null> {
   if (!handle || !handle.startsWith(seedConfig.handlePrefix) || !/^[a-z0-9-]+$/.test(handle)) return null;
-  const response = record(await query(PRODUCT_QUERY, {variables: {handle, variantLimit: limits.variantLimit}}));
+  const response = record(await query(PRODUCT_QUERY, {variables: {
+    handle, variantLimit: limits.variantLimit, imageLimit: limits.imageLimit,
+  }}));
   if (!response || !Object.hasOwn(response, 'product')) throw new Error('Invalid Shopify product response');
   const product = mapShopifyProduct(response.product);
   return product?.handle === handle ? product : null;

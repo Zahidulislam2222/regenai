@@ -1205,6 +1205,38 @@ main:focus {
   height: 100%;
   object-fit: contain;
 }
+.shopify-gallery-thumbs {
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  bottom: 22px;
+  display: flex;
+  gap: 9px;
+  overflow-x: auto;
+  padding: 3px;
+}
+.shopify-gallery-thumbs button {
+  flex: 0 0 58px;
+  width: 58px;
+  height: 58px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--paper);
+  cursor: pointer;
+}
+.shopify-gallery-thumbs button[aria-pressed="true"] {
+  border: 2px solid var(--blue);
+}
+.shopify-gallery-thumbs button:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+.shopify-gallery-thumbs img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
 .view-controls {
   position: absolute;
   bottom: 25px;
@@ -1246,6 +1278,35 @@ main:focus {
   line-height: 1.9;
   margin-top: 25px;
   max-width: 440px;
+}
+.shopify-concept-note {
+  margin-top: 26px;
+  max-width: 440px;
+}
+.shopify-concept-note h2 {
+  font-size: 14px;
+  font-weight: 600;
+}
+.shopify-concept-note p {
+  margin-top: 9px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.8;
+}
+.shopify-variant-price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 14px;
+  margin-top: 20px;
+}
+.shopify-variant-price strong {
+  font-size: 25px;
+  font-weight: 500;
+}
+.shopify-variant-price span {
+  color: var(--muted);
+  font-size: 11px;
 }
 .pdp-price {
   display: flex;
@@ -2298,6 +2359,13 @@ main:focus {
   }
   .product-page .product-grid .product-card:last-child {
     display: none;
+  }
+  .product-page .shopify-related-grid .product-card:last-child {
+    display: block;
+  }
+  .shopify-related-grid {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 440px;
   }
   .finder-top h1 {
     font-size: 52px;

@@ -2,7 +2,7 @@ import raw from './recovery-editorial.json';
 
 type Category = {slug: string; filter: string; label: string; title: string; body: string; image: string; alt: string};
 export type Story = {slug: string; eyebrow: string; title: string; summary: string; image: string; alt: string; paragraphs: string[]};
-type Question = {question: string; answer: string};
+type Question = {id: string; question: string; answer: string};
 
 function hasText(value: unknown): value is string {
   return typeof value === 'string' && value.trim().length > 0;
@@ -42,9 +42,12 @@ function validateStories(value: unknown): Story[] {
 }
 
 function validateQuestions(value: unknown): Question[] {
+  const ids = new Set<string>();
   if (!Array.isArray(value) || value.length === 0 ||
     !value.every((entry: unknown) => {
       const item = entry as Partial<Question>;
+      if (!hasText(item.id) || !/^[a-z0-9-]+$/.test(item.id) || ids.has(item.id)) return false;
+      ids.add(item.id);
       return hasText(item.question) && hasText(item.answer);
     })) {
     throw new Error('Invalid question content');
@@ -52,10 +55,26 @@ function validateQuestions(value: unknown): Question[] {
   return value as Question[];
 }
 
+function validateProductQuestions(value: unknown, questions: Question[]): Question[] {
+  if (!Array.isArray(value) || value.length === 0 ||
+    new Set(value).size !== value.length ||
+    !value.every((id) => typeof id === 'string' && questions.some((item) => item.id === id))) {
+    throw new Error('Invalid product question selection');
+  }
+  return (value as string[]).map((id) => {
+    const item = questions.find((question) => question.id === id);
+    if (!item) throw new Error('Invalid product question selection');
+    return item;
+  });
+}
+
+const questions = validateQuestions(raw.questions);
+
 export const editorial = {
   categories: validateCategories(raw.categories),
   stories: validateStories(raw.stories),
-  questions: validateQuestions(raw.questions),
+  questions,
+  productQuestions: validateProductQuestions(raw.productQuestionIds, questions),
   ui: validateUi(raw.ui),
 };
 

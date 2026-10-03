@@ -34,7 +34,9 @@ export function validateCatalog(input: unknown): RecoveryProduct[] {
       p.options.some((o) => typeof o !== 'string' || !o) ||
       new Set(p.options).size !== p.options.length ||
       !Array.isArray(p.areas) ||
-      !Array.isArray(p.specs)
+      !Array.isArray(p.specs) || p.specs.length === 0 ||
+      !p.specs.every((entry) => Array.isArray(entry) && entry.length === 2 &&
+        entry.every((part) => typeof part === 'string' && part.trim().length > 0))
     )
       throw new Error('Invalid catalog entry');
     ids.add(p.id);

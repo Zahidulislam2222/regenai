@@ -5,7 +5,7 @@ export type StorefrontSettings = {
   mode: RuntimeMode;
   catalogSource: 'fixture' | 'shopify';
   sandboxCheckoutEnabled: boolean;
-  catalog: {pageSize: number; maxPages: number; variantLimit: number};
+  catalog: {pageSize: number; maxPages: number; variantLimit: number; imageLimit: number};
   sandboxCart: {maxLineQuantity: number; maxTotalQuantity: number; maxLines: number};
   canonicalOrigin: string;
   secureCookies: boolean;
@@ -74,6 +74,7 @@ type SettingsInput = Pick<HydrogenEnv, 'PUBLIC_STOREFRONT_API_TOKEN' | 'PUBLIC_S
   CATALOG_PAGE_SIZE?: string;
   CATALOG_MAX_PAGES?: string;
   CATALOG_VARIANT_LIMIT?: string;
+  CATALOG_IMAGE_LIMIT?: string;
   SANDBOX_CART_MAX_LINE_QUANTITY?: string;
   SANDBOX_CART_MAX_TOTAL_QUANTITY?: string;
   SANDBOX_CART_MAX_LINES?: string;
@@ -116,7 +117,7 @@ const storefrontEnvironmentKeys: readonly (keyof SettingsInput)[] = [
   'PUBLIC_CHECKOUT_DOMAIN', 'SESSION_SECRET', 'PRIVATE_STOREFRONT_API_TOKEN',
   'PUBLIC_CUSTOMER_ACCOUNT_API_CLIENT_ID', 'SHOP_ID', 'PUBLIC_CUSTOMER_ACCOUNT_API_URL',
   'NODE_ENV', 'CATALOG_SOURCE', 'SANDBOX_CHECKOUT_ENABLED',
-  'CATALOG_PAGE_SIZE', 'CATALOG_MAX_PAGES', 'CATALOG_VARIANT_LIMIT',
+  'CATALOG_PAGE_SIZE', 'CATALOG_MAX_PAGES', 'CATALOG_VARIANT_LIMIT', 'CATALOG_IMAGE_LIMIT',
   'SANDBOX_CART_MAX_LINE_QUANTITY', 'SANDBOX_CART_MAX_TOTAL_QUANTITY', 'SANDBOX_CART_MAX_LINES',
   'PUBLIC_CANONICAL_ORIGIN', 'STOREFRONT_API_VERSION',
   'CUSTOMER_ACCOUNT_ENABLED', 'CUSTOMER_ACCOUNT_API_VERSION', 'HEADER_MENU_HANDLE',
@@ -287,6 +288,7 @@ export function loadStorefrontSettings(input: SettingsInput): StorefrontSettings
     pageSize: boundedInteger(input.CATALOG_PAGE_SIZE, 'CATALOG_PAGE_SIZE', 50, 1, 250),
     maxPages: boundedInteger(input.CATALOG_MAX_PAGES, 'CATALOG_MAX_PAGES', 20, 1, 100),
     variantLimit: boundedInteger(input.CATALOG_VARIANT_LIMIT, 'CATALOG_VARIANT_LIMIT', 100, 1, 250),
+    imageLimit: boundedInteger(input.CATALOG_IMAGE_LIMIT, 'CATALOG_IMAGE_LIMIT', 12, 1, 250),
   };
   const localDevelopment = flag(input, 'LOCAL_DEVELOPMENT', false);
   const originValue = required(input, 'PUBLIC_CANONICAL_ORIGIN');
