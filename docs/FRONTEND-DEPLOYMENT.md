@@ -1,5 +1,9 @@
 # Live frontend review
 
+## Current release — 2026-10-04
+
+The reviewed Hydrogen storefront is live on [main](https://regenai.zahidul-islam.com) and [staging](https://regenai-staging.zahidul-islam.com). Commit `21e2f0e` includes the approved hero composition plus fixes for responsive hero spacing, reduced-motion controls, Shopify finder copy and search revalidation. The same tested Docker image runs on both hosts. Final local/live checks matched **145/145 main release files** and **144/144 staging release files** plus its archived image; both containers and seven origin routes passed, and cart POST remained HTTP 501. Public browser runs on each host passed motion, finder and search behavior, six mobile/desktop axe scans with zero WCAG A/AA violations or overflow, and ten hero widths with no overlap. The independent source review found no blocking code defect. The products remain portfolio concepts; public checkout and accounts are closed. A complete manual screen-reader journey and live rollback exercise are still due. Older release sections below are historical checkpoints.
+
 ## Current Hydrogen storefront — 2026-10-03
 
 The main site at **https://regenai.zahidul-islam.com** and staging at **https://regenai-staging.zahidul-islam.com** now run the Shopify-backed Hydrogen frontend. Both show the original Pulse One 3D hero. A fresh connected-browser check after the session-key rotation found the scene ready, a canvas present and normal motion enabled on both homepages; two main-site screenshots showed different model positions. The header motion button can pause the scene, and a reduced-motion browser preference shows a still poster. The owner-reported missing-animation view has not yet been reproduced or identified. Ordering and Account remain disabled.

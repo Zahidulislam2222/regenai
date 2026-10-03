@@ -1,6 +1,17 @@
 # Roadmap
 
-Updated 2026-10-03. Task-level acceptance criteria and dependencies live in the [master plan](../PROJECT_PLAN.md). Current evidence lives in [BUILD-STATUS.md](BUILD-STATUS.md). Phases are ordered by dependency; dates are not promised.
+Updated 2026-10-04. Task-level acceptance criteria and dependencies live in the [master plan](../PROJECT_PLAN.md). Current evidence lives in [BUILD-STATUS.md](BUILD-STATUS.md). Phases are ordered by dependency; dates are not promised. Work is stopped after the current frontend release at the owner's request.
+
+## Current frontend-first phases
+
+| Phase | Status | Verified now | Due before phase exit |
+|---|---|---|---|
+| F1 — Shopping journey | Implemented for the concept demo; acceptance open | Six Shopify concept products, discovery and comparison are live; the enabled development-store cart passed the desktop/mobile 0→1→2→1→0 flow locally; public cart writes remain closed | Fresh F1 journey review and a real unavailable-variant browser case when a test variant exists |
+| F2 — Frontend completeness | Live review release verified; manual check open | Help/contact/policies, approved hero, source-specific finder copy, search, SEO and responsive checks; exact-image staging/main releases and independent source review passed | Full manual screen-reader journey and broader route-level visual acceptance |
+| B1 — Buyer platform | Due | Test gateway and staging account callback/origin/logout settings were verified | Development-store test checkout and authenticated account flow; main account settings as needed |
+| B2 — Merchant platform | Due | Inactive sandbox app draft with three Functions exists | Install, OAuth/isolation, eligible Function activation and real sandbox behavior |
+| R1 — Production controls | Due | Bounded frontend security, accessibility and performance evidence exists | Full config/security audit, restore drill, monitoring and measured performance/reliability evidence |
+| R2 — Release and handoff | Due for full platform | The current frontend alone is released with local/live hash parity | Integrated buyer/merchant release, live rollback drill and final handoff |
 
 ## Where the project is
 
@@ -10,7 +21,7 @@ Updated 2026-10-03. Task-level acceptance criteria and dependencies live in the 
 | **M2 — Integrated Shopify store** | Real development-store catalog, cart, accounts and test checkout through Hydrogen; secured merchant app; verified Functions | In progress |
 | **M3 — Production-grade platform** | M2 plus security, privacy, accessibility, observability, reliability and scale evidence; backups and rollback drilled | Planned |
 
-## Phases
+## Earlier workstream breakdown (historical)
 
 ### Phase A — Frontend ✅
 Selected visual design, original Blender assets, Three.js product inspection, accessible shopping flow, live deployment with rollback.
