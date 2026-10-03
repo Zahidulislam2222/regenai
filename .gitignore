@@ -74,7 +74,9 @@ temp/
 # Private recovery and project memory
 memory/
 CREDENTIALS.md
-deploy/hydrogen/.env
+deploy/hydrogen/.env*
+!deploy/hydrogen/.env.example
+deploy/hydrogen/*.runtime.env
 deploy/hydrogen/context/
 PROJECT-DOSSIER.md
 tests/manual/
