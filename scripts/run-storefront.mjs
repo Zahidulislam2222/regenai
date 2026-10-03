@@ -1,5 +1,6 @@
 import {spawn} from 'node:child_process';
 import {createRequire} from 'node:module';
+import {readFileSync} from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 
@@ -10,6 +11,12 @@ const [task, ...extraArgs] = process.argv.slice(2);
 let child;
 
 if (task === 'build' || task === 'dev' || task === 'codegen') {
+  if (task === 'build') {
+    const lockfile = JSON.parse(readFileSync(path.join(projectRoot, 'package-lock.json'), 'utf8'));
+    if (!lockfile.packages?.['packages/storefront']) {
+      throw new Error('The root npm lockfile does not contain the storefront workspace.');
+    }
+  }
   const require = createRequire(import.meta.url);
   const shopifyPackage = require.resolve('@shopify/cli/package.json', {
     paths: [storefrontDirectory],
@@ -20,6 +27,7 @@ if (task === 'build' || task === 'dev' || task === 'codegen') {
     'hydrogen',
     task,
     ...(task === 'codegen' ? [] : ['--codegen']),
+    ...(task === 'build' ? ['--no-lockfile-check'] : []),
     '--path',
     storefrontDirectory,
     ...extraArgs.filter((argument) => argument !== '--'),
