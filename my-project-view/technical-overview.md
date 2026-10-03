@@ -5,6 +5,18 @@ Project by Zahidul Islam. Client review edition, updated 24 September 2026.
 
 Live frontend: https://regenai.zahidul-islam.com
 
+## Current release update — October 2026
+
+The live main storefront now runs the Shopify-backed Hydrogen application. It preserves the approved 3D design while reading six portfolio concept products from the development store. Visitors can browse categories, search, compare concepts, open product pages, and read help, contact and policy content. The public cart explains that ordering is closed; account sign-in and checkout remain disabled. These are illustrative designs, without verified saleable inventory or a real-payment offer.
+
+The current source passed 137 storefront unit tests with one existing skip, type checks, lint with zero errors and four prior warnings, Hydrogen and static-preview builds, and scoped security scans. Independent source review found no blocking defect. The same tested image was released on staging and main with 144/144 and 145/145 release-file parity respectively. Public browser checks on each host covered route status, motion and reduced-motion behavior, finder copy, search requests, mobile/desktop automated accessibility scans, and ten hero widths without overlap. These are bounded checks, not full accessibility or production-readiness proof.
+
+Frontend-first phase status: F1 shopping journey is implemented for the concept demo. Its enabled sandbox cart passed a local desktop/mobile add, quantity and remove sequence of 0 to 1 to 2 to 1 to 0; a real unavailable-variant browser case and fresh full-journey review remain due. F2 frontend completeness has a reviewed live release; a complete manual screen-reader journey and broader visual acceptance remain due. B1 buyer-platform test checkout and account sign-in, B2 merchant installation and Function activation, R1 production controls, and R2 integrated release and handoff remain due.
+
+The development store's test payment gateway and staging account callback settings were verified, but no test order or account login was completed. A modern merchant sandbox app has an inactive draft with three Shopify Functions; it has not been installed or activated. No real payment or physical order is open.
+
+The completed frontend source is pushed to the GitHub branch `fix/hydrogen-edge-transform`. It has not been merged into `main`. The earlier static release was retained as rollback material, but a live rollback drill has not been run. The remaining sections preserve the original September snapshot and longer-term plan; their descriptions of a public static container and pending Hydrogen cutover are historical.
+
 RegenAI is a Shopify-focused recovery and wellness commerce portfolio project. The vision is to combine a distinctive shopping experience with dependable commerce, evidence-aware content, responsible recommendations and an architecture that can grow with a real merchant. The current milestone is a publicly deployed visual demo. It is not an operating medical business, a clinically validated product range or a store accepting real payments.
 
 This document separates verified delivery from implementation in progress, planned controls and longer-term ideas. It replaces the earlier day-by-day snapshot; historical CI results, product claims and deployment assumptions are not treated as current proof.
