@@ -6,6 +6,7 @@ export const recoverySettings = {
   maxQuantity: 9,
   maxCartLines: 30,
   scene: {
+    productId: 'pulse',
     model: '/media/pulse.glb',
     poster: '/media/pulse.png',
     camera: [3.2, 1.5, 5.7] as const,

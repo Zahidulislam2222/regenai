@@ -6,6 +6,7 @@ import {site} from '~/content/recovery';
 import {editorial} from '~/content/recovery-editorial';
 import type {ConceptEditorial} from '~/lib/concept-editorial.server';
 import type {CatalogVariant, ShopifyCatalogProduct} from '~/lib/shopify-catalog.server';
+import {Inspection, ProductVisual} from './Experience';
 
 function money(variant: CatalogVariant | undefined): string | null {
   if (!variant?.price) return null;
@@ -96,8 +97,13 @@ function ShopifyComparison({products, concepts, remove}: {
   </section>;
 }
 
-export function ShopifyHomeView({products}: {products: ShopifyCatalogProduct[]}) {
+export function ShopifyHomeView({products, sceneProduct, paused}: {
+  products: ShopifyCatalogProduct[];
+  sceneProduct: ShopifyCatalogProduct | null;
+  paused: boolean;
+}) {
   const featured = products.slice(0, 3);
+  const heroProduct = sceneProduct ?? featured[0];
   return (
     <>
       <section className="hero">
@@ -108,12 +114,12 @@ export function ShopifyHomeView({products}: {products: ShopifyCatalogProduct[]})
           <Link className="button" to="/collections/all">Explore the collection <ArrowUpRight size={19} /></Link>
         </div>
         <div className="hero-object">
-          {featured[0]?.image ? <img src={featured[0].image.url}
-            alt={featured[0].image.altText || `${featured[0].name} concept render`}
-            width={featured[0].image.width ?? 1000} height={featured[0].image.height ?? 1000} />
+          {sceneProduct ? <ProductVisual paused={paused} /> : heroProduct?.image ? <img src={heroProduct.image.url}
+            alt={heroProduct.image.altText || `${heroProduct.name} concept render`}
+            width={heroProduct.image.width ?? 1000} height={heroProduct.image.height ?? 1000} />
             : <p className="empty-state">The Shopify concept collection is being prepared.</p>}
-          {featured[0] && <Link className="hero-product-label" to={`/products/${featured[0].handle}`}>
-            <span><small>Explore the design</small><strong>{featured[0].name}</strong></span>
+          {heroProduct && <Link className="hero-product-label" to={`/products/${heroProduct.handle}`}>
+            <span><small>Explore the design</small><strong>{heroProduct.name}</strong></span>
           </Link>}
         </div>
       </section>
@@ -124,6 +130,7 @@ export function ShopifyHomeView({products}: {products: ShopifyCatalogProduct[]})
           <ProductCard key={product.id} product={product} index={index} />)}</div>
           : <div className="empty-state"><h3>Collection coming into view</h3><p>No RegenAI concepts are published to this storefront yet.</p></div>}
       </section>
+      {sceneProduct && <Inspection paused={paused} productHref={`/products/${sceneProduct.handle}`} />}
     </>
   );
 }

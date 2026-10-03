@@ -50,7 +50,7 @@ function ScenePoster() {
     </div>
   );
 }
-function ProductVisual({
+export function ProductVisual({
   paused = false,
   progress = 0,
   angle = 0,
@@ -65,7 +65,7 @@ function ProductVisual({
     setClientReady(true);
   }, []);
 
-  if (!clientReady) return <ScenePoster />;
+  if (paused || !clientReady) return <ScenePoster />;
 
   return (
     <Suspense fallback={<ScenePoster />}>
@@ -198,9 +198,9 @@ export function HomeView({paused}: {paused: boolean}) {
           <div className="orbit orbit-two" />
           <span className="object-cross cross-a">{ui._a318c2}</span>
           <span className="object-cross cross-b">{ui._a318c2}</span>
-          <ScenePoster />
+          <ProductVisual paused={paused} />
           <div className="object-shadow" />
-          <Link className="hero-product-label" to="/products/pulse">
+          <Link className="hero-product-label" to={`/products/${recoverySettings.scene.productId}`}>
             <span>
               <small>{ui.meet_your_everyday_essential_bc05c1}</small>
               <strong>
@@ -249,7 +249,7 @@ export function HomeView({paused}: {paused: boolean}) {
         </div>
       </section>
       <CategoryExplore />
-      <Inspection />
+      <Inspection paused={paused} productHref={`/products/${recoverySettings.scene.productId}`} />
       <section className="section ritual-section">
         <div className="ritual-index">
           <Mark />
@@ -342,10 +342,40 @@ function ProductCard({
     </article>
   );
 }
-function Inspection() {
+export function Inspection({paused, productHref}: {paused: boolean; productHref: string}) {
+  const root = useRef<HTMLElement>(null);
+  const [progress, setProgress] = useState(0);
+  useEffect(() => {
+    if (paused) {
+      setProgress(0);
+      return;
+    }
+    let frame = 0;
+    const update = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        const element = root.current;
+        if (!element) return;
+        const rect = element.getBoundingClientRect();
+        const travel = Math.max(1, rect.height - window.innerHeight);
+        setProgress(Math.max(0, Math.min(1, -rect.top / travel)));
+      });
+    };
+    window.addEventListener('scroll', update, {passive: true});
+    window.addEventListener('resize', update);
+    update();
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', update);
+      window.removeEventListener('resize', update);
+    };
+  }, [paused]);
+  const active = Math.min(site.inspection.length - 1, Math.floor(progress * site.inspection.length));
   return (
     <section
-      className="inspection inspection-static"
+      className={`inspection ${paused ? 'inspection-static' : ''}`}
+      ref={root}
       aria-label={ui.pulse_one_product_inspection_2a3ef4}
     >
       <div className="inspection-sticky">
@@ -357,16 +387,17 @@ function Inspection() {
           <div className="inspection-word" aria-hidden="true">
             {ui.pulse_64ab2b}
           </div>
-          <ScenePoster />
+          <ProductVisual paused={paused} progress={progress} />
           <div className="inspection-tag">
-            <span className="status-dot" /> {site.inspection[0].label}
+            <span className="status-dot" /> {site.inspection[active].label}
           </div>
         </div>
         <div className="inspection-content">
           {site.inspection.map((s, i) => (
             <article
               key={s.number}
-              className={`inspection-step ${i === 0 ? 'active' : ''}`}
+              className={`inspection-step ${active === i ? 'active' : ''}`}
+              aria-hidden={!paused && active !== i}
             >
               <span className="chapter-number">
                 {ui._8a5eda}
@@ -376,13 +407,13 @@ function Inspection() {
               <p>{s.body}</p>
             </article>
           ))}
-          <Link to="/products/pulse" className="text-link">
+          <Link to={productHref} className="text-link">
             {ui.explore_pulse_one_043eba}
             <ArrowUpRight size={18} />
           </Link>
           <div className="chapter-bars" aria-hidden="true">
-            {site.inspection.map((s) => (
-              <span className="filled" key={s.number} />
+            {site.inspection.map((s, i) => (
+              <span className={active >= i ? 'filled' : ''} key={s.number} />
             ))}
           </div>
           <small>
