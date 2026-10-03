@@ -1,8 +1,9 @@
 import {useState} from 'react';
 import {Link, useSearchParams} from 'react-router';
-import {ArrowLeft, ArrowUpRight, Plus, Search, SlidersHorizontal} from 'lucide-react';
+import {ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Plus, Search, SlidersHorizontal} from 'lucide-react';
 import {CartForm} from '@shopify/hydrogen';
 import {getDesignCategoryHandle, site} from '~/content/recovery';
+import {ui} from '~/content/recovery-ui';
 import {editorial} from '~/content/recovery-editorial';
 import {CategoryExplore, HomeQuestions, JournalFeature} from './Editorial';
 import type {ConceptEditorial} from '~/lib/concept-editorial.server';
@@ -112,23 +113,40 @@ export function ShopifyHomeView({products, sceneProduct, paused}: {
   return (
     <>
       <section className="hero">
-        <div className="hero-topline"><span><i className="status-dot" /> {site.hero.eyebrow}</span><span>SHOPIFY SANDBOX COLLECTION</span></div>
+        <div className="hero-grain" />
+        <div className="hero-topline"><span><i className="status-dot" /> {site.hero.eyebrow}</span>
+          <span>{ui.collection_001_everyday_tools_5e408a}</span></div>
         <div className="hero-copy">
           <h1>{site.hero.lines[0]}<br /><span>{site.hero.lines[1]}</span></h1>
           <p>{site.hero.body}</p>
-          <Link className="button" to="/collections/all">Explore the collection <ArrowUpRight size={19} /></Link>
+          <Link className="button" to="/collections/all">{site.hero.primary} <ArrowUpRight size={19} /></Link>
+          <Link className="hero-secondary" to="/quiz">{site.hero.secondary} <ArrowRight size={16} /></Link>
         </div>
         <div className="hero-object">
+          <div className="orbit orbit-one" />
+          <div className="orbit orbit-two" />
+          <span className="object-cross cross-a">{ui._a318c2}</span>
+          <span className="object-cross cross-b">{ui._a318c2}</span>
           {sceneProduct ? <ProductVisual paused={paused} poster={sceneProduct.image?.url} posterPriority /> : heroProduct?.image ? <img src={heroProduct.image.url}
             alt={heroProduct.image.altText || `${heroProduct.name} concept render`}
             loading="eager" {...{fetchpriority: 'high'}}
             width={heroProduct.image.width ?? 1000} height={heroProduct.image.height ?? 1000} />
             : <p className="empty-state">The Shopify concept collection is being prepared.</p>}
+          <div className="object-shadow" />
           {heroProduct && <Link className="hero-product-label" to={`/products/${heroProduct.handle}`}>
-            <span><small>Explore the design</small><strong>{heroProduct.name}</strong></span>
+            <span><small>{ui.meet_your_everyday_essential_bc05c1}</small>
+              <strong>{heroProduct.name}<span>{ui._ca29ed}</span></strong></span>
+            <span className="product-index">01 — {String(products.length).padStart(2, '0')}</span>
           </Link>}
         </div>
+        <div className="hero-bottom"><a href="#collection" className="scroll-cue">
+          <ArrowDown size={15} />{ui.scroll_to_find_your_rhythm_962ea0}</a>
+          <span>{ui.designed_with_intention_built_as_a_concept_1aeeef}</span></div>
       </section>
+      <div className="principle-strip"><span>{ui.recovery_is_personal_011ec7}</span>
+        <span><span className="mini-star">{ui._20baed}</span>{ui.make_it_part_of_your_everyday_6bbdf7}</span>
+        <Link to="/evidence">{ui.clarity_before_claims_234298}<ArrowUpRight size={16} /></Link>
+      </div>
       <section className="section collection-section" id="collection">
         <div className="section-heading"><div><p className="eyebrow">THE EVERYDAY COLLECTION</p><h2>{site.home.collectionTitle}</h2></div>
           <Link className="text-link" to="/collections/all">Explore all tools <ArrowUpRight size={19} /></Link></div>
