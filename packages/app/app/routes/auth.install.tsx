@@ -1,6 +1,7 @@
 import {redirect, type LoaderFunctionArgs} from 'react-router';
 import {buildInstallUrl, isValidShopDomain} from '~/lib/shopify';
-import {authConfig, createOauthState} from '~/lib/merchant-auth';
+import {createOauthState} from '~/lib/merchant-auth';
+import {authConfig} from '~/lib/merchant-config';
 
 /**
  * OAuth install entry point. Merchant hits /auth/install?shop=X.myshopify.com.

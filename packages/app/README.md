@@ -1,8 +1,8 @@
 # Merchant app — `packages/app`
 
-The backend of RegenAI: a standalone Shopify merchant app on Cloudflare Workers, plus four Shopify Functions written in Rust.
+The backend of RegenAI: a standalone Shopify merchant app on Cloudflare Workers, plus three deployable Shopify Functions written in Rust. A fourth discount-stacking crate remains experimental.
 
-> **Status: local security repair, not redeployed.** A prior development build exists at a `workers.dev` URL. The current authentication repair has local tests but needs remote secret/binding validation, migration, full review and release checks before deployment or use with real merchant data.
+> **Status: local security repair, not redeployed.** The prior development Worker's production and preview `workers.dev` URLs were disabled and verified on 2026-10-04. The current authentication and uninstall-webhook repairs have local tests but need isolated remote data, secret validation, migration, subscription, full review and release checks before merchant use.
 
 ## What it does
 
@@ -12,8 +12,9 @@ The backend of RegenAI: a standalone Shopify merchant app on Cloudflare Workers,
 | OAuth callback — shop-domain validation, browser-bound single-use state, HMAC verification, token exchange | `app/routes/auth.callback.tsx` | Local repair built; remote migration and secret configuration pending |
 | Product-claim review queue — intended for staff to review product-copy changes before publishing | `app/routes/admin.reviews.tsx`, `app/routes/admin.review-detail.tsx` | Local list/detail require opaque merchant session and bound shop query; submission and approval remain planned |
 | Shopify API helpers | `app/lib/shopify.ts` | Built |
-| Webhooks (orders, app uninstall, mandatory privacy webhooks) | — | Planned |
-| Shopify Functions | [`extensions/`](extensions/README.md) | Built; 47/47 unit tests pass |
+| App uninstall webhook | `app/routes/webhooks.app-uninstalled.ts` | Locally built and HTTP-tested; not subscribed or deployed |
+| Orders and mandatory privacy webhooks | — | Planned |
+| Shopify Functions | [`extensions/`](extensions/README.md) | Three current-schema crates in an inactive draft; store activation unverified |
 
 ## Stack
 
@@ -24,7 +25,7 @@ The backend of RegenAI: a standalone Shopify merchant app on Cloudflare Workers,
 
 ## Data model
 
-Defined in [`migrations/0001_initial.sql`](migrations/0001_initial.sql) and [`migrations/0002_merchant_auth.sql`](migrations/0002_merchant_auth.sql):
+Defined in [`migrations/0001_initial.sql`](migrations/0001_initial.sql), [`migrations/0002_merchant_auth.sql`](migrations/0002_merchant_auth.sql), and [`migrations/0003_webhook_deliveries.sql`](migrations/0003_webhook_deliveries.sql):
 
 | Table | Purpose |
 |---|---|
@@ -33,6 +34,7 @@ Defined in [`migrations/0001_initial.sql`](migrations/0001_initial.sql) and [`mi
 | `oauth_states` / `merchant_sessions` | Hashed, expiring browser-bound OAuth states and merchant sessions |
 | `clinician_review_queue` | Product-copy changes awaiting review, with status, reviewer and evidence metadata |
 | `protocol_tracker` | Future adherence tracking (not used by any route yet) |
+| `webhook_deliveries` | Signed delivery IDs and payload digests for idempotency; no raw webhook payloads stored |
 
 Every table carries a `shop` column; every query must filter by the authenticated shop.
 
@@ -54,7 +56,7 @@ From `packages/app`:
 
 ## Configuration
 
-Worker bindings and non-secret variables live in `wrangler.toml`. Secrets (`SHOPIFY_API_KEY`, `SHOPIFY_API_SECRET`, `SHOPIFY_TOKEN_ENC_KEY`) are set with `wrangler secret put`, never committed. Preview and staging have no D1 binding until isolated databases are provisioned. The production encryption key is prepared privately but has not been configured remotely; the merchant app must not be redeployed before that and the migration are verified.
+Worker bindings and non-secret variables live in `wrangler.toml`; typed limits live in `app/lib/merchant-config.ts`. Secrets (`SHOPIFY_API_KEY`, `SHOPIFY_API_SECRET`, `SHOPIFY_TOKEN_ENC_KEY`) are set with `wrangler secret put`, never committed. Preview and staging have no D1 binding until isolated databases are provisioned. The production encryption key is prepared privately but has not been configured remotely; the merchant app must not be redeployed before that and the migration are verified. The current Shopify app config has no uninstall webhook subscription yet.
 
 ## Scaling notes
 

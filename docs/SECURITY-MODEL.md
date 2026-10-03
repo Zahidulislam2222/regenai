@@ -55,7 +55,7 @@ These are tracked openly. The merchant app and Hydrogen integration **must not b
 | SEC-05 | `Strict-Transport-Security` header not present on live frontend responses | Medium | Enable HSTS at the edge after confirming all subdomains serve HTTPS |
 | SEC-06 | Dependency advisories: at the last audit (2026-09-21) 0 critical, 45 high, 13 moderate, 5 low, many in development tooling | High | Reachability review; targeted upgrades; CI gate on new high/critical |
 | SEC-07 | Some CI jobs mask failures (`continue-on-error`, `\|\| true`) | Medium | Remove masks so a red check means a real failure |
-| SEC-08 | No webhook intake yet; HMAC verification, idempotency and replay protection must be built with it | Planned | Implement with raw-body HMAC verification and tests |
+| SEC-08 | Webhook lifecycle incomplete | Release blocker | Local `app/uninstalled` handler now verifies raw-body HMAC, deduplicates by delivery ID, and atomically revokes older shop tokens/sessions; local HTTP and D1 tests passed. Remote subscription, delivery proof, privacy topics, reconciliation and failure recovery remain due. |
 | SEC-09 | No rate limiting, audit log or admin MFA enforcement in the merchant app | Planned | Implement per OWASP ASVS Level 2 mapping |
 
 ## 5. Security programme — planned

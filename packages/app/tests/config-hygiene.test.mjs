@@ -45,6 +45,16 @@ test('legacy merchant Worker keeps public production routes disabled', () => {
   }
 });
 
+test('webhook body limit is provided to every Worker environment', () => {
+  const config = file('../wrangler.toml');
+  for (const section of [config.split('\n[vars]')[1]?.split('\n[')[0],
+    ...['preview', 'staging', 'production'].map((name) =>
+      config.split(`[env.${name}.vars]`)[1]?.split('\n[')[0])]) {
+    assert.ok(section, 'Worker environment is missing');
+    assert.match(section, /^SHOPIFY_WEBHOOK_MAX_BODY_BYTES = "65536"$/m);
+  }
+});
+
 test('obvious secrets and plaintext token persistence cannot enter app source', () => {
   const roots = [new URL('../app/', import.meta.url), new URL('../workers/', import.meta.url)];
   const sourceFiles = (root) => readdirSync(root, {withFileTypes: true}).flatMap((entry) => {

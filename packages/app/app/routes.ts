@@ -6,4 +6,5 @@ export default [
   route('admin/reviews/:id', 'routes/admin.review-detail.tsx'),
   route('auth/install', 'routes/auth.install.tsx'),
   route('auth/callback', 'routes/auth.callback.tsx'),
+  route('webhooks/app-uninstalled', 'routes/webhooks.app-uninstalled.ts'),
 ] satisfies RouteConfig;

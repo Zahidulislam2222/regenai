@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import {
-  authConfig, authenticatedShop, consumeOauthState, createMerchantSession,
+  authenticatedShop, consumeOauthState, createMerchantSession,
   createOauthState, encryptShopToken,
 } from '../app/lib/merchant-auth.ts';
+import {authConfig} from '../app/lib/merchant-config.ts';
 import {buildInstallUrl, exchangeCodeForToken, isValidShopDomain, verifyOauthHmac} from '../app/lib/shopify.ts';
 
 class FakeD1 {

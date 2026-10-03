@@ -11,7 +11,8 @@ import {
   EmptyState,
   Banner,
 } from '@shopify/polaris';
-import {authenticatedShop, reviewQueueLimit} from '~/lib/merchant-auth';
+import {authenticatedShop} from '~/lib/merchant-auth';
+import {reviewQueueLimit} from '~/lib/merchant-config';
 
 /**
  * Clinician review dashboard — first admin-app route for Day 15.

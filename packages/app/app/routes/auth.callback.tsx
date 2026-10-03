@@ -5,8 +5,9 @@ import {
   verifyOauthHmac,
 } from '~/lib/shopify';
 import {
-  authConfig, consumeOauthState, createMerchantSession, encryptShopToken,
+  consumeOauthState, createMerchantSession, encryptShopToken,
 } from '~/lib/merchant-auth';
+import {authConfig} from '~/lib/merchant-config';
 
 /**
  * OAuth callback. Verifies `state`, verifies HMAC, exchanges `code` for an
