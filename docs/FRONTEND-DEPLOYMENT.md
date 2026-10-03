@@ -1,5 +1,11 @@
 # Live frontend review
 
+## Current Hydrogen storefront — 2026-10-03
+
+The main site at **https://regenai.zahidul-islam.com** and staging at **https://regenai-staging.zahidul-islam.com** now run the Shopify-backed Hydrogen frontend. Both show the original Pulse One 3D hero. A fresh connected-browser check after the session-key rotation found the scene ready, a canvas present and normal motion enabled on both homepages; two main-site screenshots showed different model positions. The header motion button can pause the scene, and a reduced-motion browser preference shows a still poster. The owner-reported missing-animation view has not yet been reproduced or identified. Ordering and Account remain disabled.
+
+The session-key rotation changed only ignored runtime environment files in versioned releases on the existing VPS. Before mutation, staging and main matched their saved local release hashes. After activation, staging matched 143/143 files plus its image archive and main matched 144/144 files; both active containers passed health, seven origin routes and closed-cart POST 501. The prior release trees remain archived with expired keys and require a fresh rotation before rollback. The historical static release evidence below is preserved as prior-release history.
+
 ## Animated hero repair — 2026-10-03
 
 The public design-study site at **https://regenai.zahidul-islam.com** now serves the restored Pulse One 3D hero. The 991,864-byte original model had loaded too slowly and revalidated on each visit. A source-pinned replacement keeps the same visible form and moving part, reduces the model to 321,652 bytes, and transfers 144,192 bytes when gzip is accepted. Only the content-versioned model receives a long immutable browser cache header; HTML stays `no-store` and the store remains read-only.
