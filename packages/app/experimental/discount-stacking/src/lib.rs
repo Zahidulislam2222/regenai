@@ -1,6 +1,7 @@
-//! Shopify Function — discount stacking validator.
+//! Experimental discount stacking rules, not a deployable Shopify Function.
 //!
-//! Target: `cart.checkout.validation.run`
+//! The 2026-01 validation input does not expose applied discount codes.
+//! The former `cart.checkout.validation.run` target is retired.
 //!
 //! PROJECT_PLAN §6 Phase-1 features:
 //!   "Allows subscription + first-time + clinic discount stack under rules.
@@ -25,6 +26,8 @@
 //!
 //! Output is the standard `cart.checkout.validation.run` shape:
 //!   `{ errors: [{ localizedMessage, target }] }`.
+
+#![cfg(test)]
 
 use serde::{Deserialize, Serialize};
 
@@ -173,16 +176,12 @@ fn validate_stacking(kinds: &[CodeKind], has_sub: bool) -> Option<&'static str> 
 
     // More than one first-time code → abuse
     if first > 1 {
-        return Some(
-            "Only one first-time-customer discount can be applied per order.",
-        );
+        return Some("Only one first-time-customer discount can be applied per order.");
     }
 
     // More than one clinic code → abuse
     if clinic > 1 {
-        return Some(
-            "Only one clinic discount can be applied per order.",
-        );
+        return Some("Only one clinic discount can be applied per order.");
     }
 
     // Subscription + first-time + clinic all three → blocked
@@ -330,12 +329,7 @@ mod tests {
         assert_eq!(effective_discount_pct(100, 200), 0); // weird state, safe default
     }
 
-    fn mk_input(
-        codes: &[&str],
-        subscription: bool,
-        subtotal: &str,
-        total: &str,
-    ) -> Input {
+    fn mk_input(codes: &[&str], subscription: bool, subtotal: &str, total: &str) -> Input {
         Input {
             cart: Cart {
                 cost: Cost {
@@ -424,8 +418,7 @@ mod tests {
         ));
         // Stacking error (under 40% cap so only one error)
         assert_eq!(out.errors.len(), 1);
-        assert!(out
-            .errors[0]
+        assert!(out.errors[0]
             .localized_message
             .to_lowercase()
             .contains("subscription"));

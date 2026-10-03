@@ -30,6 +30,7 @@ build/
 
 # Hydrogen / Oxygen
 .shopify/
+packages/app/shopify.app*.toml
 .wrangler/
 .mf/
 .hydrogen/

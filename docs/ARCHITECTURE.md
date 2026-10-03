@@ -52,16 +52,16 @@ The live build is a static single-page application served by an unprivileged, re
 
 ### 2.3 Backend — Shopify Functions (`packages/app/extensions`)
 
-Four Rust crates compiled to WebAssembly and executed by Shopify inside cart and checkout. They run on Shopify infrastructure, so they scale with Shopify, not with RegenAI servers.
+Three deployable Rust Function crates are built for Shopify's current WebAssembly runtime. The discount stacking rule crate is retained as a local experiment because Shopify's 2026-01 validation input does not expose applied codes.
 
 | Function | Shopify target | Purpose | Status |
 |---|---|---|---|
-| `cart-contraindication` | `cart.checkout.validation.run` | Block checkout when a product's contraindication conflicts with a health flag on the signed-in customer (guests pass) | **Built** |
-| `b2b-tiered-pricing` | `cart.transform.run` | Company-tier discount plus subtotal-based volume adder for B2B buyers, capped at 40% | **Built** |
-| `delivery-customization` | `cart.delivery-options.transform.run` | Hide/rename delivery options by cart content | **Built** |
-| `discount-stacking` | `cart.checkout.validation.run` | Enforce discount-combination rules | **Built** |
+| `cart-contraindication` | `cart.validations.generate.run` | Block checkout when a product's contraindication conflicts with a health flag on the signed-in customer (guests pass) | **Draft uploaded; not activated** |
+| `b2b-tiered-pricing` | `cart.transform.run` | Company-tier discount plus subtotal-based volume adder for B2B buyers, capped at 40%; line updates require Shopify Plus | **Draft uploaded; not activated** |
+| `delivery-customization` | `cart.delivery-options.transform.run` | Hide/rename delivery options by cart content | **Draft uploaded; not activated** |
+| `discount-stacking` | Experimental source only | Intended discount-code combinations are not enforceable from the current validation input | **Not deployed** |
 
-Verified 2026-09-24: native unit tests **47/47 pass** (`cargo test --workspace`), and release WASM builds are 159–181 KiB each, under Shopify's 256 kB limit. Not yet verified: schema revalidation against the current Function API version, and a store-level activation test. `cart-contraindication` reads a customer health-flag metafield; any real deployment requires the privacy review described in [PRIVACY.md](PRIVACY.md). Shopify permits Functions in **custom** apps only on Shopify Plus stores ([Shopify Functions limits](https://shopify.dev/docs/api/functions/latest)); a non-Plus store would need public-app distribution.
+Verified 2026-10-03: native Rust workspace tests passed; all three deployable Functions passed schema type generation, release compilation and local Shopify CLI execution, including positive synthetic cases. Shopify created inactive draft version `regenai-merchant-sandbox-4`. No store-level activation or checkout proof exists. `cart-contraindication` reads a customer health-flag metafield; any real-customer use requires the privacy review in [PRIVACY.md](PRIVACY.md). Shopify permits custom-app Functions on Plus live stores; a non-Plus live store needs the public-app distribution route.
 
 ### 2.4 Design system (`packages/ui`)
 

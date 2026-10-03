@@ -13,3 +13,4 @@ crate-type = ["cdylib", "rlib"]
 regenai-extensions-shared = { path = "../../extensions-shared" }
 serde = { workspace = true }
 serde_json = { workspace = true }
+shopify_function = { workspace = true }

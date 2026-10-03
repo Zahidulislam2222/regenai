@@ -1,6 +1,6 @@
 //! Shopify Function — cart-contraindication validator.
 //!
-//! Target: `cart.checkout.validation.run`
+//! Target: `cart.validations.generate.run`
 //!
 //! Reads the customer's medical-flag metafield + each cart line's
 //! contraindication metafield; if any product has a contraindication tag
@@ -11,12 +11,17 @@
 //! guest checkout (the data can only be set once the customer is
 //! authenticated + has answered the recovery quiz or medical-intake form).
 //!
-//! Output shape is the standard `cart.checkout.validation.run` Function
-//! output: `{ errors: [{ localizedMessage, target }] }`. An empty `errors`
-//! array means the checkout proceeds.
+//! Output is mapped to Shopify's `validationAdd` operation at the ABI boundary.
 
 use regenai_extensions_shared::{ContraTag, MedicalFlag};
 use serde::{Deserialize, Serialize};
+use shopify_function::prelude::*;
+
+#[typegen("schema.graphql")]
+pub mod schema {
+    #[query("src/input.graphql")]
+    pub mod run {}
+}
 
 // ---------------------------------------------------------------------------
 // Input shape — matches the `input.graphql` query response.
@@ -38,7 +43,6 @@ struct Cart {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct CartLine {
-    id: String,
     merchandise: Merchandise,
 }
 
@@ -57,7 +61,6 @@ enum Merchandise {
 struct Product {
     title: String,
     contraindications: Option<Metafield>,
-    fda_class: Option<Metafield>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -163,7 +166,7 @@ fn run_rules(input: &Input) -> Output {
                     product.title,
                     flag_label(flag),
                 ),
-                target: format!("cart.lines.{}", line.id),
+                target: "$.cart".to_string(),
             });
         }
     }
@@ -172,24 +175,64 @@ fn run_rules(input: &Input) -> Output {
 }
 
 // ---------------------------------------------------------------------------
-// WASM entry point. Shopify's Function runtime hands us stdin as JSON,
-// expects JSON on stdout. Rust stdlib stdio works on wasm32-wasip1.
+// Shopify's current runtime supplies typed input and expects a named export.
 // ---------------------------------------------------------------------------
-#[cfg(target_arch = "wasm32")]
-#[no_mangle]
-pub extern "C" fn _start() {
-    use std::io::{self, Read, Write};
-    let mut buf = String::new();
-    io::stdin().read_to_string(&mut buf).expect("read stdin");
-    let input: Input = serde_json::from_str(&buf).expect("parse input");
-    let output = run_rules(&input);
-    let payload = serde_json::to_string(&output).expect("serialise output");
-    io::stdout().write_all(payload.as_bytes()).expect("write");
+#[shopify_function]
+fn cart_validations_generate_run(
+    input: schema::run::Input,
+) -> shopify_function::Result<schema::CartValidationsGenerateRunResult> {
+    let cart = input.cart();
+    let source = Input {
+        cart: Cart {
+            lines: cart
+                .lines()
+                .iter()
+                .map(|line| CartLine {
+                    merchandise: match line.merchandise() {
+                        schema::run::input::cart::lines::Merchandise::ProductVariant(variant) => {
+                            Merchandise::ProductVariant {
+                                product: Product {
+                                    title: variant.product().title().to_string(),
+                                    contraindications: variant
+                                        .product()
+                                        .contraindications()
+                                        .as_ref()
+                                        .map(|field| Metafield {
+                                            value: field.value().to_string(),
+                                        }),
+                                },
+                            }
+                        }
+                        _ => Merchandise::Other,
+                    },
+                })
+                .collect(),
+            buyer_identity: cart.buyer_identity().map(|buyer| BuyerIdentity {
+                customer: buyer.customer().map(|customer| Customer {
+                    medical_flags: customer.medical_flags().as_ref().map(|field| Metafield {
+                        value: field.value().to_string(),
+                    }),
+                }),
+            }),
+        },
+    };
+    let errors = run_rules(&source)
+        .errors
+        .into_iter()
+        .map(|error| schema::ValidationError {
+            message: error.localized_message,
+            target: error.target,
+        })
+        .collect::<Vec<_>>();
+    let operations = if errors.is_empty() {
+        vec![]
+    } else {
+        vec![schema::Operation::ValidationAdd(
+            schema::ValidationAddOperation { errors },
+        )]
+    };
+    Ok(schema::CartValidationsGenerateRunResult { operations })
 }
-
-// Harmless `main` for non-wasm compile targets (tests).
-#[cfg(not(target_arch = "wasm32"))]
-fn main() {}
 
 // ---------------------------------------------------------------------------
 // Tests — pure rules core only, no Shopify mocks needed.
@@ -203,9 +246,7 @@ mod tests {
             cart: Cart {
                 lines: lines
                     .into_iter()
-                    .enumerate()
-                    .map(|(i, (title, contras))| CartLine {
-                        id: format!("gid://shopify/CartLine/{i}"),
+                    .map(|(title, contras)| CartLine {
                         merchandise: Merchandise::ProductVariant {
                             product: Product {
                                 title: title.to_string(),
@@ -216,7 +257,6 @@ mod tests {
                                         value: contras.to_string(),
                                     })
                                 },
-                                fda_class: None,
                             },
                         },
                     })
@@ -302,9 +342,9 @@ mod tests {
     }
 
     #[test]
-    fn error_target_references_line_id() {
+    fn error_target_is_supported_cart_path() {
         let out = run_rules(&mk_input("pacemaker", vec![("TENS Device", "pacemaker")]));
-        assert!(out.errors[0].target.starts_with("cart.lines."));
+        assert_eq!(out.errors[0].target, "$.cart");
     }
 
     #[test]

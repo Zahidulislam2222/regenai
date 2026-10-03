@@ -1,6 +1,6 @@
 # Roadmap
 
-Updated 2026-09-24. Task-level acceptance criteria and dependencies live in the [master plan](../PROJECT_PLAN.md). Current evidence lives in [BUILD-STATUS.md](BUILD-STATUS.md). Phases are ordered by dependency; dates are not promised.
+Updated 2026-10-03. Task-level acceptance criteria and dependencies live in the [master plan](../PROJECT_PLAN.md). Current evidence lives in [BUILD-STATUS.md](BUILD-STATUS.md). Phases are ordered by dependency; dates are not promised.
 
 ## Where the project is
 
@@ -19,14 +19,15 @@ Selected visual design, original Blender assets, Three.js product inspection, ac
 - Repair full-workspace build, typecheck and lint
 - Finish the Node server adapter for self-hosted Hydrogen (settings, bounded public cache, safe logging — built, integration pending)
 - Port the visual storefront into Hydrogen routes with real Storefront API data
-- Real cart, Customer Account API sign-in, sandbox checkout on a development store
+- Local-only Shopify cart built and browser-verified for owned variants; development-store test order and Customer Account API sign-in remain open
 - Dependency advisory remediation; masked CI checks made honest
 
 ### Phase C — Merchant app and Shopify Functions
 - Close security release blockers SEC-01 to SEC-04 ([SECURITY-MODEL.md](SECURITY-MODEL.md)): token encryption, per-shop authorization, atomic OAuth state, isolated environments
+- Separate modern sandbox app created; approved draft version `regenai-merchant-sandbox-4` contains three migrated Functions and is verified inactive. The legacy custom app cannot serve this path. Release, install, OAuth credential wiring and store activation remain open.
 - Webhook intake with HMAC verification, queue, idempotency and dead-letter replay
 - Shopify mandatory privacy webhooks
-- Revalidate the four Functions against the current API version and run store activation tests (unit tests and WASM size already verified)
+- Run development-store activation and checkout tests for the three current-schema Functions. The fourth discount stacking prototype is outside deployment because validation input lacks applied codes; redesign it with a supported Discount API architecture. B2B line updates require Plus, so the free-store path cannot prove that operation active.
 
 ### Phase D — Commerce features
 B2B pricing and company accounts, Shopify Markets (US/EU currencies and languages), subscriptions, checkout extensions — each enabled only after plan/capability verification.

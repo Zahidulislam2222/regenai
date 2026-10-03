@@ -3,14 +3,15 @@ api_version = "2026-01"
 [[extensions]]
 name = "delivery-customization"
 handle = "delivery-customization"
+uid = "7caef09d-bc92-c4fe-9c8c-5e43dc1b38bce5a7fa55"
 type = "function"
 
 [[extensions.targeting]]
 target = "cart.delivery-options.transform.run"
 input_query = "src/input.graphql"
-export = "cart-delivery-options-transform"
+export = "cart_delivery_options_transform_run"
 
 [extensions.build]
-command = "cargo build --release --target=wasm32-wasip1"
-path = "target/wasm32-wasip1/release/delivery_customization.wasm"
+command = "cargo build --release --target=wasm32-unknown-unknown"
+path = "../../target/wasm32-unknown-unknown/release/delivery_customization.wasm"
 watch = ["src/**/*.rs", "Cargo.toml", "../../Cargo.toml"]
