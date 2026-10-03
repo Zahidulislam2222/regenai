@@ -1,5 +1,11 @@
 # Live frontend review
 
+## Animated hero repair — 2026-10-03
+
+The public design-study site at **https://regenai.zahidul-islam.com** now serves the restored Pulse One 3D hero. The 991,864-byte original model had loaded too slowly and revalidated on each visit. A source-pinned replacement keeps the same visible form and moving part, reduces the model to 321,652 bytes, and transfers 144,192 bytes when gzip is accepted. Only the content-versioned model receives a long immutable browser cache header; HTML stays `no-store` and the store remains read-only.
+
+Before activation, the actual public release was snapshotted and matched its saved 29-file manifest. The new versioned static release passed local browser checks, exact remote Nginx-image validation and **31/31** remote file hashes; its container became healthy after activation. Public HTTPS returned the compressed model and noindex headers. Fresh mobile and desktop browsers reached the 3D scene, and canvas frames changed over time; reduced motion retained the still image. All three public views had no page errors or horizontal overflow. The prior release remains available for rollback. Cloudflare currently reports `DYNAMIC` for the model, so this evidence does not establish edge caching or a fixed first-load time. The separate Hydrogen staging site received the same model optimization in a later source-pinned release; its public animated browser and parity evidence is in [build status](BUILD-STATUS.md).
+
 ## Updated visual storefront — 2026-10-03
 
 The expanded design-study storefront is live at **https://regenai.zahidul-islam.com**. It adds a visible product hero, compact inspection, category entry points, journal index and three articles, plus a home FAQ. Product pages state that ordering is closed and show no invented prices or purchase controls. The connected Shopify store has no verified RegenAI recovery merchandise, so this release does not enable checkout or establish full-project readiness.
