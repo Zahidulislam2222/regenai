@@ -23,6 +23,13 @@ const product: ShopifyCatalogProduct = {
 };
 
 describe('Shopify concept product page', () => {
+  it('describes an empty verified design category accurately', () => {
+    render(<MemoryRouter><ShopifyCatalogView products={[]} categoryTitle="Reset" /></MemoryRouter>);
+    expect(screen.getByRole('heading', {name: 'Reset concepts.'})).toBeTruthy();
+    expect(screen.getByText('No verified concepts are available in this design category yet.')).toBeTruthy();
+    expect(screen.getByRole('link', {name: 'All tools'}).getAttribute('href')).toBe('/collections/all');
+  });
+
   it('selects available media and preserves the closed-commerce design disclosure', () => {
     render(<MemoryRouter><ShopifyProductView product={product} related={[]} sandboxCartEnabled={false}
       concept={{summary: 'Illustrative product concept.', detail: 'An original form study.',

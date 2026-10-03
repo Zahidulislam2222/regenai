@@ -128,10 +128,11 @@ export function ShopifyHomeView({products}: {products: ShopifyCatalogProduct[]})
   );
 }
 
-export function ShopifyCatalogView({products, concepts = {}, search = false}: {
+export function ShopifyCatalogView({products, concepts = {}, search = false, categoryTitle}: {
   products: ShopifyCatalogProduct[];
   concepts?: Record<string, ConceptEditorial | null>;
   search?: boolean;
+  categoryTitle?: string;
 }) {
   const [params, setParams] = useSearchParams();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -162,9 +163,14 @@ export function ShopifyCatalogView({products, concepts = {}, search = false}: {
   }, {replace: true, preventScrollReset: true});
   return (
     <section className="page catalog-page">
-      <p className="eyebrow">THE EVERYDAY COLLECTION / SHOPIFY SANDBOX</p>
-      <div className="catalog-heading"><h1>{search ? 'Find your next ritual.' : 'Room for recovery.'}</h1>
+      <p className="eyebrow">{categoryTitle ? site.designCategory.eyebrow : 'THE EVERYDAY COLLECTION'} / SHOPIFY SANDBOX</p>
+      <div className="catalog-heading"><h1>{categoryTitle ? `${categoryTitle} ${site.designCategory.titleSuffix}` : search ? 'Find your next ritual.' : 'Room for recovery.'}</h1>
         <p>Original design studies. Ordering is closed while the sandbox is being verified.</p></div>
+      <nav className="catalog-design-nav" aria-label={site.designCategory.navLabel}>
+        <Link to="/collections/all" aria-current={!categoryTitle ? 'page' : undefined}>All tools</Link>
+        {site.categories.slice(1).map((name) => <Link key={name} to={`/collections/${name.toLowerCase().replace(/\s+/g, '-')}`}
+          aria-current={categoryTitle === name ? 'page' : undefined}>{name}</Link>)}
+      </nav>
       <div className="catalog-toolbar">
         <div className="category-tabs" aria-label="Product categories">{categories.map((item) =>
           <button key={item} aria-pressed={category === item} onClick={() => update('category', item === 'All tools' ? '' : item)}>{item}</button>)}</div>
@@ -185,7 +191,7 @@ export function ShopifyCatalogView({products, concepts = {}, search = false}: {
           disabled: selectedIds.length >= editorial.comparisonLimit && !selectedIds.includes(product.id),
           toggle: () => toggleComparison(product.id),
         }} />)}</div>
-        : <div className="empty-state"><h2>No concepts found</h2><p>{products.length ? 'Try another search or clear the filters.' : 'No RegenAI concepts are published to this storefront yet.'}</p>
+        : <div className="empty-state"><h2>No concepts found</h2><p>{products.length ? 'Try another search or clear the filters.' : categoryTitle ? site.designCategory.emptyBody : 'No RegenAI concepts are published to this storefront yet.'}</p>
           {products.length > 0 && <button className="button" onClick={() => setParams({})}>Show the collection <ArrowUpRight size={18} /></button>}</div>}
     </section>
   );

@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'vitest';
-import {getConceptEditorial, selectRelatedConcepts} from '../../app/lib/concept-editorial.server';
-import {products} from '../../app/content/recovery';
+import {getConceptEditorial, selectDesignCategoryProducts, selectRelatedConcepts} from '../../app/lib/concept-editorial.server';
+import {getDesignCategoryByHandle, products} from '../../app/content/recovery';
 import seedConfig from '../../../../scripts/catalog-seed/seed-config.json';
 
 function identity(id: string) {
@@ -32,5 +32,18 @@ describe('owned Shopify concept editorial', () => {
     const roller = identity('roller');
     expect(selectRelatedConcepts(pulse, [pulse, balls, roller])).toEqual([balls]);
     expect(selectRelatedConcepts({...pulse, name: 'Changed title'}, [balls])).toEqual([]);
+  });
+
+  it('allows only maintained category handles and exact owned concept identities', () => {
+    expect(getDesignCategoryByHandle('release')).toBe('Release');
+    expect(getDesignCategoryByHandle('move')).toBe('Move');
+    expect(getDesignCategoryByHandle('reset')).toBe('Reset');
+    expect(getDesignCategoryByHandle('hydrogen')).toBeNull();
+    expect(getDesignCategoryByHandle('RELEASE')).toBeNull();
+    const pulse = identity('pulse');
+    const balls = identity('balls');
+    const roller = identity('roller');
+    expect(selectDesignCategoryProducts('Release', [pulse, balls, roller])).toEqual([pulse, balls]);
+    expect(selectDesignCategoryProducts('Release', [pulse, {...balls, name: 'Sample product'}, roller])).toEqual([pulse]);
   });
 });

@@ -1089,6 +1089,27 @@ main:focus {
   border-bottom: 1px solid var(--line);
   padding-bottom: 20px;
 }
+.catalog-design-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 28px;
+}
+.catalog-design-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 9px 15px;
+  border: 1px solid var(--line);
+  border-radius: 25px;
+  font-size: 12px;
+}
+.catalog-design-nav a[aria-current='page'],
+.catalog-design-nav a:hover {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
 .category-tabs {
   display: flex;
   gap: 8px;

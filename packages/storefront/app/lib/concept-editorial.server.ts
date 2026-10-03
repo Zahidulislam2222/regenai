@@ -43,3 +43,10 @@ export function selectRelatedConcepts<T extends Pick<ShopifyCatalogProduct, 'id'
   return candidates.filter((item) => item.id !== product.id &&
     getConceptEditorial(item)?.category === category);
 }
+
+export function selectDesignCategoryProducts<T extends Pick<ShopifyCatalogProduct, 'handle' | 'name' | 'description'>>(
+  category: string,
+  candidates: T[],
+): T[] {
+  return candidates.filter((product) => getConceptEditorial(product)?.category === category);
+}

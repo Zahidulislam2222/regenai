@@ -4,7 +4,9 @@ import {hydrogenRoutes} from '@shopify/hydrogen';
 
 const recoveryRoutes = layout('routes/recovery/layout.tsx', [
   index('routes/recovery/home.tsx'),
+  route('collections', 'routes/recovery/collections-index.tsx'),
   route('collections/all', 'routes/recovery/collection.tsx'),
+  route('collections/:categoryHandle', 'routes/recovery/category.tsx'),
   route('search', 'routes/recovery/search.tsx'),
   route('products/:handle', 'routes/recovery/product.tsx'),
   route('quiz', 'routes/recovery/finder.tsx'),

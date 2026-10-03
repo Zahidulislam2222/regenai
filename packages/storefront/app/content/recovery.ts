@@ -73,6 +73,13 @@ export const site = {
     secondary: 'Find your recovery ritual',
   },
   categories: ['All tools', 'Release', 'Move', 'Reset'],
+  designCategory: {
+    eyebrow: 'DESIGN CATEGORY',
+    titleSuffix: 'concepts.',
+    navLabel: 'Design categories',
+    fallbackTitle: 'Design category',
+    emptyBody: 'No verified concepts are available in this design category yet.',
+  },
   areas: ['Back', 'Shoulders', 'Legs', 'Hips'],
   bodyPoints: [
     {label: 'Shoulders', x: 138, y: 136},
@@ -224,6 +231,9 @@ export const site = {
     },
   },
 };
+export function getDesignCategoryByHandle(handle: string | undefined): string | null {
+  return site.categories.slice(1).find((name) => name.toLowerCase().replace(/\s+/g, '-') === handle) ?? null;
+}
 export const media = {
   lab: {
     image: '/media/lab.webp',
