@@ -1,6 +1,6 @@
 # Legal and compliance overview
 
-Updated 2026-09-24. Detailed register with sources, owners and evidence requirements: [PRODUCTION-APPLICABILITY.md](PRODUCTION-APPLICABILITY.md).
+Updated 2026-10-04. Detailed register with sources, owners and evidence requirements: [PRODUCTION-APPLICABILITY.md](PRODUCTION-APPLICABILITY.md).
 
 > **This is not legal advice and not a compliance certificate.** RegenAI is currently a portfolio demo with fictional products, no real sales and no payment processing. This document maps the laws and standards a real merchant launch on this platform would have to address, and how the architecture supports them. Which rules actually apply depends on the real seller, products, customers, locations and data — and must be decided with qualified counsel before launch.
 
@@ -42,6 +42,8 @@ Recovery and wellness products sit close to medical-device rules:
 - **EU:** the Medical Device Regulation, General Product Safety Regulation and CE marking may apply depending on the product.
 
 **Platform approach:** the merchant app includes a claim-review queue scaffold (read-only listing today; submission and approval flow planned) designed to route product-copy changes for review before publication; its schema records evidence level and device classification. The demo uses visibly fictional products and states that it gives no diagnosis or treatment advice.
+
+The CI **demo-copy guard** checks five maintained JSON sources for a short list of explicit unsupported approval, evidence and disease/pain promises. It also requires the synthetic catalog's publication notice to say the concepts are illustrative, unavailable for sale and unvalidated. Its failure tests introduce a claim and remove the notice. It does not inspect later edits made directly in Shopify, assess implied claims or net impression, review scientific evidence, classify a real product, validate dietary-supplement labeling, or check contraindication logic. Those are separate pre-sale reviews; a passing guard is not a regulatory approval. This boundary follows the [FDA's intended-use guidance](https://www.fda.gov/medical-devices/classify-your-medical-device/how-determine-if-your-product-medical-device), the [FTC's substantiation guidance](https://www.ftc.gov/business-guidance/resources/health-products-compliance-guidance), and the [FDA's dietary-supplement claim rules](https://www.fda.gov/food/food-labeling-nutrition/structurefunction-claims).
 
 ## 5. Accessibility
 
