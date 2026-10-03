@@ -18,7 +18,7 @@ const supportingFiles = new Set([
   'packages/storefront/server.node.ts', 'packages/storefront/server.ts',
   'packages/storefront/storefrontapi.generated.d.ts',
   'packages/storefront/tsconfig.json', 'packages/storefront/vite.config.ts',
-  'scripts/rebuild-native.mjs', 'scripts/run-storefront.mjs',
+  'scripts/run-storefront.mjs',
   'scripts/catalog-seed/seed-config.json',
 ]);
 

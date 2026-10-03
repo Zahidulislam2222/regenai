@@ -13,7 +13,6 @@ COPY package.json package-lock.json ./
 COPY packages/app/package.json ./packages/app/package.json
 COPY packages/storefront/package.json ./packages/storefront/package.json
 COPY packages/ui/package.json ./packages/ui/package.json
-COPY scripts/rebuild-native.mjs ./scripts/rebuild-native.mjs
 RUN npm ci --no-audit --no-fund
 
 COPY packages/storefront/ ./packages/storefront/

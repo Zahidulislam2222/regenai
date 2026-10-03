@@ -27,7 +27,6 @@
     "test:build-context": "node --test scripts/prepare-hydrogen-context.test.mjs",
     "storefront": "node scripts/run-storefront.mjs",
     "ui": "npm --workspace packages/ui run",
-    "postinstall": "node ./scripts/rebuild-native.mjs",
     "dev:frontend": "npm --workspace packages/storefront run dev:frontend",
     "build:frontend": "npm --workspace packages/storefront run build:frontend",
     "typecheck:frontend": "npm --workspace packages/storefront run typecheck:frontend"
