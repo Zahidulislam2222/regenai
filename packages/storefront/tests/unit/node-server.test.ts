@@ -181,6 +181,8 @@ describe('Node Fetch runtime boundary', () => {
     await mkdir(join(clientDirectory, 'assets'));
     await mkdir(join(clientDirectory, 'media'));
     await writeFile(join(clientDirectory, 'assets', 'app-abcdef123456.css'), 'body{color:green}');
+    await writeFile(join(clientDirectory, 'assets', 'ProductScene-Dt7uuRmH.js'), 'export const ready=true');
+    await writeFile(join(clientDirectory, 'assets', 'ProductScene.js'), 'export const ready=false');
     await writeFile(join(clientDirectory, 'assets', '.env'), 'must-not-serve');
     const worker = {fetch: vi.fn(async () => new Response('SSR'))};
     const {runtime, port} = await startRuntime(worker, clientDirectory);
@@ -191,6 +193,11 @@ describe('Node Fetch runtime boundary', () => {
     expect(asset.body).toBe('body{color:green}');
     expect(asset.headers['content-type']).toContain('text/css');
     expect(asset.headers['cache-control']).toContain('immutable');
+    const viteAsset = await runRequest(port, {path: '/assets/ProductScene-Dt7uuRmH.js'});
+    expect(viteAsset.status).toBe(200);
+    expect(viteAsset.headers['cache-control']).toContain('immutable');
+    const unversioned = await runRequest(port, {path: '/assets/ProductScene.js'});
+    expect(unversioned.headers['cache-control']).toContain('must-revalidate');
     expect((await runRequest(port, {path: '/assets/.env'})).status).toBe(404);
     expect((await runRequest(port, {path: '/assets/app-abcdef123456.css', method: 'POST'})).status).toBe(405);
     expect(worker.fetch).not.toHaveBeenCalled();
