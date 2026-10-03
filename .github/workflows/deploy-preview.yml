@@ -8,14 +8,15 @@ concurrency:
   group: deploy-preview-${{ github.ref }}
   cancel-in-progress: true
 
-# Post-ADR-011 pivot: storefront + custom app both deploy to Cloudflare
-# Workers on PR. Oxygen is unavailable on dev stores (Shopify policy).
-# Gate on CLOUDFLARE_API_TOKEN (mint at dash.cloudflare.com) +
-# SHOPIFY_STOREFRONT_PUBLIC_TOKEN (from Headless channel).
+# Preview deployment is an explicit opt-in because each PR creates two
+# Cloudflare Workers. Set the repository variable REGENAI_PR_PREVIEW_APPROVED
+# to "true" only after the preview cost and isolation are approved. Missing
+# variables evaluate to an empty string, so both jobs skip by default.
 
 jobs:
   storefront-preview:
     name: Storefront preview (CF Workers)
+    if: ${{ vars.REGENAI_PR_PREVIEW_APPROVED == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -77,6 +78,7 @@ jobs:
 
   app-preview:
     name: Custom app preview (activates Day 15+)
+    if: ${{ vars.REGENAI_PR_PREVIEW_APPROVED == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
