@@ -42,7 +42,12 @@ test('a wrong execution digest stops before any network or store mutation', () =
 
 test('seed source contains no literal shop endpoint or obvious live credential', () => {
   const source = readFileSync(resolve(root, 'scripts/catalog-seed/seed.mjs'), 'utf8');
-  assert.doesNotMatch(source, /https:\/\/[a-z0-9-]+\.myshopify\.com\/admin\/api\/\d{4}-\d{2}/);
+  for (const [candidate] of source.matchAll(/https?:\/\/[^\s"'`]+/g)) {
+    if (!URL.canParse(candidate)) continue;
+    const url = new URL(candidate);
+    assert.ok(!(url.hostname.endsWith('.myshopify.com') &&
+      url.pathname.startsWith('/admin/api/')), 'literal Shopify Admin endpoint in source');
+  }
   assert.doesNotMatch(source, /(?:shpat_|shpss_|sk_live_)[A-Za-z0-9]{8,}/);
   assert.match(source, /process\.env\.SHOPIFY_ADMIN_API_VERSION/);
   assert.match(source, /process\.env\.SHOPIFY_ADMIN_API_TOKEN/);

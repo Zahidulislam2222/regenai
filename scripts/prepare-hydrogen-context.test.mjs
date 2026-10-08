@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {execFileSync} from 'node:child_process';
-import {lstat, readdir, readFile} from 'node:fs/promises';
+import {constants} from 'node:fs';
+import {open, readdir, readFile} from 'node:fs/promises';
 import {dirname, join, relative, resolve, sep} from 'node:path';
 import {test} from 'node:test';
 import {fileURLToPath} from 'node:url';
@@ -47,9 +48,14 @@ test('the generated Docker context contains only tracked, scrubbed storefront in
     assert.ok(name.startsWith('packages/storefront/app/') ||
       name.startsWith('packages/storefront/public/') || supportingFiles.has(name),
     `unexpected source path entered build context: ${name}`);
-    const stat = await lstat(path);
-    assert.ok(stat.isFile());
-    const bytes = await readFile(path);
+    const file = await open(path, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0));
+    let bytes;
+    try {
+      assert.ok((await file.stat()).isFile());
+      bytes = await file.readFile();
+    } finally {
+      await file.close();
+    }
     assert.deepEqual(bytes, await readFile(join(root, name)), `context drift: ${name}`);
     if (/\.(?:ts|tsx|js|mjs|json)$/.test(name)) {
       assert.doesNotMatch(bytes.toString('utf8'), obviousSecret, `secret-shaped value in ${name}`);

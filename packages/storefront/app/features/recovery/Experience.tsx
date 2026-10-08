@@ -8,7 +8,6 @@ import {
   useParams,
   useSearchParams,
 } from 'react-router';
-import * as Dialog from '@radix-ui/react-dialog';
 import {
   ArrowUpRight,
   ArrowRight,

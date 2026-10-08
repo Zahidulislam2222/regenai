@@ -334,7 +334,6 @@ function createApplication(options: NodeRuntimeOptions, clientDirectory: string)
         duplex: 'half',
       } as RequestInit & {duplex: 'half'};
       const canonicalRequest = new Request(canonicalUrl, init);
-      let clearDeadline: () => void = () => {};
       let resolveTimedOut!: (response: Response) => void;
       let timedOut = false;
       const timeoutResponse = new Promise<Response>((resolveTimeout) => {
@@ -345,7 +344,7 @@ function createApplication(options: NodeRuntimeOptions, clientDirectory: string)
         deadlineController.abort();
         resolveTimedOut(jsonResponse(504, 'Request timed out'));
       }, options.settings.nodeServer.handlerTimeoutMs);
-      clearDeadline = () => clearTimeout(deadlineTimer);
+      const clearDeadline = () => clearTimeout(deadlineTimer);
       const executionContext: HydrogenExecutionContext = {
         cache,
         waitUntil(promise) {

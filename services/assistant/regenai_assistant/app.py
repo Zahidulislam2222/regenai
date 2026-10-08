@@ -6,6 +6,7 @@ import hashlib
 import json
 import secrets
 import time
+from collections.abc import AsyncIterator, Awaitable, Callable
 from contextlib import asynccontextmanager
 from typing import Annotated
 
@@ -63,7 +64,7 @@ def create_app(settings: Settings | None = None, run_worker: bool = True) -> Fas
         store.put("system", "maintenance", "retention", {"job": maintenance_job})
 
     @asynccontextmanager
-    async def lifespan(_: FastAPI):
+    async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         task = (
             asyncio.create_task(worker_loop(store, workflow, integrations)) if run_worker else None
         )
@@ -101,7 +102,9 @@ def create_app(settings: Settings | None = None, run_worker: bool = True) -> Fas
     cookie = "regenai_assistant_session"
 
     @app.middleware("http")
-    async def boundaries(request: Request, call_next):
+    async def boundaries(
+        request: Request, call_next: Callable[[Request], Awaitable[Response]]
+    ) -> Response:
         if request.method not in {"GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"}:
             return JSONResponse({"detail": "Method not allowed"}, status_code=405)
         if request.method in {"POST", "PUT", "DELETE"}:

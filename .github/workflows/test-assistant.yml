@@ -33,7 +33,7 @@ jobs:
       - name: Lint
         run: python -m ruff check .
       - name: Type check
-        run: python -m mypy regenai_assistant
+        run: python -m mypy --no-incremental regenai_assistant
       - name: Security scan
         run: python -m bandit -r regenai_assistant -q
       - name: Build distributable
