@@ -8,7 +8,7 @@ Three deployable Rust Functions are compiled to WebAssembly for Shopify's cart a
 | [`b2b-tiered-pricing`](b2b-tiered-pricing/) | `cart.transform.run` | Generates line updates for company-tier and volume pricing; Shopify restricts line updates to Plus stores | 12 |
 | [`delivery-customization`](delivery-customization/) | `cart.delivery-options.transform.run` | Hides express/same-day options for carts containing items flagged as FDA Class II devices; adds "Signature required" to options when any line requires signature delivery | 9 |
 
-Verified 2026-10-03: workspace Rust tests passed, including the experimental rule crate. Three deployable Functions passed 2026-01 schema type generation, `wasm32-unknown-unknown` release builds (39–68 KiB), and Shopify CLI local runtime tests with empty and positive synthetic inputs. Shopify accepted them in inactive draft app version `regenai-merchant-sandbox-4`; no version release, install or store-level activation has occurred.
+Verified 2026-10-03: workspace Rust tests passed, including the experimental rule crate. Three deployable Functions passed 2026-01 schema type generation, `wasm32-unknown-unknown` release builds (39–68 KiB), and Shopify CLI local runtime tests with empty and positive prepared inputs. Shopify accepted them in inactive draft app version `regenai-merchant-sandbox-4`; no version release, install or store-level activation has occurred.
 
 ## Build
 

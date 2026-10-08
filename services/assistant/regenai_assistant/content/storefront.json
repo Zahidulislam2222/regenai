@@ -1,0 +1,62 @@
+{
+  "ordering": "closed",
+  "currency": "USD",
+  "price_status": "listed prices in cents; these products cannot be purchased.",
+  "claims": "products. No medical benefit, shipping availability or device performance has been validated.",
+  "products": [
+    {
+      "id": "pulse",
+      "name": "Pulse One",
+      "kind": "Percussion massager",
+      "category": "Release",
+      "price": 14900,
+      "description": "A considered addition to your wind-down ritual. A sculpted handle, interchangeable contact head, and a compact form that fits into everyday life.",
+      "detail": "This original product explores a simple, tactile percussion device. The standard kit includes the illustrated device and round attachment; the travel kit adds a product carrying sleeve."
+    },
+    {
+      "id": "roller",
+      "name": "Form Roller",
+      "kind": "Textured mobility roller",
+      "category": "Move",
+      "price": 4800,
+      "description": "A little space to stretch out. A textured foam-roller product designed around a straightforward, repeatable mobility ritual.",
+      "detail": "A considered surface and open core create a simple piece of everyday movement equipment. Choose the size that suits your space."
+    },
+    {
+      "id": "bands",
+      "name": "Range Kit",
+      "kind": "Three resistance loops",
+      "category": "Move",
+      "price": 3400,
+      "description": "Small tools. Room to move. A coordinated set of three resistance-loop products for a more intentional movement corner.",
+      "detail": "Three tactile loops, illustrated in complementary finishes. Resistance levels and materials would require physical validation before a commercial release."
+    },
+    {
+      "id": "wrap",
+      "name": "Restore Wrap",
+      "kind": "Adjustable comfort wrap",
+      "category": "Reset",
+      "price": 7900,
+      "description": "A softer landing after a full day. An adjustable wrap product with a simple closure and a clean, unobtrusive silhouette.",
+      "detail": "The illustrated adjustable straps explore everyday comfort. Temperature performance, fit and safety have not been clinically or physically validated."
+    },
+    {
+      "id": "balls",
+      "name": "Point Duo",
+      "kind": "Two mobility balls",
+      "category": "Release",
+      "price": 2900,
+      "description": "Two simple forms for a more focused pause. Compact mobility-ball products in contrasting sizes and tactile finishes.",
+      "detail": "An uncomplicated pair designed to sit comfortably in a movement kit. Any therapeutic benefit would need independent evidence."
+    },
+    {
+      "id": "sensor",
+      "name": "Align Pebble",
+      "kind": "Posture companion",
+      "category": "Reset",
+      "price": 8900,
+      "description": "A quiet reminder to check in with yourself. A small wearable product exploring a gentler relationship with desk-time habits.",
+      "detail": "This is an industrial-product design. Sensing, Bluetooth connectivity and coaching have not been implemented or validated."
+    }
+  ]
+}

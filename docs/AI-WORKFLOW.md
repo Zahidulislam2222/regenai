@@ -21,7 +21,7 @@ Last updated: 2026-04-20 (Day 1, session 1)
 | **Cursor (Pro)** | Secondary pair-programmer for React component spikes and refactor passes. Used for: Tab-based inline completion in `packages/ui/`, Composer sessions for multi-file component refactors, Agent mode for bounded tasks Claude Code delegates. | Local VS Code-fork IDE. |
 | **GitHub Copilot** | Inline React/JSX completion in PRs. Used for: boilerplate component scaffolding, prop-type autocomplete, test-case generation in Vitest, Storybook arg-type suggestions. | IDE plugin (VS Code / Cursor). |
 | **OpenAI Codex (via ChatGPT)** | Schema queries (GraphQL), refactor spikes, ad-hoc debugging across languages (React, Rust for Functions, SQL for dbt). Used for: reasoning-heavy prompts where Claude's token budget is better spent elsewhere. | Web / ChatGPT app. |
-| **Claude Design** (research preview) | Brand system generation (Day 1 — full token set from brand brief). Downstream consumers: `packages/ui/`, Tailwind config, all component theming. | Via Claude.ai app with Design feature enabled (Max plan). |
+| **Claude Design** (research version) | Brand system generation (Day 1 — full token set from brand brief). Downstream consumers: `packages/ui/`, Tailwind config, all component theming. | Via Claude.ai app with Design feature enabled (Max plan). |
 
 ### Why multi-assistant (vs Kindred Grove's single-assistant)
 
@@ -29,7 +29,7 @@ Kindred Grove was deliberately single-assistant (Claude Code only) to keep the v
 
 1. **Anderson Collaborative JD explicitly lists Cursor, Codex, Microsoft 365 Copilot, GitHub Copilot** as mandatory skill tags. The KG project showed Claude/MCP only; RegenAI closes those tag gaps with real, logged evidence.
 2. **Different tools excel at different tasks.** Cursor's Tab-complete beats Claude Code for small inline edits in long React files. Codex via ChatGPT handles some reasoning at lower token cost. Claude Code orchestrates — the others assist.
-3. **Honest governance is more defensible.** A portfolio review will see the AI_GOVERNANCE.md and recognize a real, reviewed, measured workflow — not a tool-salad.
+3. **Honest governance is more defensible.** A project review will see the AI_GOVERNANCE.md and recognize a real, reviewed, measured workflow — not a tool-salad.
 
 ---
 

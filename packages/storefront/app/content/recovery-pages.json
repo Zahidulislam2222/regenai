@@ -2,11 +2,20 @@
   "about": {
     "eyebrow": "OUR APPROACH",
     "title": "More intention.\nLess noise.",
-    "body": "RegenAI explores how original recovery-object designs could fit into everyday life. This is a portfolio design study; the collection is not a verified retail offer.",
+    "body": "Thoughtfully designed recovery objects, a clear finder and a calm place to explore the collection.",
     "sections": [
-      ["Designed around the everyday", "The collection brings together original industrial-design studies, a clear finder and a calm place to explore the forms."],
-      ["Objects you can explore", "Pulse One was modeled in Blender and can be explored interactively in your browser. The render shows a design direction; physical specifications are not yet confirmed."],
-      ["A work in progress, openly", "The six concepts are published to a Shopify development-store channel for testing. Physical stock, fulfillment and real payment are not available."]
+      [
+        "Designed around the everyday",
+        "The collection brings together original industrial-product designs, a clear finder and a calm place to explore the forms."
+      ],
+      [
+        "Objects you can explore",
+        "Pulse One was modeled in Blender and can be explored interactively in your browser. The render shows a design direction; physical specifications are not yet confirmed."
+      ],
+      [
+        "A work in progress, openly",
+        "The six products are published to a Shopify development-store channel for testing. Physical stock, fulfillment and real payment are not available."
+      ]
     ]
   },
   "evidence": {
@@ -14,61 +23,125 @@
     "title": "Clarity comes first.",
     "body": "Good design is no substitute for evidence. Here is what has and has not been established.",
     "sections": [
-      ["Original design studies, without medical claims", "The visuals represent original design studies. Physical specifications and performance have not been verified. No medical-device, clinical, review or health-outcome claim is made."],
-      ["How the finder works", "The published finder groups current concepts by Shopify product type. Collection links offer separate design categories. Neither assesses symptoms or provides medical advice."],
-      ["Before a real launch", "Physical product validation, safety documentation, evidence review, approved policies and confirmed merchandise would be required before real orders open."]
+      [
+        "Original product designs, without medical claims",
+        "The visuals represent original product designs. Physical specifications and performance have not been verified. No medical-device, clinical, review or health-outcome claim is made."
+      ],
+      [
+        "How the finder works",
+        "The published finder groups current products by Shopify product type. Collection links offer separate design categories. Neither assesses symptoms or provides medical advice."
+      ],
+      [
+        "Before a real launch",
+        "Physical product validation, safety documentation, evidence review, approved policies and confirmed merchandise would be required before real orders open."
+      ]
     ]
   },
   "privacy": {
-    "eyebrow": "PRIVACY / DEMO SCOPE",
+    "eyebrow": "PRIVACY",
     "title": "Your pause is yours.",
-    "body": "This page describes the current design-study storefront. It is not a final policy for a future retail business.",
+    "body": "How this storefront handles your information.",
     "sections": [
-      ["Finder answers and design bag", "Finder choices stay in page memory while you browse. In the static design preview, the demo bag saves selected concept IDs, options and quantities in this browser's local storage. Neither is a health profile or a real order."],
-      ["Cart and account boundary", "The public preview has no active ordering or customer account. The separate local development-store cart uses a session cookie and sends test cart changes to Shopify only when its sandbox gate is enabled."],
-      ["Before accounts or real orders", "A final privacy notice, seller details and any required consent controls must be reviewed and published before a real customer service opens."]
+      [
+        "Finder answers",
+        "Finder choices stay on this page and are not saved as a personal profile or sent to an AI service."
+      ],
+      [
+        "AI conversations",
+        "Opening the assistant creates a secure session. Messages and saved preferences are encrypted on the server and removed under the workspace retention policy. Chat text and images may be sent to the configured AI provider. Image attachments are not stored. Avoid sharing sensitive personal information."
+      ],
+      [
+        "Your controls",
+        "Use Erase conversation in Support Studio to remove messages, preferences and retrieved web context. Support ticket and approval records remain for accountability."
+      ],
+      [
+        "Ordering and accounts",
+        "Ordering and customer accounts are currently closed. No payment is collected through this storefront."
+      ]
     ]
   },
   "delivery": {
-    "eyebrow": "DELIVERY & RETURNS / DEMO SCOPE",
+    "eyebrow": "DELIVERY & RETURNS / CURRENT AVAILABILITY",
     "title": "Explore freely.",
-    "body": "No physical products are shipped from this design study. Public ordering and real payment are closed.",
+    "body": "No physical products are shipped from this product design. Public ordering and real payment are closed.",
     "sections": [
-      ["Illustrative availability", "Development-store prices and availability support the interface demonstration. They do not confirm physical stock or a real offer for sale."],
-      ["Test checkout", "A local development-store test checkout may be enabled during verification. It is a sandbox flow and does not place a real fulfillment order."],
-      ["Before products go on sale", "Actual delivery regions and costs, returns and cancellation terms, warranty and product documentation must be supplied and reviewed before retail checkout opens."]
+      [
+        "availability",
+        "Development-store prices and availability support the interface demonstration. They do not confirm physical stock or a real offer for sale."
+      ],
+      [
+        "Test checkout",
+        "A local development-store test checkout may be enabled during verification. It is a development environment flow and does not place a real fulfillment order."
+      ],
+      [
+        "Before products go on sale",
+        "Actual delivery regions and costs, returns and cancellation terms, warranty and product documentation must be supplied and reviewed before retail checkout opens."
+      ]
     ]
   },
   "terms": {
-    "eyebrow": "DEMO TERMS",
-    "title": "A design study, clearly.",
-    "body": "RegenAI currently presents illustrative product concepts for portfolio review and development-store testing.",
+    "eyebrow": "TERMS OF USE",
+    "title": "Clear terms. Considered choices.",
+    "body": "The current availability and use of the RegenAI storefront.",
     "sections": [
-      ["No real purchase", "Public product pages do not accept a real order or payment. A separately enabled local Shopify checkout is for development-store tests only."],
-      ["What the images and prices mean", "Renders, product descriptions and development-store prices show a possible experience. Physical materials, performance, inventory and final commercial pricing have not been verified."],
-      ["Before retail launch", "Seller identity, product evidence, support contact, final terms and applicable consumer disclosures need owner review before real sales begin."]
+      [
+        "No real purchase",
+        "Public product pages do not accept a real order or payment. A separately enabled local Shopify checkout is for development-store tests only."
+      ],
+      [
+        "What the images and prices mean",
+        "Renders, product descriptions and development-store prices show a possible experience. Physical materials, performance, inventory and final commercial pricing have not been verified."
+      ],
+      [
+        "Before retail launch",
+        "Seller identity, product evidence, support contact, final terms and applicable consumer disclosures need owner review before real sales begin."
+      ]
     ]
   },
   "help": {
     "eyebrow": "HELP / FREQUENT QUESTIONS",
     "title": "A few clear answers.",
-    "body": "Here is how to use the current RegenAI concept storefront.",
+    "body": "A guide to the RegenAI collection and assistant.",
     "sections": [
-      ["Can I buy these products?", "Not through the public site. The six concepts are illustrative, and real ordering remains closed. A local development-store test cart may be used during verification."],
-      ["What does the finder recommend?", "It helps browse design concepts using simple product categories. It is not a diagnosis, treatment recommendation or personal health assessment."],
-      ["Are the product details verified?", "The imagery is an original design study. Physical specifications, performance, stock and shipping details require validation before a retail launch."],
-      ["Where can I read more?", "Use the Evidence and Demo terms pages for the current design-study limits, or browse the journal for the design process."]
+      [
+        "Can I buy these products?",
+        "Not through the public site. The six products are illustrative, and real ordering remains closed. A local development-store test cart may be used during verification."
+      ],
+      [
+        "What does the finder recommend?",
+        "It helps browse products using simple product categories. It is not a diagnosis, treatment recommendation or personal health assessment."
+      ],
+      [
+        "Are the product details verified?",
+        "The imagery is an original product design. Physical specifications, performance, stock and shipping details require validation before a retail launch."
+      ],
+      [
+        "Where can I read more?",
+        "Use the Evidence and TERMS OF USE pages for the current availability details, or browse the journal for the design process."
+      ]
     ]
   },
   "contact": {
     "eyebrow": "CONTACT / PROJECT REVIEW",
     "title": "Let’s keep in touch.",
-    "body": "RegenAI is a portfolio design study. Reach the project owner through his public professional profile; a retail support inbox is not yet available.",
-    "action": {"label": "Contact the project owner on LinkedIn", "href": "https://www.linkedin.com/in/zahidul-islam-developer/"},
+    "body": "Contact the RegenAI project owner through the professional profile below. A staffed retail support inbox is not yet available.",
+    "action": {
+      "label": "Contact the project owner on LinkedIn",
+      "href": "https://www.linkedin.com/in/zahidul-islam-developer/"
+    },
     "sections": [
-      ["For project reviewers", "Use the public professional link above, or continue through the channel where you received this demo. No message form is connected to this site."],
-      ["For product or order questions", "There are no real orders or shipments to support. Product and seller contact information must be confirmed before retail ordering opens."],
-      ["Your information", "This page does not collect a message or personal details."]
+      [
+        "Contact the owner",
+        "Use the professional link above or the channel through which you found RegenAI. This page has no connected message form."
+      ],
+      [
+        "For product or order questions",
+        "There are no real orders or shipments to support. Product and seller contact information must be confirmed before retail ordering opens."
+      ],
+      [
+        "Your information",
+        "This page does not collect a message or personal details."
+      ]
     ]
   }
 }

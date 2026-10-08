@@ -23,7 +23,7 @@ function validateRules(rules) {
       !Array.isArray(rules.redFlags) || rules.redFlags.length === 0 ||
       rules.redFlags.some((rule) => typeof rule.id !== 'string' || !rule.id ||
         typeof rule.pattern !== 'string' || !rule.pattern)) {
-    throw new Error('Demo copy guard rules are incomplete.');
+    throw new Error('Product copy guard rules are incomplete.');
   }
   return rules.redFlags.map((rule) => ({id: rule.id, expression: new RegExp(rule.pattern, 'iu')}));
 }
@@ -47,7 +47,7 @@ export function loadDemoCopy(root = PROJECT_ROOT) {
   const listedContentSources = rules.sources.filter((file) => file.startsWith(rules.contentDirectory + '/'));
   if (actualContentSources.length !== listedContentSources.length ||
       actualContentSources.some((file) => !listedContentSources.includes(file))) {
-    throw new Error('Demo copy guard must include every maintained content JSON file.');
+    throw new Error('Product copy guard must include every maintained content JSON file.');
   }
   const corpus = Object.fromEntries(rules.sources.map((file) => [file, readJson(root, file)]));
   return {corpus, rules};
@@ -72,7 +72,7 @@ export function auditDemoCopy(corpus, rules) {
   const notice = corpus[rules.notice.file]?.[rules.notice.field];
   for (const phrase of rules.notice.requiredPhrases) {
     if (typeof notice !== 'string' || !notice.toLocaleLowerCase('en-US').includes(phrase.toLocaleLowerCase('en-US'))) {
-      findings.push(rules.notice.file + ':$.' + rules.notice.field + ': missing required demo notice phrase');
+      findings.push(rules.notice.file + ':$.' + rules.notice.field + ': missing required product notice phrase');
     }
   }
   return findings;
@@ -85,6 +85,6 @@ if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.m
     findings.forEach((finding) => console.error(finding));
     process.exitCode = 1;
   } else {
-    console.log('Demo copy guard passed for ' + rules.sources.length + ' checked-in JSON sources.');
+    console.log('Product copy guard passed for ' + rules.sources.length + ' checked-in JSON sources.');
   }
 }

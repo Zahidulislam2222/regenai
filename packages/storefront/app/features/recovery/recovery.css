@@ -2980,3 +2980,25 @@ main:focus {
     margin-block: 43px;
   }
 }
+
+/* Customer guidance shares the collection's typography and palette. */
+.support-launcher { position: fixed; right: 24px; bottom: 24px; z-index: 35; display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 14px 20px; border: 1px solid var(--blue); border-radius: 3px; background: var(--blue); color: var(--white); font: 500 13px var(--font); box-shadow: 0 4px 20px color-mix(in srgb, var(--ink) 12%, transparent); }
+.support-launcher:hover { background: var(--blue-dark); }
+.support-panel { position: fixed; z-index: 60; right: 24px; bottom: 24px; width: min(430px, calc(100vw - 32px)); max-height: calc(100dvh - 48px); display: flex; flex-direction: column; padding: 25px; border: 1px solid var(--line); border-radius: 3px; background: var(--paper); color: var(--ink); box-shadow: 0 12px 50px color-mix(in srgb, var(--ink) 15%, transparent); }
+.support-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.support-heading .eyebrow { margin: 0 0 12px; font-size: 9px; }
+.support-heading h2 { font-size: 29px; letter-spacing: -.055em; line-height: 1.1; font-weight: 500; margin: 0; }
+.support-intro { font-size: 11px; color: var(--muted); line-height: 1.7; margin: 16px 0; }
+.support-messages { min-height: 160px; max-height: 330px; overflow: auto; overscroll-behavior: contain; padding: 12px 0; }
+.support-welcome { font-size: 14px; line-height: 1.8; color: var(--blue); }
+.support-message { margin-bottom: 12px; padding: 13px; border: 1px solid var(--line); background: var(--white); border-radius: 3px; }
+.support-message.user { background: var(--sage); margin-left: 20px; }
+.support-message .eyebrow { font-size: 8px; }
+.support-message p { margin: 7px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 12px; line-height: 1.8; }
+.support-error { font-size: 11px; color: var(--muted); line-height: 1.7; }
+.support-compose { display: flex; gap: 8px; margin-top: 16px; }
+.support-compose input { min-width: 0; width: 100%; border: 1px solid var(--line); border-radius: 3px; padding: 13px; background: var(--white); color: var(--ink); font-size: 16px; }
+.support-compose button { min-width: 46px; border: 0; border-radius: 3px; color: var(--white); background: var(--blue); }
+.support-compose button:disabled { opacity: .45; }
+.support-studio-link { display: flex; align-items: center; gap: 8px; color: var(--blue); font: 10px var(--mono); margin-top: 18px; }
+@media (max-width: 600px) { .support-launcher { right: 16px; bottom: 16px; } .support-panel { right: 16px; bottom: 16px; padding: 20px; max-height: calc(100dvh - 32px); } }

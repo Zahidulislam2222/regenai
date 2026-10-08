@@ -1,3 +1,4 @@
+import {createHash} from 'node:crypto';
 import seedConfig from '../../../../scripts/catalog-seed/seed-config.json';
 import {products} from '~/content/recovery';
 import type {ShopifyCatalogProduct} from './shopify-catalog.server';
@@ -24,7 +25,9 @@ export function getConceptEditorial(
   const parts = [concept.description, concept.detail, seedConfig.descriptionNotice]
     .map(normalizedDescription);
   const actual = normalizedDescription(product.description);
-  if (actual !== parts.join(' ') && actual !== parts.join('')) return null;
+  const legacyHashes = seedConfig.legacyDescriptionHashes[product.handle as keyof typeof seedConfig.legacyDescriptionHashes] ?? [];
+  const verifiedLegacy = legacyHashes.includes(createHash('sha256').update(actual).digest('hex'));
+  if (actual !== parts.join(' ') && actual !== parts.join('') && !verifiedLegacy) return null;
   return {
     summary: concept.description,
     detail: concept.detail,

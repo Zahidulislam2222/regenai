@@ -2,20 +2,20 @@
 
 Updated 2026-10-04. Detailed register with sources, owners and evidence requirements: [PRODUCTION-APPLICABILITY.md](PRODUCTION-APPLICABILITY.md).
 
-> **This is not legal advice and not a compliance certificate.** RegenAI is currently a portfolio demo with fictional products, no real sales and no payment processing. This document maps the laws and standards a real merchant launch on this platform would have to address, and how the architecture supports them. Which rules actually apply depends on the real seller, products, customers, locations and data — and must be decided with qualified counsel before launch.
+> **This is not legal advice and not a compliance certificate.** RegenAI is currently an application with ordering closed, no real sales and no payment processing. This document maps the laws and standards a real merchant launch on this platform would have to address, and how the architecture supports them. Which rules actually apply depends on the real seller, products, customers, locations and data — and must be decided with qualified counsel before launch.
 
 ## 1. Summary
 
 | Area | Key rules (US / EU) | How the platform supports it | Launch status |
 |---|---|---|---|
 | Payments | PCI DSS | Card data handled only by Shopify-hosted checkout (Shopify is certified PCI DSS Level 1) | Architecture ready; merchant's own PCI self-assessment still required |
-| Privacy | GDPR, ePrivacy/cookie rules; CCPA/CPRA and other US state laws | Data minimisation, no tracking by default, Shopify privacy tools — see [PRIVACY.md](PRIVACY.md) | Demo: collects no personal data. Real launch: planned |
+| Privacy | GDPR, ePrivacy/cookie rules; CCPA/CPRA and other US state laws | Data minimisation, no tracking by default, Shopify privacy tools — see [PRIVACY.md](PRIVACY.md) | Assistant inputs are processed and retained; privacy/legal review remains required |
 | Consumer health data | GDPR Article 9; Washington My Health My Data Act; FTC Health Breach Notification Rule; HIPAA only if the business is a covered entity or business associate | Finder answers not persisted; health flags opt-in only; never in telemetry | Legal review required before any health data is stored |
-| Health product claims | FTC Act (substantiation); FDA device rules; EU MDR/GPSR and CE marking where applicable | Claim-review queue in the merchant app (partial); demo labelled fictional | Demo makes no clinical claims. Real products need per-product classification |
+| Health product claims | FTC Act (substantiation); FDA device rules; EU MDR/GPSR and CE marking where applicable | Claim-review queue in the merchant app (partial); ordering closed; physical performance claims withheld | application makes no clinical claims. Real products need per-product classification |
 | Consumer protection | EU distance-selling and withdrawal rights; FTC endorsement rules; US state auto-renewal laws | Clear pricing, shipping, returns and subscription terms in the storefront | Planned — required before real sales |
 | Accessibility | EU European Accessibility Act; ADA (US) | WCAG 2.2 AA engineering target — see [ACCESSIBILITY.md](ACCESSIBILITY.md) | Partially tested |
-| Marketing | CAN-SPAM, TCPA (US); GDPR/ePrivacy consent (EU) | No marketing messages sent by the demo | Planned |
-| AI features | EU AI Act transparency duties where applicable | Current recommendations are rule-based, not AI; any AI feature disclosed and reviewed | Not applicable today |
+| Marketing | CAN-SPAM, TCPA (US); GDPR/ePrivacy consent (EU) | No marketing messages sent by the application | Planned |
+| AI features | EU AI Act transparency duties where applicable | Optional Claude assistance is disclosed; deterministic policy checks remain separate | Model controls built; applicable legal review remains due |
 | Tax | US sales tax, EU VAT | Shopify tax settings; tax advice required per market | Merchant responsibility |
 
 ## 2. Payments — PCI DSS
@@ -27,7 +27,7 @@ Updated 2026-10-04. Detailed register with sources, owners and evidence requirem
 
 ## 3. Privacy — EU (GDPR) and US state laws
 
-**EU / EEA (GDPR):** a lawful basis for each processing purpose; transparent notices; data-subject rights (access, deletion, portability, objection); processor agreements; records of processing; international transfer mechanisms; breach notification to the supervisory authority within 72 hours where required (Article 33). Fines can reach €20 million or 4% of worldwide annual turnover, whichever is higher (Article 83). Cookie consent under ePrivacy rules applies before non-essential storage — the demo's only storage is the functional demo bag.
+**EU / EEA (GDPR):** a lawful basis for each processing purpose; transparent notices; data-subject rights (access, deletion, portability, objection); processor agreements; records of processing; international transfer mechanisms; breach notification to the supervisory authority within 72 hours where required (Article 33). Fines can reach €20 million or 4% of worldwide annual turnover, whichever is higher (Article 83). Cookie consent under ePrivacy rules applies before non-essential storage — the application's only storage is the functional application bag.
 
 **United States:** comprehensive state privacy laws (California CCPA/CPRA and others) apply based on revenue and data-volume thresholds; they grant access, deletion and opt-out rights and in several states require honouring Global Privacy Control. Consumer health data laws (notably Washington's My Health My Data Act) apply to wellness data even where HIPAA does not.
 
@@ -41,9 +41,9 @@ Recovery and wellness products sit close to medical-device rules:
 - **US — FTC:** health claims need competent and reliable scientific evidence; reviews and endorsements must be genuine and disclosed ([FTC Health Products Compliance Guidance](https://www.ftc.gov/business-guidance/resources/health-products-compliance-guidance)).
 - **EU:** the Medical Device Regulation, General Product Safety Regulation and CE marking may apply depending on the product.
 
-**Platform approach:** the merchant app includes a claim-review queue scaffold (read-only listing today; submission and approval flow planned) designed to route product-copy changes for review before publication; its schema records evidence level and device classification. The demo uses visibly fictional products and states that it gives no diagnosis or treatment advice.
+**Platform approach:** the merchant app includes a claim-review queue scaffold (read-only listing today; submission and approval flow planned) designed to route product-copy changes for review before publication; its schema records evidence level and device classification. The application uses visibly prepared products and states that it gives no diagnosis or treatment advice.
 
-The CI **demo-copy guard** checks five maintained JSON sources for a short list of explicit unsupported approval, evidence and disease/pain promises. It also requires the synthetic catalog's publication notice to say the concepts are illustrative, unavailable for sale and unvalidated. Its failure tests introduce a claim and remove the notice. It does not inspect later edits made directly in Shopify, assess implied claims or net impression, review scientific evidence, classify a real product, validate dietary-supplement labeling, or check contraindication logic. Those are separate pre-sale reviews; a passing guard is not a regulatory approval. This boundary follows the [FDA's intended-use guidance](https://www.fda.gov/medical-devices/classify-your-medical-device/how-determine-if-your-product-medical-device), the [FTC's substantiation guidance](https://www.ftc.gov/business-guidance/resources/health-products-compliance-guidance), and the [FDA's dietary-supplement claim rules](https://www.fda.gov/food/food-labeling-nutrition/structurefunction-claims).
+The CI **application-copy guard** checks five maintained JSON sources for a short list of explicit unsupported approval, evidence and disease/pain promises. It also requires the prepared catalog's publication notice to say the products are illustrative, unavailable for sale and unvalidated. Its failure tests introduce a claim and remove the notice. It does not inspect later edits made directly in Shopify, assess implied claims or net impression, review scientific evidence, classify a real product, validate dietary-supplement labeling, or check contraindication logic. Those are separate pre-sale reviews; a passing guard is not a regulatory approval. This boundary follows the [FDA's intended-use guidance](https://www.fda.gov/medical-devices/classify-your-medical-device/how-determine-if-your-product-medical-device), the [FTC's substantiation guidance](https://www.ftc.gov/business-guidance/resources/health-products-compliance-guidance), and the [FDA's dietary-supplement claim rules](https://www.fda.gov/food/food-labeling-nutrition/structurefunction-claims).
 
 ## 5. Accessibility
 
@@ -55,6 +55,6 @@ The EU European Accessibility Act applies to many e-commerce services from 28 Ju
 2. Complete the applicability register ([PRODUCTION-APPLICABILITY.md](PRODUCTION-APPLICABILITY.md)) with a decision and owner for every row.
 3. Qualified legal review of privacy notices, terms of sale, health claims and product classification.
 4. Close security release blockers ([SECURITY-MODEL.md](SECURITY-MODEL.md)).
-5. Publish real policies (privacy, terms, shipping, returns, accessibility statement) that describe the actual business. Policy pages in the demo are placeholders for a fictional store.
+5. Publish real policies (privacy, terms, shipping, returns, accessibility statement) that describe the actual business. Policy pages in the application are placeholders for a prepared store.
 
 No badge, template or tool result in this repository should be read as a claim of GDPR, CCPA, HIPAA, PCI, ADA or FDA compliance.

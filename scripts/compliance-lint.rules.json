@@ -11,17 +11,35 @@
     "file": "scripts/catalog-seed/seed-config.json",
     "field": "descriptionNotice",
     "requiredPhrases": [
-      "portfolio demo",
-      "not manufactured or available for sale",
+      "ordering is closed",
+      "physical stock",
       "have not been validated"
     ]
   },
   "redFlags": [
-    {"id": "unsupported-fda-status", "pattern": "FDA[ -]+(?:approved|cleared|registered)"},
-    {"id": "unsupported-ce-status", "pattern": "CE[ -]+(?:marked|certified|approved)"},
-    {"id": "unsupported-evidence", "pattern": "(?:clinically|scientifically)[ -]+proven"},
-    {"id": "unsupported-endorsement", "pattern": "(?:doctor|physician)[ -]+recommended"},
-    {"id": "disease-or-pain-promise", "pattern": "(?:cures?|treats?|prevents?|diagnoses?|heals?)[ -]+(?:[a-z]+[ -]+){0,3}(?:disease|pain|injury|arthritis|anxiety|depression)"},
-    {"id": "pain-or-safety-promise", "pattern": "(?:pain relief|relieves? pain|guaranteed recovery|100% safe)"}
+    {
+      "id": "unsupported-fda-status",
+      "pattern": "FDA[ -]+(?:approved|cleared|registered)"
+    },
+    {
+      "id": "unsupported-ce-status",
+      "pattern": "CE[ -]+(?:marked|certified|approved)"
+    },
+    {
+      "id": "unsupported-evidence",
+      "pattern": "(?:clinically|scientifically)[ -]+proven"
+    },
+    {
+      "id": "unsupported-endorsement",
+      "pattern": "(?:doctor|physician)[ -]+recommended"
+    },
+    {
+      "id": "disease-or-pain-promise",
+      "pattern": "(?:cures?|treats?|prevents?|diagnoses?|heals?)[ -]+(?:[a-z]+[ -]+){0,3}(?:disease|pain|injury|arthritis|anxiety|depression)"
+    },
+    {
+      "id": "pain-or-safety-promise",
+      "pattern": "(?:pain relief|relieves? pain|guaranteed recovery|100% safe)"
+    }
   ]
 }

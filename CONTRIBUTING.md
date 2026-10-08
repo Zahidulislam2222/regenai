@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for your interest in RegenAI. This is a portfolio project maintained by one developer; issues and focused pull requests are welcome.
+Thanks for your interest in RegenAI. This is a project project maintained by one developer; issues and focused pull requests are welcome.
 
 ## Before you start
 

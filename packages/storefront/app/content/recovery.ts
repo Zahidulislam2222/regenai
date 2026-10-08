@@ -48,7 +48,7 @@ export function validateCatalog(input: unknown): RecoveryProduct[] {
 export const products = validateCatalog(rawCatalog);
 export const site = {
   name: 'regenai',
-  demo: 'Explore recovery objects and the thinking behind their design.',
+  description: 'Explore recovery objects and the thinking behind their design.',
   errors: {
     notFound: {
       eyebrow: 'A MOMENT OFF TRACK',
@@ -77,10 +77,10 @@ export const site = {
   categories: ['All tools', 'Release', 'Move', 'Reset'],
   designCategory: {
     eyebrow: 'DESIGN CATEGORY',
-    titleSuffix: 'concepts.',
+    titleSuffix: 'tools.',
     navLabel: 'Design categories',
     fallbackTitle: 'Design category',
-    emptyBody: 'No verified concepts are available in this design category yet.',
+    emptyBody: 'No products are available in this design category yet.',
   },
   areas: ['Back', 'Shoulders', 'Legs', 'Hips'],
   bodyPoints: [
@@ -154,7 +154,7 @@ export const site = {
       {label: 'Contact', to: '/contact'},
       {label: 'Privacy', to: '/policies/privacy'},
       {label: 'Delivery & returns', to: '/policies/delivery'},
-      {label: 'Demo terms', to: '/policies/terms'},
+      {label: 'Terms of use', to: '/policies/terms'},
     ],
   },
   pages,
@@ -197,7 +197,7 @@ export const media = {
     video: '/media/lab.mp4',
     videoAvailable: false,
     alt: 'Sculptural recovery studio with a blue bench, warm plaster and circular sea-facing window',
-    kind: 'AI-generated architectural concept',
+    kind: 'AI-generated architecture',
   },
-  productKind: 'Original Blender product concept',
+  productKind: 'Original Blender product design',
 };

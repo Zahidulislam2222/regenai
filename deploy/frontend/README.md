@@ -1,6 +1,6 @@
 # Standalone recovery storefront — deployment
 
-This deployment has served the public design-study storefront at https://regenai.zahidul-islam.com since 2026-09-22 ([release evidence](../../docs/FRONTEND-DEPLOYMENT.md)). It serves a static React Router build. Hydrogen SSR, Shopify account/cart APIs, checkout, payments and backend routes are not deployed here. Product data are local design records; ordering is closed until real merchandise and fulfillment are verified. The site makes no medical claims.
+This deployment has served the public storefront at https://regenai.zahidul-islam.com since 2026-09-22 ([release evidence](../../docs/FRONTEND-DEPLOYMENT.md)). It serves a static React Router build. Hydrogen SSR, Shopify account/cart APIs, checkout, payments and backend routes are not deployed here. Product data are local design records; ordering is closed until real merchandise and fulfillment are verified. The site makes no medical claims.
 
 ## Build and local configuration
 

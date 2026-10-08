@@ -1,6 +1,6 @@
 # Accessibility statement
 
-Updated 2026-09-24. Applies to the live demo at `https://regenai.zahidul-islam.com` and the storefront source in this repository.
+Updated 2026-09-24. Applies to the live application at `https://regenai.zahidul-islam.com` and the storefront source in this repository.
 
 ## Standard
 
@@ -25,7 +25,7 @@ Tests ran in Chromium/Chrome on desktop. Details: [FRONTEND-REVIEW.md](FRONTEND-
 - Motion can be paused; reduced-motion preference respected
 - Text alternatives and still-image fallbacks for 3D product views
 
-The separate `@regenai/ui` design system (not used by the live demo) builds most of its interactive components on Radix primitives with ARIA semantics.
+The separate `@regenai/ui` design system (not used by the live application) builds most of its interactive components on Radix primitives with ARIA semantics.
 
 ## Known limitations
 

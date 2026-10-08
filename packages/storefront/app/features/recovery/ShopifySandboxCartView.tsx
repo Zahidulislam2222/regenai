@@ -20,10 +20,10 @@ export function ShopifySandboxCartView({cart, checkoutUrl, maxLineQuantity, maxT
   return (
     <section className="page narrow">
       <p className="eyebrow">LOCAL DEVELOPMENT STORE / TEST ORDERS ONLY</p>
-      <h1>Sandbox cart</h1>
-      <p>This cart is connected to Shopify’s development store. Its concept prices are illustrative.</p>
+      <h1>{editorial.ui.shopifyCartHeading}</h1>
+      <p>{editorial.ui.shopifyCartDescription}</p>
       {lines.length === 0 ? (
-        <div className="empty-state"><p>Your sandbox cart is empty.</p>
+        <div className="empty-state"><p>{editorial.ui.shopifyCartEmpty}</p>
           <Link className="button" to="/collections/all">Explore the collection <ArrowUpRight size={18} /></Link>
         </div>
       ) : (
@@ -33,19 +33,19 @@ export function ShopifySandboxCartView({cart, checkoutUrl, maxLineQuantity, maxT
             const product = variant?.product;
             return <article className="cart-line" key={line.id}>
               {variant?.image?.url && <img src={variant.image.url}
-                alt={variant.image.altText || product?.title || 'Concept image'} width={96} height={96} />}
-              <div><h2>{product?.title || 'Concept'}</h2><p>{variant?.title}</p>
+                alt={variant.image.altText || product?.title || editorial.ui.shopifyCartImageAlt} width={96} height={96} />}
+              <div><h2>{product?.title || editorial.ui.shopifyCartProductFallback}</h2><p>{variant?.title}</p>
                 <div className="shopify-cart-quantity" role="group"
-                  aria-label={`${editorial.ui.shopifyCartQuantity}: ${product?.title || 'Concept'}`}>
+                  aria-label={`${editorial.ui.shopifyCartQuantity}: ${product?.title || editorial.ui.shopifyCartProductFallback}`}>
                   <CartForm route="/cart" action={CartForm.ACTIONS.LinesUpdate}
                     inputs={{lines: [{id: line.id, quantity: line.quantity - 1}]}}>
-                    {(fetcher) => <button type="submit" aria-label={`${editorial.ui.shopifyCartDecrease} ${product?.title || 'Concept'}`}
+                    {(fetcher) => <button type="submit" aria-label={`${editorial.ui.shopifyCartDecrease} ${product?.title || editorial.ui.shopifyCartProductFallback}`}
                       disabled={line.quantity <= 1 || fetcher.state !== 'idle'}><Minus size={15} /></button>}
                   </CartForm>
                   <span aria-label={editorial.ui.shopifyCartQuantity}>{line.quantity}</span>
                   <CartForm route="/cart" action={CartForm.ACTIONS.LinesUpdate}
                     inputs={{lines: [{id: line.id, quantity: line.quantity + 1}]}}>
-                    {(fetcher) => <button type="submit" aria-label={`${editorial.ui.shopifyCartIncrease} ${product?.title || 'Concept'}`}
+                    {(fetcher) => <button type="submit" aria-label={`${editorial.ui.shopifyCartIncrease} ${product?.title || editorial.ui.shopifyCartProductFallback}`}
                       disabled={line.quantity >= maxLineQuantity || totalQuantity >= maxTotalQuantity || fetcher.state !== 'idle'}>
                       <Plus size={15} />
                     </button>}
@@ -54,7 +54,7 @@ export function ShopifySandboxCartView({cart, checkoutUrl, maxLineQuantity, maxT
                 <p>{amount(line.cost?.totalAmount)}</p></div>
               <CartForm route="/cart" action={CartForm.ACTIONS.LinesRemove} inputs={{lineIds: [line.id]}}>
                 {(fetcher) => <button type="submit" disabled={fetcher.state !== 'idle'}
-                  aria-label={`${editorial.ui.shopifyCartRemove} ${product?.title || 'Concept'}`}>
+                  aria-label={`${editorial.ui.shopifyCartRemove} ${product?.title || editorial.ui.shopifyCartProductFallback}`}>
                   {editorial.ui.shopifyCartRemove}
                 </button>}
               </CartForm>

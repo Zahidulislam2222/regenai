@@ -18,8 +18,8 @@ Kindred Grove was deliberately single-assistant (Claude Code only) to keep veloc
 | Claude Design | Day 1 brand system generation only | n/a (one-shot) |
 
 ## Alternatives rejected
-- **Single-assistant like KG** — closes none of the JD skill tags. Portfolio story doesn't close Anderson's asks.
-- **Tool salad (everything turned on, no rules)** — coherence risk high, portfolio reviewers see confusion not discipline.
+- **Single-assistant like KG** — closes none of the JD skill tags. project story doesn't close Anderson's asks.
+- **Tool salad (everything turned on, no rules)** — coherence risk high, project reviewers see confusion not discipline.
 - **Claude + one other** — leaves 2 of 4 JD skill tags unchecked.
 
 ## Consequences

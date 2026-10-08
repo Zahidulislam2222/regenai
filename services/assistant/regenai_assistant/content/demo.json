@@ -1,0 +1,86 @@
+{
+  "rulebook": {
+    "store_name": "RegenAI store",
+    "voice": "Warm, concise and direct. Acknowledge the issue, explain the next step, avoid medical claims and never promise a completed refund before confirmation.",
+    "refund_window_days": 30,
+    "max_refund_cents": 10000,
+    "refund_reasons": [
+      "damaged",
+      "wrong_item"
+    ],
+    "handoff_terms": [
+      "medical",
+      "injury",
+      "lawyer",
+      "chargeback",
+      "fraud",
+      "allergic",
+      "unsafe"
+    ],
+    "confidence_threshold": 0.8,
+    "policies": "Store policy: damaged or incorrect items may be refunded within 30 days after the owner verifies the order. Other requests require human review. Public ordering is closed. No medical or efficacy claim is established."
+  },
+  "orders": [
+    {
+      "id": "demo-order-1001",
+      "number": "1001",
+      "customer": "customer-one@example.test",
+      "currency": "USD",
+      "total_cents": 8900,
+      "refunded_cents": 0,
+      "age_days": 5,
+      "paid": true,
+      "item": "Recovery bands product",
+      "synthetic": true
+    },
+    {
+      "id": "demo-order-1002",
+      "number": "1002",
+      "customer": "customer-two@example.test",
+      "currency": "USD",
+      "total_cents": 14900,
+      "refunded_cents": 0,
+      "age_days": 45,
+      "paid": true,
+      "item": "Pulse One product",
+      "synthetic": true
+    }
+  ],
+  "tickets": [
+    {
+      "id": "demo-ticket-1",
+      "subject": "Damaged item — refund $89?",
+      "body": "My recovery bands arrived damaged. Please help with order #1001.",
+      "customer": "customer-one@example.test",
+      "order_number": "1001",
+      "reason": "damaged",
+      "channel": "demo",
+      "language": "English"
+    },
+    {
+      "id": "demo-ticket-2",
+      "subject": "A sensitive product question",
+      "body": "I have an injury. Can this product treat it? My order is #1002.",
+      "customer": "customer-two@example.test",
+      "order_number": "1002",
+      "reason": "other",
+      "channel": "demo",
+      "language": "English"
+    },
+    {
+      "id": "demo-ticket-3",
+      "subject": "Artículo incorrecto",
+      "body": "Recibí un artículo incorrecto para el pedido #1001. ¿Pueden ayudarme?",
+      "customer": "customer-one@example.test",
+      "order_number": "1001",
+      "reason": "wrong_item",
+      "channel": "demo",
+      "language": "Spanish"
+    }
+  ],
+  "reply_templates": {
+    "refund": "Thanks for letting us know. We verified the order and recommend a refund under the Store policy. The owner will review it before any action.",
+    "handoff": "Thanks for reaching out. This needs a team member's review. We have prepared the ticket context for the owner; no external message or financial action has been taken.",
+    "reply": "Thanks for your message. We have reviewed the available order and policy details. The owner will confirm the next step."
+  }
+}

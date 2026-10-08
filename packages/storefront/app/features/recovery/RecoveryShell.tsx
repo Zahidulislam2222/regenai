@@ -6,6 +6,7 @@ import {ui} from '../../content/recovery-ui';
 import {site} from '../../content/recovery';
 import {editorial} from '../../content/recovery-editorial';
 import {BagProvider} from './Bag';
+import {SupportAssistant} from './SupportAssistant';
 
 export type RecoveryMotionState = {paused: boolean; reduced: boolean; toggle: () => void};
 
@@ -166,6 +167,7 @@ export function RecoveryShell({
           {children}
         </main>
         <Footer />
+        <SupportAssistant />
       </div>
   );
   return bagEnabled ? <BagProvider>{content}</BagProvider> : content;

@@ -1,6 +1,6 @@
 # Architecture
 
-Updated 2026-09-24. This document describes how RegenAI is built today and the architecture it is being built toward. Every component carries a status label so a reader can tell what exists from what is planned.
+Updated 2026-10-08. This document describes how RegenAI is built today and the architecture it is being built toward. Every component carries a status label so a reader can tell what exists from what is planned.
 
 | Label | Meaning |
 |---|---|
@@ -11,7 +11,7 @@ Updated 2026-09-24. This document describes how RegenAI is built today and the a
 
 ## 1. System context
 
-RegenAI is a headless Shopify commerce platform for a recovery-and-wellness catalog. It is delivered as a client-facing portfolio demo with synthetic products. Shopify remains the system of record for catalog, inventory, cart, checkout, orders and payments; RegenAI never handles card data.
+RegenAI is a headless Shopify storefront and support assistant for a recovery-and-wellness catalog. Public ordering is closed. Shopify supplies the catalog and is the intended system of record for commerce; RegenAI never handles card data. The diagram includes planned commerce and merchant flows; component status is recorded below.
 
 ```mermaid
 flowchart LR
@@ -30,16 +30,17 @@ flowchart LR
 
 ## 2. Components
 
-### 2.1 Frontend — customer storefront (`packages/storefront`)
+### 2.1 Customer storefront and support
 
-| Part | Technology | Status |
-|---|---|---|
-| Visual recovery storefront (home, collection, search, 6 product pages, recovery finder, bag, info pages) | React 18, TypeScript, Three.js, Vite static build | **Live** at https://regenai.zahidul-islam.com |
-| Original 3D product assets | Blender-authored GLB models with still-image fallbacks | **Live** |
-| Hydrogen integration (real catalog, cart, accounts, SEO routes) | Hydrogen 2026.4, React Router 7, Storefront API | **Partial** — route migration in progress; full-workspace build/typecheck currently fail |
-| Node server adapter for self-hosted Hydrogen | Node 24, bounded public cache, safe logger, typed settings | **Partial** — focused tests pass; integrated HTTP/SSR acceptance pending |
+| Component | Technology | Verified state |
+| --- | --- | --- |
+| Customer storefront | Hydrogen, React Router, React, TypeScript and Three.js | Source-pinned live container with Shopify catalog reads; ordering closed |
+| Python assistant | FastAPI, encrypted SQLite, durable worker | Live same-origin service at `/assistant`; isolated workspaces, approvals and audit |
+| Customer chat | Accessible React dialog; storefront fonts and palette | Local and public HTTP/browser interaction checks pass |
+| AI provider | Configured OpenRouter upstream model | Server-only credentials and bounded ledger; two authorized inference checks passed; AI enabled, external actions disabled |
+| Claude client | Recommendation-only stdio-to-HTTPS MCP bridge | Actual handshake, five tools and private rulebook read verified |
 
-The live build is a static single-page application served by an unprivileged, read-only Nginx container behind Caddy and Cloudflare. It makes no third-party network calls; its only browser storage is the demo bag (`localStorage` key `regenai:demo-bag:v1`). See [FRONTEND-DEPLOYMENT.md](FRONTEND-DEPLOYMENT.md) and [`deploy/frontend/`](../deploy/frontend/README.md).
+Caddy routes support requests to the Python service and commerce requests to Hydrogen. Both containers use read-only filesystems and loopback host ports. The backend has a separate durable writable data directory. Source, image identities and compiled artifacts have verified local/live hashes; [Support Studio](ASSISTANT.md) documents operational boundaries and client prerequisites. No real refund or customer email has been verified; live actions remain disabled.
 
 ### 2.2 Backend — merchant app (`packages/app`)
 
@@ -61,11 +62,11 @@ Three deployable Rust Function crates are built for Shopify's current WebAssembl
 | `delivery-customization` | `cart.delivery-options.transform.run` | Hide/rename delivery options by cart content | **Draft uploaded; not activated** |
 | `discount-stacking` | Experimental source only | Intended discount-code combinations are not enforceable from the current validation input | **Not deployed** |
 
-Verified 2026-10-03: native Rust workspace tests passed; all three deployable Functions passed schema type generation, release compilation and local Shopify CLI execution, including positive synthetic cases. Shopify created inactive draft version `regenai-merchant-sandbox-4`. No store-level activation or checkout proof exists. `cart-contraindication` reads a customer health-flag metafield; any real-customer use requires the privacy review in [PRIVACY.md](PRIVACY.md). Shopify permits custom-app Functions on Plus live stores; a non-Plus live store needs the public-app distribution route.
+Verified 2026-10-03: native Rust workspace tests passed; all three deployable Functions passed schema type generation, release compilation and local Shopify CLI execution, including positive prepared cases. Shopify created inactive draft version `regenai-merchant-sandbox-4`. No store-level activation or checkout proof exists. `cart-contraindication` reads a customer health-flag metafield; any real-customer use requires the privacy review in [PRIVACY.md](PRIVACY.md). Shopify permits custom-app Functions on Plus live stores; a non-Plus live store needs the public-app distribution route.
 
 ### 2.4 Design system (`packages/ui`)
 
-`@regenai/ui` — 15 React components, most built on Radix primitives, styled with Tailwind v4; Storybook stories for four of them so far. **Built**, used locally; not published to npm and not used by the live demo.
+`@regenai/ui` — 15 React components, most built on Radix primitives, styled with Tailwind v4; Storybook stories for four of them so far. **Built**, used locally; not published to npm and not used by the live application.
 
 ## 3. Trust boundaries and data flow
 

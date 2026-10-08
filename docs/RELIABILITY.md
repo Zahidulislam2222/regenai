@@ -34,7 +34,7 @@ Each SLI is measured per journey and per region (US, EU), never blended into one
 | Storefront browse | Homepage, collection and product page return 2xx with expected content, from external probes in US and EU | 99.9% of probe intervals |
 | Server latency | HTML responses served at origin in < 1 s | 95% of requests |
 | Cart | Well-formed add/update/remove cart mutations succeed | 99.9% of requests |
-| Checkout hand-off | Cart → Shopify checkout URL succeeds (sandbox journey probe; never a real card) | 99.9% of probe runs |
+| Checkout hand-off | Cart → Shopify checkout URL succeeds (development environment journey probe; never a real card) | 99.9% of probe runs |
 | Merchant app | Authenticated admin pages load | 99.5% of probe intervals |
 | Webhook processing | Shopify webhooks processed within 5 minutes of receipt | 99.9% of deliveries |
 | Page experience (field) | Core Web Vitals at p75: LCP ≤ 2.5 s, INP ≤ 200 ms, CLS ≤ 0.1 ([web.dev](https://web.dev/articles/vitals)) | Tracked once traffic is sufficient |
@@ -89,7 +89,7 @@ RPO/RTO values are targets. They become claims only after a **restore drill** me
 
 Process: detect (alert or report) → assign an incident lead → mitigate first (rollback, failover, feature flag off) → communicate status → resolve → blameless post-incident review within 5 business days, with action items tracked to completion.
 
-Response targets assume a staffed on-call rota, which does not exist for this demo. They define the operating model required for a production launch; they are not a current commitment.
+Response targets assume a staffed on-call rota, which does not exist for this application. They define the operating model required for a production launch; they are not a current commitment.
 
 Security incidents additionally follow [SECURITY.md](../SECURITY.md) and applicable breach-notification law (for example, GDPR Article 33 requires notifying the supervisory authority within 72 hours where applicable; see [COMPLIANCE.md](COMPLIANCE.md)).
 

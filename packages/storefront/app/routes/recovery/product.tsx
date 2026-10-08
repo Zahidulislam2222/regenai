@@ -45,7 +45,8 @@ export async function loader({params, context}: Route.LoaderArgs) {
 
 export const meta: Route.MetaFunction = ({data}) => [
   {title: data ? `${data.product.name} — RegenAI` : 'Product design — RegenAI'},
-  {name: 'description', content: data?.product.description ?? 'An original recovery-object design study.'},
+  {name: 'description', content: (data?.source === 'shopify' && data.concept
+    ? data.concept.summary : data?.product.description) ?? 'An original recovery-object design study.'},
 ];
 
 export default function RecoveryProductRoute() {

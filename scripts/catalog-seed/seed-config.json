@@ -1,14 +1,17 @@
 {
   "sourceCurrency": "USD",
   "currency": "USD",
-  "vendor": "RegenAI concept studio",
+  "vendor": "RegenAI",
   "handlePrefix": "regenai-concept-",
   "skuPrefix": "RGN-DEMO-",
   "markerKey": "regenai_seed_key",
   "markerPrefix": "regenai-concept-v1:",
-  "tags": ["regenai-concept", "not-for-sale-demo"],
-  "descriptionNotice": "Illustrative product concept for a portfolio demo. Not manufactured or available for sale. Specifications, materials, safety and performance have not been validated.",
-  "imageAltTemplate": "Illustrative render of {name}",
+  "tags": [
+    "regenai-concept",
+    "not-for-sale-demo"
+  ],
+  "descriptionNotice": "Ordering is closed. Physical stock, materials, safety and performance have not been validated.",
+  "imageAltTemplate": "Product render of {name}",
   "optionNames": {
     "pulse": "Kit",
     "roller": "Size",
@@ -17,10 +20,43 @@
     "balls": "Set",
     "sensor": "Mount"
   },
-  "expectedIds": ["pulse", "roller", "bands", "wrap", "balls", "sensor"],
+  "expectedIds": [
+    "pulse",
+    "roller",
+    "bands",
+    "wrap",
+    "balls",
+    "sensor"
+  ],
   "headlessPublicationName": "Regenai Headless",
   "headlessAppTitle": "Headless",
   "requestTimeoutMs": 20000,
   "mediaPollAttempts": 8,
-  "mediaPollDelayMs": 1500
+  "mediaPollDelayMs": 1500,
+  "legacyDescriptionHashes": {
+    "regenai-concept-pulse": [
+      "7e74e7857aaeec6d63a6ef64d7d9834f6e0b6a0b6ef6012a8247bf5a6ceb310b",
+      "0a8e555fbdd0ef68e90c151984a367901f3112abbf0dbfc6c8e51102f7bab468"
+    ],
+    "regenai-concept-roller": [
+      "8ffc9634c5c7e76bbc6d834ba992805f28fb5811c8543303ab3b4f08888e39fc",
+      "db2bb2a4fc29be64bad3c8c0fbb918b0f0189c86df3b49b3f15eb749eea5ab9e"
+    ],
+    "regenai-concept-bands": [
+      "ec6f4447b47a728b44ff31fb79af63f18310410929456b656cfbbd9306c8474c",
+      "a5426dfcbcb0c0e3518abd130856f8e54275787dc32e3248711a1239c6f98bec"
+    ],
+    "regenai-concept-wrap": [
+      "0a27a6b232464ef92b3169404ac2e897f67e70b085fd9143d627561e75d27501",
+      "43b8c056ae1c7d424e44a6d8be7b254f1bee26bbee881bb53c05ba3abc19d6c7"
+    ],
+    "regenai-concept-balls": [
+      "c140b2ca776d79ad9758a04adcc71560a07d93783387933f31e743184b40dc4c",
+      "2f8afb822cd17098075361854782d078c1b4265fbacbb21edc01a9154737bf1a"
+    ],
+    "regenai-concept-sensor": [
+      "3437eca772ecc484228efe711125c3764cc2cb4cc9fb9f41d3fc5e54070d0865",
+      "c9546315baec0e80ea26051fee07df05a6e8d7433406bed56c83859c20225735"
+    ]
+  }
 }

@@ -27,7 +27,7 @@ export async function loader({context}: Route.LoaderArgs) {
 
 export const meta: MetaFunction = () => [
   {title: 'Find your next ritual — RegenAI'},
-  {name: 'description', content: site.demo},
+  {name: 'description', content: site.description},
   {name: 'robots', content: 'noindex, nofollow'},
 ];
 

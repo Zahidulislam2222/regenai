@@ -1,34 +1,31 @@
 # Privacy and data inventory
 
-Updated 2026-10-04. Related: [COMPLIANCE.md](COMPLIANCE.md), [SECURITY-MODEL.md](SECURITY-MODEL.md), [PRODUCTION-APPLICABILITY.md](PRODUCTION-APPLICABILITY.md).
+Updated 2026-10-08. Related: [COMPLIANCE.md](COMPLIANCE.md), [SECURITY-MODEL.md](SECURITY-MODEL.md), [Support Studio](ASSISTANT.md).
 
-This document has two parts: a **privacy notice for the live demo** (what actually happens today), and the **privacy design for the full platform** (what must be true before real customers use it). It is an engineering document, not legal advice.
+## Part A — Current storefront and support service
 
-## Part A — Live demo privacy notice
+The main storefront has ordering closed and collects no payment. The same domain also hosts Support Studio and customer AI chat. Support inputs can contain personal information, so the former claim that the site collects no personal data no longer applies.
 
-Applies to `https://regenai.zahidul-islam.com`, a portfolio demonstration with fictional products. Nothing is sold and no payment can be made.
+| Data | Current processing | User control |
+| --- | --- | --- |
+| Finder choices | Stay in page memory; no saved health profile or model request | Leave or reset the finder |
+| Assistant session | Secure HttpOnly cookie; server stores its digest and isolated workspace | Sign out or expire the session |
+| Chat text and saved preferences | Encrypted records on the server; included in configured model requests when AI is enabled | Erase conversation deletes messages, preferences and retrieved chat context |
+| Image attachments | Sent to the configured model for analysis; attachment bytes are not persisted | Attach only information you intend to share |
+| Voice | Optional browser speech service may process audio; playback uses browser voices | Type instead, or leave voice controls off |
+| Support tickets and approvals | Encrypted operational records, history and audit; may include supplied email and order details | Export privately; audit/history remain after conversation erasure |
+| Owner and connector credentials | Server-only secrets and encrypted connector records; never returned to the browser | Owner manages delegated access and revocation |
+| Payment information | No payment form, card processing or enabled public checkout | Ordering remains closed |
 
-### What the demo collects
+Public workspaces are removed under the configured retention policy by scheduled maintenance. The current default is seven days; sessions share that default lifetime. Merchant operational records require an owner-managed retention/export process. Encryption covers record payloads, while categories, identifiers and timestamps remain structural database metadata. No multi-client isolation claim is made: each client needs a separate database and deployment.
 
-| Data | Collected? | Details |
-|---|---|---|
-| Name, email, address, account | **No on the main site** | Main Account and public cart writes are closed; the separate staging site has a test-only Shopify Account sign-in entry |
-| Payment details | **No** | Public checkout is closed; the main site has no payment form |
-| Recovery-finder answers | **Not stored or sent** | Answers stay in the open page's memory and are discarded when you leave. The finder states this on screen |
-| Demo bag contents | **No active bag on the main Hydrogen site** | The current main layout disables the legacy browser bag, and public cart writes remain closed. Old local storage from the earlier static demo may remain until browser site data is cleared |
-| Analytics and advertising | **No first-party integration in the current source** | Infrastructure still processes request metadata to serve and protect the site |
+### Processors and delivery
 
-### What infrastructure processes
+Cloudflare and Caddy deliver the site and process network metadata. Hydrogen reads the Shopify catalog. The Python service stores support records. When enabled, model requests go through OpenRouter to the explicitly configured upstream model. Requesting restricted provider data collection is not proof of a provider's retention behavior; review the applicable processor terms before handling client data. Browser voice processing depends on the browser's service.
 
-| Processor | What it sees | Why |
-|---|---|---|
-| Cloudflare (DNS, TLS, proxy) | IP address, request metadata, headers | Delivering and protecting the site. Governed by [Cloudflare's privacy policy](https://www.cloudflare.com/privacypolicy/). Cloudflare also sets a Network Error Logging header: successful requests are not reported, but browsers may send network-failure reports to Cloudflare |
-| Hydrogen application server | Storefront requests and Shopify catalog responses | Server-rendered product browsing; current source uses a redacted error logger. Full infrastructure log retention still needs an operational audit |
-| Reverse proxy (Caddy) | Request routing | The RegenAI site block does not enable an access log |
+The deployed assistant response uses private, no-store, no-transform and a strict Content Security Policy. A public-edge response check found no injected analytics script. This does not establish a complete infrastructure log-retention audit or legal compliance.
 
-### Your choices
-
-The main demo has no buyer account to access or delete. To remove any old static-demo bag data, clear this site's browser storage. Questions: open an issue on the [GitHub repository](https://github.com/Zahidulislam2222/regenai/issues) (do not include personal information).
+Avoid entering passwords, payment details or sensitive health information. The finder provides browsing assistance; sensitive support issues require human review. Full privacy/legal review and verified client consent remain prerequisites for customer operations.
 
 ## Part B — Privacy design for the full platform
 
@@ -60,7 +57,7 @@ When the Hydrogen storefront connects to a real Shopify store, personal data wil
 
 | Item | Status |
 |---|---|
-| Live demo collects no personal data beyond network delivery | **Verified** by source inspection and release browser checks |
+| Assistant data processing and erase controls | **Verified** by source and real HTTP checks; broader infrastructure retention review remains due |
 | Finder answers not persisted | **Verified** in source (in-memory state only) |
 | Telemetry redaction tests | **Built** for the storefront server logger; full coverage planned |
 | Shopify mandatory privacy webhooks | **Locally built and HTTP-tested**; remote D1 migrations, subscriptions, real delivery and operational response are unverified, so merchant release remains blocked |

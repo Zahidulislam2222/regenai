@@ -11,7 +11,7 @@ The executor distinction follows the current [Grafana k6 open and closed workloa
 
 ## Terms and baseline model
 
-- **Active session**: one synthetic browser journey currently in progress, with a unique test identity and a defined session timeout. It is not a monthly visitor, registered account, open browser tab, VU count by itself, or checkout mutation.
+- **Active session**: one controlled browser journey currently in progress, with a unique test identity and a defined session timeout. It is not a monthly visitor, registered account, open browser tab, VU count by itself, or checkout mutation.
 - **Request rate**: completed or attempted HTTP requests per second, stated at a specific measurement point (generator, edge, application origin, or dependency). Report them separately.
 - **Session arrival rate**: new journeys started per second. Session concurrency depends on arrival rate and journey duration; it is not interchangeable with request rate.
 - **Closed VU model**: a fixed number of virtual users repeat journeys and wait/think between work. As response time slows, their request rate falls. This is useful for user-concurrency behavior.
@@ -27,26 +27,26 @@ This is only a planning approximation. Count asset requests and bytes separately
 
 ## Candidate local smoke profile
 
-The following is a starting profile, **not a measured customer forecast**. It assumes an isolated local build and deterministic fixtures. It deliberately leaves market share, real route timings and payload distributions as unknowns to replace with observed non-sensitive data or explicitly synthetic decisions.
+The following is a starting profile, **not a measured customer forecast**. It assumes an isolated local build and deterministic fixtures. It deliberately leaves market share, real route timings and payload distributions as unknowns to replace with observed non-sensitive data or explicitly documented assumptions.
 
 | Dimension | Candidate assumption | How future maintainers must own/update it |
 |---|---|---|
 | Journey length | Candidate user journey is up to 30 seconds, with 2–5 seconds of think time between a small number of actions; wait time is part of the journey model, not server processing time. It is not run as part of the primary request smoke profile. | Store journey sequence/distribution/seed in proposed `tests/load/profiles/baseline.json`; record rationale and revision in profile metadata |
-| Route mix by journey action | 45% home/collection/product reads; 15% search/filter; 15% quiz/recommendation; 10% cart reads/updates; 5% account read/sign-in test path; 5% checkout initialization; 5% sandbox checkout continuation | Keep weights in profile data. Reconcile to actual enabled features; mark unavailable routes explicitly rather than silently redistributing. Account/checkout shares are journey actions, not shares of total visitors or mutations |
+| Route mix by journey action | 45% home/collection/product reads; 15% search/filter; 15% quiz/recommendation; 10% cart reads/updates; 5% account read/sign-in test path; 5% checkout initialization; 5% development environment checkout continuation | Keep weights in profile data. Reconcile to actual enabled features; mark unavailable routes explicitly rather than silently redistributing. Account/checkout shares are journey actions, not shares of total visitors or mutations |
 | Dynamic/cache behavior | Public browse requests: candidate 90% warm-cache and 10% cold/miss requests. Personalized/cart/account/checkout paths: private and bypass shared public cache | Profile controls warm/cold proportions; cache tests assert private responses are never served across identities. Add a fully cold-cache scenario |
 | Regions | Local baseline has one region and zero network RTT realism. Future regional profiles name generator and target region separately | Region and RTT/packet-loss assumptions belong to profile data; don't call localhost evidence multi-region evidence |
 | Payload and egress | Use repository fixture sizes and capture response bytes by route; baseline numbers remain TBD until assets and response sizes are inventoried | Store measured bytes and source commit with each profile revision. Count browser asset transfer separately from API JSON and app-origin egress |
 | Dependency calls | Stubbed or controlled local dependencies only for baseline. Record expected calls per route and injected timeout/error behavior | Version the dependency map with profile; live third-party calls require separate target approval and provider limits |
 | Burst pattern | Candidate 2× steady arrival for 30 seconds after a 60-second ramp; not a forecast | Keep burst multiplier/duration in profile and report as a separate phase, not averaged away |
-| Session identity | Deterministic synthetic IDs; no real accounts, email addresses, health answers or production data | Fixture generator owns clearly synthetic reserved identifiers; test fails if external production host or real PII is present |
+| Session identity | Deterministic test IDs; no real accounts, email addresses, health answers or production data | Fixture generator owns clearly reserved test identifiers; test fails if external production host or real PII is present |
 
-The eventual route names must match actual app routes and behavior. Do not create synthetic route handlers or empty profiles just to satisfy this contract. Browser and API workloads may differ; report each independently.
+The eventual route names must match actual app routes and behavior. Do not create empty route handlers or empty profiles just to satisfy this contract. Browser and API workloads may differ; report each independently.
 
 ## Primary local request smoke profile
 
 The bounded primary smoke uses short, single-request iterations against the isolated local app and controlled local dependency stubs. Ratified hard maxima: **5 VUs, 2 request starts/second, 60 seconds, and 120 total HTTP requests**, whichever is reached first. Only localhost/project-isolated targets are allowed; zero third-party calls, zero Shopify calls, no shared VPS, no production data, and no paid generator/service. The runner must enforce all four caps and refuse any non-allowlisted host. These limits are a ceiling, not a target to reach.
 
-This primary profile does not claim to model full shopper journey concurrency. Full journey rehearsal is a separate low-volume functional flow: at most 5 sequential synthetic sessions, each with a documented route/action sequence and a maximum elapsed journey duration of 30 seconds, run only when its HTTP request count also remains within the same 120-request ceiling and its request rate remains within 2 starts/second. If meaningful routes cannot complete inside those bounds, revise the journey definition before execution; do not increase the safety envelope implicitly. Record profile ID/revision and actual requests/second for every run.
+This primary profile does not claim to model full shopper journey concurrency. Full journey rehearsal is a separate low-volume functional flow: at most 5 sequential controlled test sessions, each with a documented route/action sequence and a maximum elapsed journey duration of 30 seconds, run only when its HTTP request count also remains within the same 120-request ceiling and its request rate remains within 2 starts/second. If meaningful routes cannot complete inside those bounds, revise the journey definition before execution; do not increase the safety envelope implicitly. Record profile ID/revision and actual requests/second for every run.
 
 For machine use, the future validated profile/config is the canonical owner of executable caps and thresholds. Store the profile in proposed `tests/load/profiles/` with schema validation; the runner must reject missing/invalid/duplicated settings. The master plan retains broader product workload goals and authorization boundaries. This document only explains them.
 
@@ -62,7 +62,7 @@ Report separately: active sessions/VUs, scheduled and started iterations, attemp
 
 Proposed ownership after implementation:
 
-- `tests/load/profiles/*.json` owns maintained scenario inputs: routes/weights, session and think-time distributions, cache state, payload references, region/RTT, burst phases and synthetic data seed. Each profile includes `profile_id`, schema version, revision, rationale, source/owner, date and intended target.
+- `tests/load/profiles/*.json` owns maintained scenario inputs: routes/weights, session and think-time distributions, cache state, payload references, region/RTT, burst phases and test data seed. Each profile includes `profile_id`, schema version, revision, rationale, source/owner, date and intended target.
 - Typed application settings own runtime behavior under test (timeouts, cache TTLs, concurrency limits, feature flags and dependency endpoints). Load profile data must not duplicate those defaults; the runner reads the selected environment/config manifest and records its digest.
 - `tests/load/scenarios/` owns executable k6 scenarios and thresholds after S04. Shared numerical scale targets, local safety ceilings, and abort budgets belong in `PROJECT_PLAN.md` as authoritative S01/S04 settings. Do not silently copy or override them in CI YAML, shell scripts or this derived doc.
 - Each result artifact records commit, profile revision/hash, config revision/hash, command, target allowlist, generator version, host CPU/RAM, environment, duration, region/cache state, executor model, generator resource saturation, raw summary and reviewer/limitations.
@@ -77,7 +77,7 @@ The local-only smoke limits above are the ratified ceiling for the initial candi
 
 The plan’s **10k / 100k / 1M+** labels are workload-design scenarios, not established capacity or committed traffic. For each future tier, define active sessions, journey duration/arrival shape, request rate, route mix, cache warm/cold ratio, region, egress, dependency fan-out, concurrent cart/account/checkout actions and failure conditions before selecting infrastructure. Do not extrapolate from a local smoke result or same-host replica test to independent-host availability or end-to-end Shopify capacity.
 
-A future 1M scenario may use the plan’s illustrative public-cache math, but must declare each assumption and separately measure edge, origin and dependency load. Provider limits and checkout capacity require current provider/account evidence. No tier number implies a server size or a guarantee.
+A future 1M scenario may use the plan’s public-cache math, but must declare each assumption and separately measure edge, origin and dependency load. Provider limits and checkout capacity require current provider/account evidence. No tier number implies a server size or a guarantee.
 
 ## Future acceptance and failure behavior
 
@@ -85,8 +85,8 @@ A future executable S01/S04 suite is meaningful only if it fails closed when a s
 
 The report must show p50/p95/p99 latency by route and phase, status/error rate, timeouts, throughput at generator/edge/origin/dependency, cache hit/miss and cold/warm phase, response/request bytes and egress, active VUs/sessions, attempted/completed/dropped work, resource saturation at generator and target, test duration, commit/profile/config provenance and limitations. A test that reports only average latency, omits dropped iterations, or lacks target hardware is insufficient evidence.
 
-Test distinct cases: warm public browse, cold cache, hot product, personalized cache isolation, cart contention, account path, sandbox checkout initiation, slow/down controlled dependency, burst, and one-generator-saturation check. The suite itself should fail when a required case is removed, not silently pass with a placeholder or `|| true`. Stub/local test results establish only the tested software path; they do not establish real provider capacity, production readiness, or the availability objective in [RELIABILITY.md](RELIABILITY.md).
+Test distinct cases: warm public browse, cold cache, hot product, personalized cache isolation, cart contention, account path, development environment checkout initiation, slow/down controlled dependency, burst, and one-generator-saturation check. The suite itself should fail when a required case is removed, not silently pass with a placeholder or `|| true`. Stub/local test results establish only the tested software path; they do not establish real provider capacity, production readiness, or the availability objective in [RELIABILITY.md](RELIABILITY.md).
 
 ## Current evidence
 
-No workload profile, k6 scenario, generator run, performance result, or capacity evidence was created by this document. Current status: **contract drafted; profile and executable tests planned; capacity unverified**. Candidate route assumptions are explicitly illustrative and should be revised from the actual feature routes, asset/dependency inventory and observed flows when those are inspected; they are not a forecast and do not need approval as business facts.
+No workload profile, k6 scenario, generator run, performance result, or capacity evidence was created by this document. Current status: **contract drafted; profile and executable tests planned; capacity unverified**. Candidate route assumptions are explicitly and should be revised from the actual feature routes, asset/dependency inventory and observed flows when those are inspected; they are not a forecast and do not need approval as business facts.

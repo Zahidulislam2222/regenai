@@ -30,7 +30,7 @@ export async function loader({context, params}: Route.LoaderArgs) {
 
 export const meta: MetaFunction = ({params}) => [
   {title: `${getDesignCategoryByHandle(params.categoryHandle) ?? site.designCategory.fallbackTitle} — RegenAI`},
-  {name: 'description', content: site.demo},
+  {name: 'description', content: site.description},
 ];
 
 export default function RecoveryCategoryRoute() {

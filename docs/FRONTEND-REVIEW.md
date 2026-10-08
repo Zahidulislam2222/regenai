@@ -4,7 +4,7 @@ The local customer frontend is available for owner review. This is not a product
 
 ## Delivered experience
 
-Original Blender models and matching catalog renders; pointer-responsive Three.js hero; bounded native-scroll product inspection; an OpenRouter-generated architectural still; six-product catalog, search/filter/sort, product options, persistent local bag, demo checkout, three-step deterministic recovery finder, and informational/404 views. Responsive layouts, motion pause/reduced-motion views, and product still fallbacks are included. Video is not generated or enabled. The single approved image cost $0.033145; no retry or cap increase.
+Original Blender models and matching catalog renders; pointer-responsive Three.js hero; bounded native-scroll product inspection; an OpenRouter-generated architectural still; six-product catalog, search/filter/sort, product options, persistent local bag, application checkout, three-step deterministic recovery finder, and informational/404 views. Responsive layouts, motion pause/reduced-motion views, and product still fallbacks are included. Video is not generated or enabled. The single approved image cost $0.033145; no retry or cap increase.
 
 The preview harness consumes the existing storefront workspace. Phase B must integrate the reviewed components into Hydrogen loaders and real commerce adapters. No production deployment occurred.
 
@@ -19,7 +19,7 @@ All 12 local criteria F01–F12 were evaluated and met within this scope:
 | F03 | Chrome scroll in both directions changes inspection chapter; all chapters remain visible with reduced motion |
 | F04 | Filter, search, sort, reset and no-results assertions pass |
 | F05 | All six product deep links load; option selection/add exercised |
-| F06 | Add, quantity, subtotal, refresh persistence, remove, empty state and demo checkout pass; malformed stored data covered by unit tests |
+| F06 | Add, quantity, subtotal, refresh persistence, remove, empty state and application checkout pass; malformed stored data covered by unit tests |
 | F07 | Validation, back, restart, results and area-only fallback explanation pass |
 | F08 | Mobile dialog and bag Escape/focus checks pass, including restoration to product Add button |
 | F09 | About/evidence/policies and unknown-route views exercised; invalid collection handles now reach 404 |

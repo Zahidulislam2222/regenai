@@ -27,7 +27,7 @@ export async function loader({context}: Route.LoaderArgs) {
 
 export const meta: MetaFunction = () => [
   {title: 'The collection — RegenAI'},
-  {name: 'description', content: site.demo},
+  {name: 'description', content: site.description},
 ];
 
 export default function RecoveryCollectionRoute() {

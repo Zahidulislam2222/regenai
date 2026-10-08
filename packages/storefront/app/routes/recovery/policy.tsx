@@ -14,7 +14,7 @@ export async function loader({params}: LoaderFunctionArgs) {
 
 export const meta: MetaFunction<typeof loader> = ({data}) => [
   {title: data ? `${site.pages[data.page].title.replaceAll('\n', ' ')} — RegenAI` : 'Policy — RegenAI'},
-  {name: 'description', content: data ? site.pages[data.page].body : site.demo},
+  {name: 'description', content: data ? site.pages[data.page].body : site.description},
 ];
 
 export default function RecoveryPolicyRoute() {

@@ -1,0 +1,23 @@
+name: Test Python assistant
+on:
+  pull_request:
+    paths: ['services/assistant/**', 'packages/storefront/app/features/recovery/**', '.github/workflows/test-assistant.yml']
+  push:
+    branches: [main, staging]
+permissions:
+  contents: read
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -e './services/assistant[dev]'
+      - run: pytest services/assistant/tests -q
+      - run: mypy services/assistant/regenai_assistant
+      - run: ruff check services/assistant
+      - run: bandit -r services/assistant/regenai_assistant -ll
+      - run: pip wheel --no-deps --wheel-dir /tmp/assistant-wheel ./services/assistant

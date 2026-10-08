@@ -5,6 +5,11 @@ export const recoverySettings = {
   storageKey: 'regenai:demo-bag:v1',
   maxQuantity: 9,
   maxCartLines: 30,
+  assistant: {
+    basePath: '/assistant',
+    requestTimeoutMs: 45000,
+    maxVisibleMessages: 20,
+  },
   scene: {
     productId: 'pulse',
     model: '/media/pulse-58a7666c.glb',

@@ -27,7 +27,7 @@ Start with the [project README](../README.md), then use this index.
 |---|---|
 | [../SECURITY.md](../SECURITY.md) | How to report a vulnerability |
 | [SECURITY-MODEL.md](SECURITY-MODEL.md) | Threat model, controls in place, known gaps and release blockers |
-| [PRIVACY.md](PRIVACY.md) | Live demo privacy notice and platform data map |
+| [PRIVACY.md](PRIVACY.md) | Live application privacy notice and platform data map |
 | [COMPLIANCE.md](COMPLIANCE.md) | PCI DSS, GDPR, US state privacy, health-product, consumer and accessibility law overview |
 | [PRODUCTION-APPLICABILITY.md](PRODUCTION-APPLICABILITY.md) | Detailed applicability register with official sources |
 | [ACCESSIBILITY.md](ACCESSIBILITY.md) | WCAG 2.2 AA target, tested scope, known limitations |

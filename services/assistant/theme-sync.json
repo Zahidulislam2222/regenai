@@ -1,0 +1,33 @@
+{
+  "source_css": "packages/storefront/app/features/recovery/recovery.css",
+  "destination": "services/assistant/regenai_assistant/static",
+  "fonts": [
+    {
+      "source": "node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2",
+      "filename": "inter-latin-wght-normal.woff2",
+      "family": "Inter Variable"
+    },
+    {
+      "source": "node_modules/@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2",
+      "filename": "geist-mono-latin-wght-normal.woff2",
+      "family": "Geist Mono Variable"
+    }
+  ],
+  "source_catalog": "packages/storefront/app/content/recovery-catalog.json",
+  "knowledge_destination": "services/assistant/regenai_assistant/content/storefront.json",
+  "catalog_fields": [
+    "id",
+    "name",
+    "kind",
+    "category",
+    "price",
+    "description",
+    "detail"
+  ],
+  "knowledge_context": {
+    "ordering": "closed",
+    "currency": "USD",
+    "price_status": "listed prices in cents; these products cannot be purchased.",
+    "claims": "products. No medical benefit, shipping availability or device performance has been validated."
+  }
+}

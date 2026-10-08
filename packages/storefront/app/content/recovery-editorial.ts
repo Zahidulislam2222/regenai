@@ -88,6 +88,8 @@ export const editorial = {
   productQuestions: validateProductQuestions(raw.productQuestionIds, questions),
   comparisonLimit: validateComparisonLimit(raw.comparisonLimit),
   ui: validateUi(raw.ui),
+  typeLabels: validateLabels(raw.typeLabels),
+  imageLabels: validateLabels(raw.imageLabels),
 };
 
 export function selectJournalStory(story: Story, source: 'shopify' | 'fixture'): Story {
@@ -101,4 +103,11 @@ function validateUi(value: Record<string, unknown>): typeof raw.ui {
     throw new Error('Invalid editorial interface copy');
   }
   return value as typeof raw.ui;
+}
+
+function validateLabels(value: Record<string, string>): Record<string, string> {
+  if (!value || Object.entries(value).some(([key, label]) => !hasText(key) || !hasText(label))) {
+    throw new Error('Invalid product label aliases');
+  }
+  return value;
 }

@@ -59,8 +59,8 @@ describe('Shopify concept product page', () => {
 
   it('describes an empty verified design category accurately', () => {
     render(<MemoryRouter><ShopifyCatalogView products={[]} categoryTitle="Reset" /></MemoryRouter>);
-    expect(screen.getByRole('heading', {name: 'Reset concepts.'})).toBeTruthy();
-    expect(screen.getByText('No verified concepts are available in this design category yet.')).toBeTruthy();
+    expect(screen.getByRole('heading', {name: 'Reset tools.'})).toBeTruthy();
+    expect(screen.getByText('No products are available in this design category yet.')).toBeTruthy();
     expect(screen.getByRole('link', {name: 'All tools'}).getAttribute('href')).toBe('/collections/all');
   });
 
@@ -68,12 +68,12 @@ describe('Shopify concept product page', () => {
     const available = {...product, availableForSale: true,
       variants: [{...product.variants[0], availableForSale: true}]};
     render(<MemoryRouter><ShopifyCatalogView products={[available]} sandboxCartEnabled /></MemoryRouter>);
-    expect(screen.getByText('Original design studies. Local development-store test orders only.'))
+    expect(screen.getByText('Original product designs. Local development-store test orders only.'))
       .toBeTruthy();
-    expect(screen.getByText('DESIGN STUDIES / TEST ORDERS ONLY')).toBeTruthy();
-    fireEvent.click(screen.getByRole('button', {name: 'Compare concept'}));
+    expect(screen.getByText('CHECKOUT RESTRICTED')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', {name: 'Compare product'}));
     expect(screen.getByText('Available for local development-store test orders')).toBeTruthy();
-    expect(screen.queryByText('Ordering is closed while the sandbox is being verified.')).toBeNull();
+    expect(screen.queryByText('Explore the collection. Ordering is currently closed.')).toBeNull();
   });
 
   it('selects available media and preserves the closed-commerce design disclosure', () => {
@@ -88,15 +88,15 @@ describe('Shopify concept product page', () => {
     expect(screen.getByText('Illustrative product; not for sale')).toBeTruthy();
     expect(screen.getByText('Can I place an order now?')).toBeTruthy();
     expect(screen.queryByText('How are finder results chosen?')).toBeNull();
-    expect(screen.queryByRole('button', {name: 'Add to sandbox cart'})).toBeNull();
+    expect(screen.queryByRole('button', {name: 'Add to cart'})).toBeNull();
   });
 
   it('keeps a sold-out Shopify variant out of the local sandbox cart', () => {
     render(<MemoryRouter><ShopifyProductView product={product} related={[]}
       sandboxCartEnabled concept={null} /></MemoryRouter>);
     expect(screen.getByText('Unavailable')).toBeTruthy();
-    expect(screen.queryByRole('button', {name: 'Add to sandbox cart'})).toBeNull();
-    expect(screen.getByRole('link', {name: 'View sandbox cart'})).toBeTruthy();
+    expect(screen.queryByRole('button', {name: 'Add to cart'})).toBeNull();
+    expect(screen.getByRole('link', {name: 'View cart'})).toBeTruthy();
   });
 
   it('compares Shopify facts and validated concept details across collection filters', () => {
@@ -110,20 +110,20 @@ describe('Shopify concept product page', () => {
       [balls.id]: null,
       [roller.id]: null,
     }} /></MemoryRouter>);
-    const select = screen.getAllByRole('button', {name: 'Compare concept'});
+    const select = screen.getAllByRole('button', {name: 'Compare product'});
     fireEvent.click(select[0]);
     fireEvent.click(select[1]);
-    const table = within(screen.getByRole('region', {name: 'Compare the concepts'}));
+    const table = within(screen.getByRole('region', {name: 'Compare the products'}));
     expect(table.getByText('Pulse One')).toBeTruthy();
     expect(table.getByText('Point Duo')).toBeTruthy();
     expect(table.getByText('Handheld concept')).toBeTruthy();
     expect(table.getAllByText('Not verified').length).toBeGreaterThan(0);
-    expect(screen.getByRole('button', {name: 'Compare concept'}).hasAttribute('disabled')).toBe(true);
+    expect(screen.getByRole('button', {name: 'Compare product'}).hasAttribute('disabled')).toBe(true);
     fireEvent.change(screen.getByRole('searchbox', {name: 'Search products'}),
       {target: {value: 'no match'}});
-    expect(within(screen.getByRole('region', {name: 'Compare the concepts'})).getByText('Point Duo')).toBeTruthy();
+    expect(within(screen.getByRole('region', {name: 'Compare the products'})).getByText('Point Duo')).toBeTruthy();
     fireEvent.click(table.getByRole('button', {name: 'Remove from comparison: Pulse One'}));
     expect(table.queryByText('Pulse One')).toBeNull();
-    expect(screen.queryByRole('button', {name: 'Add to sandbox cart'})).toBeNull();
+    expect(screen.queryByRole('button', {name: 'Add to cart'})).toBeNull();
   });
 });

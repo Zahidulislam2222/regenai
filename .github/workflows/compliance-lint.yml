@@ -1,4 +1,4 @@
-name: Content — Demo Copy Red Flags
+name: Content — Product Copy Red Flags
 
 on:
   pull_request:
@@ -21,7 +21,7 @@ concurrency:
 
 jobs:
   claim-lint:
-    name: Demo copy red-flag guard
+    name: Product copy red-flag guard
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
@@ -35,5 +35,5 @@ jobs:
       - name: Test guard failure cases
         run: node --test scripts/compliance-lint.test.mjs
 
-      - name: Check demo catalog and storefront copy
+      - name: Check product catalog and storefront copy
         run: node scripts/compliance-lint.mjs

@@ -8,7 +8,7 @@ Written before implementation, 2026-09-21. Scope: local customer storefront for 
 2. Continuous fantasy scroll world: expressive, but delays comparison and invents a setting unrelated to the devices.
 3. **Recovery lab (selected):** monumental blue type on warm bone; a deliberately art-directed product still; a bounded scroll product inspection; functional product selection, finder, and bag. Commercial actions never depend on finishing an animation.
 
-The original brief's clinical blue, bone, sans typography and product-first imagery remain. No fake clinician endorsement, clearance, reviews, medical outcomes, discount urgency, or claimed AI inference. Product renders and prices are fictional demo data. New UI lives in reusable `app/features/recovery`; the local Vite preview harness uses the existing React/Router dependencies. Existing Hydrogen loaders remain intact for explicit integration in the next phase. Do not deploy the local cart as production commerce.
+The original brief's clinical blue, bone, sans typography and product-first imagery remain. No fake clinician endorsement, clearance, reviews, medical outcomes, discount urgency, or claimed AI inference. Product renders and prices are prepared application data. New UI lives in reusable `app/features/recovery`; the local Vite preview harness uses the existing React/Router dependencies. Existing Hydrogen loaders remain intact for explicit integration in the next phase. Do not deploy the local cart as production commerce.
 
 ## Acceptance criteria
 
@@ -31,7 +31,7 @@ The original brief's clinical blue, bone, sans typography and product-first imag
 
 | Values | Owner |
 |---|---|
-| Brand copy, navigation, product demo prices/options/metadata, finder questions, policies | Validated content under `app/content/` |
+| Brand copy, navigation, product application prices/options/metadata, finder questions, policies | Validated content under `app/content/` |
 | Preview host/port and local cart operational limits | `app/config/` / preview settings; safe env examples |
 | Colors, typography, spacing and motion behavior | Recovery CSS token layer |
 | Media paths/alt/factual status/provenance | Content media manifest |
@@ -56,4 +56,4 @@ Checked 2026-09-21. Shared playbook and its source transcripts informed process;
 
 ## Asset plan
 
-Hero: large precision product composition against matching bone, product right/center and clean negative space left. Catalog: consistent isolated equipment concepts. Product inspection: controlled local render or a reviewed Seedance shot, with still fallback. Never describe generated internals as real engineering. Keep originals/editable sources, web variants, and prompt records. Produce a bounded pilot before the rest.
+Hero: large precision product composition against matching bone, product right/center and clean negative space left. Catalog: consistent isolated equipment products. Product inspection: controlled local render or a reviewed Seedance shot, with still fallback. Never describe generated internals as real engineering. Keep originals/editable sources, web variants, and prompt records. Produce a bounded pilot before the rest.

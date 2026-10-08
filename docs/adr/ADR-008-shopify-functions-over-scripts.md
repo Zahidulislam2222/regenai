@@ -30,24 +30,24 @@ All live under `packages/app/extensions/<name>/` as independent Rust crates, uni
 
 ## Alternatives rejected
 
-1. **Shopify Scripts (Ruby, legacy).** Rejected — deprecated by Shopify in favour of Functions. No new features on the Scripts platform. Portfolio value rewards the current stack.
+1. **Shopify Scripts (Ruby, legacy).** Rejected — deprecated by Shopify in favour of Functions. No new features on the Scripts platform. Engineering value rewards the current stack.
 
 2. **Admin API-based discount rules** (dynamic code at checkout via price-rule + discount-code combos). Rejected — can't model contraindication logic or tier-matrix pricing. Also executes at the API layer, not checkout; attackers can bypass with direct API calls.
 
-3. **App Proxy endpoint** (custom HTTP route the storefront consults at cart/checkout time). Rejected — adds an external network hop, introduces a failure mode where checkout silently continues if the proxy times out. Functions run inside Shopify's checkout sandbox, no external call, no timeout-softness.
+3. **App Proxy endpoint** (custom HTTP route the storefront consults at cart/checkout time). Rejected — adds an external network hop, introduces a failure mode where checkout silently continues if the proxy times out. Functions run inside Shopify's isolated checkout runtime, no external call, no timeout-softness.
 
 4. **Client-side-only enforcement in the storefront** (JS blocks add-to-cart on contraindication conflict). Rejected — bypass-able with direct cart URL / Storefront API / Postman. Compliance-as-code (ADR-016) requires server-side enforcement that survives hostile clients.
 
 5. **JavaScript Functions instead of Rust.** Rejected for two reasons:
    - Rust compiles to a tiny, deterministic WASM bundle — Shopify's free tier caps WASM size; JS bundles bloat faster.
-   - Portfolio value — Rust Functions are the Shopify-recommended path + less common in portfolios than JS; they signal depth.
+   - Engineering value — Rust Functions are the Shopify-recommended path + less common in comparable implementations than JS; they signal depth.
    - Trade-off accepted: writing Rust is slower than JS, and the first-time cost of rustup + target install is real. ADR-006 multi-assistant governance allocates component-scaffolding to the AI agent with Rust context, which amortises that cost.
 
 ## Consequences
 
 **Positive**
 - Server-side enforcement — contraindication block + tiered pricing + delivery filter + discount cap all survive hostile client attempts.
-- Sub-100ms execution per Function (Shopify's runtime target for the WASM sandbox).
+- Sub-100ms execution per Function (Shopify's runtime target for the isolated WASM runtime).
 - Compliance-as-code — each Function is a reviewable + testable unit of business rule with Rust `cargo test` coverage.
 - One publish pipeline — `shopify app deploy` ships all 4 Functions together as extensions of the same Custom App (ADR-021 packages/app).
 

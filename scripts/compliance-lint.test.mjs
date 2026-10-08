@@ -6,7 +6,7 @@ const catalogPath = 'packages/storefront/app/content/recovery-catalog.json';
 const editorialPath = 'packages/storefront/app/content/recovery-editorial.json';
 const seedPath = 'scripts/catalog-seed/seed-config.json';
 
-test('current concept catalog and maintained demo copy pass the narrow red-flag guard', () => {
+test('current concept catalog and maintained product copy pass the narrow red-flag guard', () => {
   const {corpus, rules} = loadDemoCopy();
   assert.equal(rules.sources.length, 5);
   assert.deepEqual(auditDemoCopy(corpus, rules), []);
@@ -27,7 +27,7 @@ test('removing the no-sale publication notice fails', () => {
   const {corpus, rules} = loadDemoCopy();
   const candidate = structuredClone(corpus);
   candidate[seedPath].descriptionNotice = 'Illustrative portfolio demo with unverified details.';
-  assert.ok(auditDemoCopy(candidate, rules).some((finding) => finding.includes('missing required demo notice phrase')));
+  assert.ok(auditDemoCopy(candidate, rules).some((finding) => finding.includes('missing required product notice phrase')));
 });
 
 test('omitting a listed content source fails', () => {

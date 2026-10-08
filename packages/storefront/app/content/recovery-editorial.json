@@ -7,7 +7,7 @@
       "title": "Slow the pace.",
       "body": "Explore compact tools shaped for a moment of pause after a demanding day.",
       "image": "/media/pulse.png",
-      "alt": "Blue Pulse One form study"
+      "alt": "Blue Pulse One product design"
     },
     {
       "slug": "move",
@@ -16,7 +16,7 @@
       "title": "Keep moving.",
       "body": "Browse portable forms designed around simple, everyday movement routines.",
       "image": "/media/bands.png",
-      "alt": "Blue and bone Range Kit form study"
+      "alt": "Blue and bone Range Kit product design"
     },
     {
       "slug": "reset",
@@ -25,7 +25,7 @@
       "title": "Make space to reset.",
       "body": "Find objects imagined for a quieter transition between activity and rest.",
       "image": "/media/wrap.png",
-      "alt": "Restore Wrap form study"
+      "alt": "Restore Wrap product design"
     }
   ],
   "stories": [
@@ -33,13 +33,13 @@
       "slug": "making-pulse-one",
       "eyebrow": "DESIGN NOTES / 01",
       "title": "Making Pulse One",
-      "summary": "From a Blender form study to an object you can inspect on screen.",
+      "summary": "From a Blender product design to an object you can inspect on screen.",
       "image": "/media/pulse.png",
       "alt": "Original blue Pulse One render",
       "paragraphs": [
         "Pulse One began as a study in silhouette: a rounded contact head, a clean cylindrical body and a grip with a distinct visual rhythm. The original model was built in Blender, then prepared as a lightweight web asset.",
         "An interactive view lets visitors turn the form and notice details that a single photograph might miss. A still image remains available when motion is reduced or 3D rendering is unavailable.",
-        "This is a design study. Performance, materials, manufacturing details and availability need physical validation before they can be described as product facts."
+        "This is a product design. Performance, materials, manufacturing details and availability need physical validation before they can be described as product facts."
       ]
     },
     {
@@ -68,7 +68,7 @@
         "The finder helps you browse forms and routines. It does not assess a condition or recommend treatment."
       ],
       "shopifyParagraphs": [
-        "The published finder groups the six current design concepts by their Shopify product type. Choose a type to narrow the page; the collection also has separate design category links.",
+        "The published finder groups the six current products by their Shopify product type. Choose a type to narrow the page; the collection also has separate design category links.",
         "Your selected type stays on this page. It is not saved as a personal profile or sent to an AI service.",
         "The finder helps you browse forms and routines. It does not assess a condition or recommend treatment."
       ]
@@ -91,31 +91,31 @@
     "journalCardAction": "Read article",
     "journalMoreAction": "Explore more design notes",
     "productDesignTitle": "Design direction",
-    "productDesignDetail": "The image shows an original form study. Materials, performance, included items and available options have not been confirmed.",
+    "productDesignDetail": "The image shows an original product design. Materials, performance, included items and available options have not been confirmed.",
     "productAvailability": "In development · Ordering opens after product details and availability are confirmed.",
     "productDesignAction": "Explore the design notes",
     "shopifyDesignNoteTitle": "Design note",
-    "shopifySpecsTitle": "Illustrative design details",
+    "shopifySpecsTitle": "design details",
     "shopifySpecsNotice": "These are design intentions, not verified physical specifications. Materials, dimensions, safety and performance still need validation.",
-    "shopifyPriceLabel": "Illustrative development-store price",
-    "shopifyRelatedTitle": "More concepts in this collection",
+    "shopifyPriceLabel": "development-store price",
+    "shopifyRelatedTitle": "More products in this collection",
     "shopifyViewImage": "View image",
-    "shopifyCompareSelect": "Compare concept",
+    "shopifyCompareSelect": "Compare product",
     "shopifyCompareRemove": "Remove from comparison",
-    "shopifyCompareTitle": "Compare the concepts",
-    "shopifyCompareEyebrow": "Design studies / side by side",
-    "shopifyComparePrompt": "Choose concepts to see their design intentions side by side.",
-    "shopifyCompareScrollHint": "Scroll sideways to view each concept.",
-    "shopifyCompareDisclosure": "Illustrative designs and development-store prices. Physical specifications and ordering are not confirmed.",
+    "shopifyCompareTitle": "Compare the products",
+    "shopifyCompareEyebrow": "product designs / side by side",
+    "shopifyComparePrompt": "Choose products to see their design intentions side by side.",
+    "shopifyCompareScrollHint": "Scroll sideways to view each product.",
+    "shopifyCompareDisclosure": "designs and development-store prices. Physical specifications and ordering are not confirmed.",
     "shopifyCompareCategory": "Design category",
     "shopifyCompareType": "Shopify product type",
     "shopifyCompareOptions": "Listed options",
     "shopifyComparePrice": "First listed option price",
     "shopifyCompareAvailability": "Storefront availability",
     "shopifyCompareUnknown": "Not verified",
-    "shopifyCompareView": "View concept",
+    "shopifyCompareView": "View product",
     "shopifyCompareDetail": "Design detail",
-    "shopifyCompareAvailable": "Shopify marks this concept available; ordering is closed",
+    "shopifyCompareAvailable": "Shopify marks this product available; ordering is closed",
     "shopifyCompareUnavailable": "Unavailable",
     "shopifyCartLink": "Cart",
     "shopifyCartCountLabel": "items",
@@ -123,16 +123,37 @@
     "shopifyCartIncrease": "Increase quantity of",
     "shopifyCartQuantity": "Quantity",
     "shopifyCartRemove": "Remove",
-    "shopifySandboxCollectionNotice": "Original design studies. Local development-store test orders only.",
-    "shopifySandboxCollectionStatus": "DESIGN STUDIES / TEST ORDERS ONLY",
-    "shopifySandboxCompareDisclosure": "Illustrative designs and development-store prices. Physical specifications remain unverified; local test orders only.",
+    "shopifySandboxCollectionNotice": "Original product designs. Local development-store test orders only.",
+    "shopifySandboxCollectionStatus": "CHECKOUT RESTRICTED",
+    "shopifySandboxCompareDisclosure": "designs and development-store prices. Physical specifications remain unverified; local test orders only.",
     "shopifySandboxCompareAvailable": "Available for local development-store test orders",
     "shopifyFinderInviteEyebrow": "EXPLORE BY PRODUCT TYPE",
     "shopifyFinderInviteTitle": "Find a place to begin.",
-    "shopifyFinderInviteBody": "Browse the six published design concepts by Shopify product type. The finder does not assess your body or recommend treatment.",
+    "shopifyFinderInviteBody": "Browse the six published products by Shopify product type. The finder does not assess your body or recommend treatment.",
     "shopifyFinderInviteAction": "Explore the finder",
     "cartTitle": "Good things take care.",
-    "cartBody": "Ordering is not open while product details, inventory and fulfillment are being confirmed."
+    "cartBody": "Ordering is not open while product details, inventory and fulfillment are being confirmed.",
+    "shopifyStatusDetailsUnavailable": "Details unavailable",
+    "shopifyStatusClosed": "Ordering closed",
+    "shopifyStatusUnavailable": "Unavailable",
+    "shopifyImageAltSuffix": "product render",
+    "shopifyProductFallback": "Recovery object",
+    "shopifyCollectionEmpty": "The collection is being prepared.",
+    "shopifyCollectionEyebrow": "THE EVERYDAY COLLECTION",
+    "shopifyCollectionBody": "Explore the collection. Ordering is currently closed.",
+    "shopifyFinderEyebrow": "THE RECOVERY FINDER",
+    "shopifyProductEyebrow": "PRODUCT DETAILS",
+    "shopifyProductCollection": "THE COLLECTION",
+    "shopifyOrderingClosed": "Ordering is currently closed.",
+    "shopifyRestrictedCheckout": "Checkout is restricted to authorized development-store verification.",
+    "shopifyCartAdd": "Add to cart",
+    "shopifyCartView": "View cart",
+    "shopifyEvidenceAction": "Read product information",
+    "shopifyCartHeading": "Your cart",
+    "shopifyCartDescription": "This cart is connected to the Shopify development store. It cannot place a fulfilled retail order.",
+    "shopifyCartEmpty": "Your cart is empty.",
+    "shopifyCartImageAlt": "Product image",
+    "shopifyCartProductFallback": "Product"
   },
   "questions": [
     {
@@ -151,6 +172,20 @@
       "answer": "Results follow the preferences you select and the attributes listed for each form. The matching rules are deterministic and your answers stay in this page."
     }
   ],
-  "productQuestionIds": ["ordering", "medical"],
-  "comparisonLimit": 2
+  "productQuestionIds": [
+    "ordering",
+    "medical"
+  ],
+  "comparisonLimit": 2,
+  "typeLabels": {
+    "Posture companion concept": "Posture companion"
+  },
+  "imageLabels": {
+    "Illustrative render of Pulse One": "Product render of Pulse One",
+    "Illustrative render of Form Roller": "Product render of Form Roller",
+    "Illustrative render of Range Kit": "Product render of Range Kit",
+    "Illustrative render of Restore Wrap": "Product render of Restore Wrap",
+    "Illustrative render of Point Duo": "Product render of Point Duo",
+    "Illustrative render of Align Pebble": "Product render of Align Pebble"
+  }
 }

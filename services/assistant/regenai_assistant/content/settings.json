@@ -1,0 +1,97 @@
+{
+  "public_origin": "http://127.0.0.1:18100",
+  "base_path": "/assistant",
+  "bind_host": "127.0.0.1",
+  "bind_port": 18100,
+  "database_path": "memory/assistant-data/assistant.sqlite3",
+  "encryption_key": "",
+  "owner_password": "",
+  "operator_token": "",
+  "secure_cookies": false,
+  "session_seconds": 604800,
+  "retention_days": 7,
+  "max_body_bytes": 1500000,
+  "max_message_chars": 4000,
+  "max_history_messages": 12,
+  "max_output_tokens": 700,
+  "max_image_bytes": 1000000,
+  "max_sessions": 2000,
+  "session_ai_turn_limit": 8,
+  "request_timeout_seconds": 35,
+  "sqlite_timeout_seconds": 10,
+  "rate_limits": {
+    "session": [
+      20,
+      3600
+    ],
+    "login": [
+      5,
+      900
+    ],
+    "chat": [
+      10,
+      60
+    ],
+    "jobs": [
+      10,
+      60
+    ],
+    "web": [
+      5,
+      60
+    ],
+    "mcp": [
+      30,
+      60
+    ],
+    "mutations": [
+      60,
+      60
+    ]
+  },
+  "refund_currencies": [
+    "USD"
+  ],
+  "worker_poll_seconds": 5,
+  "worker_lease_seconds": 120,
+  "worker_retry_seconds": 60,
+  "worker_max_attempts": 3,
+  "ai_enabled": false,
+  "ai_api_key": "",
+  "ai_base_url": "https://openrouter.ai/api/v1",
+  "ai_model": "",
+  "input_price_per_million": "2.00",
+  "output_price_per_million": "10.00",
+  "daily_budget_usd": "0.25",
+  "total_budget_usd": "2.00",
+  "max_prompt_bytes": 18000,
+  "image_token_reserve": 20000,
+  "web_max_bytes": 80000,
+  "web_allowed_hosts": [
+    "shopify.dev",
+    "help.shopify.com",
+    "www.shopify.com"
+  ],
+  "shopify_api_version": "2026-10",
+  "shopify_client_id": "",
+  "shopify_client_secret": "",
+  "shopify_scopes": [
+    "read_products",
+    "write_orders"
+  ],
+  "google_client_id": "",
+  "google_client_secret": "",
+  "live_actions_enabled": false,
+  "mcp_protocol_version": "2025-11-25",
+  "app_name": "RegenAI Support Studio",
+  "app_version": "0.1.0",
+  "mcp_token": "",
+  "max_memory_chars": 2000,
+  "max_web_context_chars": 2500,
+  "maintenance_interval_seconds": 3600,
+  "max_records_per_workspace": 1000,
+  "max_records_total": 40000,
+  "max_jobs_per_workspace": 30,
+  "max_jobs_total": 3000,
+  "trusted_proxy_ips": ""
+}

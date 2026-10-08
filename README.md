@@ -1,16 +1,19 @@
 # RegenAI
 
+Python Support Studio and the matching storefront assistant are deployed. Verified local/public flows include approvals, handoff, memory, durable tasks and Shopify reads. Two real Claude checks passed for Spanish memory/image understanding and the $89 recommendation, costing $0.01051. AI is enabled with bounded budgets; real refund/email integration remains pending and external actions are disabled. Current verification details are in [build status](docs/BUILD-STATUS.md) and the [operator guide](docs/ASSISTANT.md).
+
 **Headless Shopify commerce platform for recovery and wellness products** — a live 3D visual storefront with Hydrogen integration in progress, a merchant app on Cloudflare Workers, and Shopify Functions written in Rust.
 
-**Live demo:** https://regenai.zahidul-islam.com
+**Live application:** https://regenai.zahidul-islam.com
 
-> RegenAI is a client-facing portfolio demo. Products are fictional, nothing is sold, no payment can be made, and no clinical claim is made. The visual storefront is live; Shopify integration is in progress. See [build status](docs/BUILD-STATUS.md) for exactly what is verified.
+> RegenAI is a client-facing application. Ordering is closed, no payment is collected, and no clinical claim is made. The visual storefront is live; Shopify integration is in progress. See [build status](docs/BUILD-STATUS.md) for exactly what is verified.
 
 ## What is in this repository
 
 | Part | Package | Stack | Status |
 |---|---|---|---|
 | **Frontend** — customer storefront | [`packages/storefront`](packages/storefront/README.md) | React 18, TypeScript, Three.js, Vite; Hydrogen 2026.4 + React Router 7 | Visual storefront **live**; Hydrogen integration **in progress** |
+| **Support assistant** | [`services/assistant`](services/assistant/README.md) | Python, FastAPI, encrypted SQLite, Claude MCP | Live support workflow; real refunds/email disabled |
 | **Backend** — merchant app | [`packages/app`](packages/app/README.md) | React Router 7 on Cloudflare Workers, D1, KV, Polaris | Scaffold built; security release blockers open |
 | **Backend** — Shopify Functions | [`packages/app/extensions`](packages/app/extensions/README.md) | Rust → WebAssembly | 4 Functions built; 47/47 unit tests pass |
 | Design system | [`packages/ui`](packages/ui/README.md) | React, Radix, Tailwind v4, Storybook | 15 components built |
@@ -40,7 +43,7 @@ Shopify owns catalog, cart, checkout, orders and payments; RegenAI never touches
 | **Scale:** 1M+ concurrent shoppers | CDN-first caching, stateless storefront, checkout on Shopify, queue-backed webhooks — [SCALABILITY.md](docs/SCALABILITY.md) | Capacity model documented; load tests not yet run |
 | **Availability:** 99.9% target, 99.0% floor | Redundant origin, SLOs, error budgets, rollback, DR — [RELIABILITY.md](docs/RELIABILITY.md) | Release-archive restore verified; rollback not yet drilled; uptime not yet measured |
 | **Security** | Threat model, strict CSP, hardened containers, secret scanning — [SECURITY-MODEL.md](docs/SECURITY-MODEL.md) | Frontend controls verified; merchant-app blockers listed openly |
-| **Privacy & law** | Data minimisation; PCI, GDPR, US state privacy, health-product rules mapped — [COMPLIANCE.md](docs/COMPLIANCE.md) | Live demo collects no personal data; legal review required before real sales |
+| **Privacy & law** | Data minimisation; PCI, GDPR, US state privacy, health-product rules mapped — [COMPLIANCE.md](docs/COMPLIANCE.md) | Assistant messages and preferences are retained with explicit erase controls; legal review required before real sales |
 | **Accessibility** | WCAG 2.2 AA target — [ACCESSIBILITY.md](docs/ACCESSIBILITY.md) | Automated axe: 0 violations; keyboard and reduced-motion checks pass |
 
 These are engineering targets with an explicit evidence trail. Nothing here claims capacity, uptime or legal compliance that has not been measured or reviewed.

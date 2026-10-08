@@ -9,7 +9,7 @@ Report privately through the contact options on the maintainer's [GitHub profile
 Include, where possible:
 
 - the affected component (storefront, merchant app, Shopify Function, deployment configuration, CI)
-- steps to reproduce or a proof of concept
+- steps to reproduce or a proof of product
 - the impact you believe it has
 - any suggested fix
 
@@ -22,21 +22,21 @@ What to expect:
 | Fix or mitigation for confirmed high/critical issues | as fast as practical; status updates at least every 14 days |
 | Credit | offered in the advisory unless you prefer to stay anonymous |
 
-This is a portfolio project maintained by an individual; there is no bug bounty.
+This is a project project maintained by an individual; there is no bug bounty.
 
 ## Scope
 
 In scope:
 
 - source code in this repository
-- the live demo at `https://regenai.zahidul-islam.com`
+- the live application at `https://regenai.zahidul-islam.com`
 - the merchant-app development deployment on `workers.dev` (known gaps are listed in [SECURITY-MODEL.md](docs/SECURITY-MODEL.md#4-known-gaps-and-release-blockers); reports of new issues are welcome)
 - CI/CD workflow configuration in `.github/`
 
 Out of scope:
 
 - Shopify, Cloudflare and GitHub platforms themselves (report to those vendors)
-- denial-of-service or load testing against the live demo
+- denial-of-service or load testing against the live application
 - social engineering, physical attacks, or findings requiring a compromised device
 - automated scanner output without a demonstrated impact
 
@@ -46,7 +46,7 @@ Please test only against your own accounts and data. Do not access, modify or de
 
 | Version | Supported |
 |---|---|
-| `main` branch and the live demo | Yes |
+| `main` branch and the live application | Yes |
 | Feature branches and historical commits | No |
 
 ## Security documentation

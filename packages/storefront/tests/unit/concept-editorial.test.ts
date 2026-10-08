@@ -14,8 +14,8 @@ describe('owned Shopify concept editorial', () => {
   it('uses validated local design notes only for the exact seeded identity', () => {
     const pulse = identity('pulse');
     const concept = getConceptEditorial(pulse);
-    expect(concept?.detail).toContain('original concept');
-    expect(concept?.specs).toContainEqual({label: 'Status', value: 'Illustrative product; not for sale'});
+    expect(concept?.detail).toContain('original product');
+    expect(concept?.specs).toContainEqual({label: 'Status', value: 'product; not for sale'});
     const source = products.find((item) => item.id === 'pulse');
     if (!source) throw new Error('Missing test concept');
     expect(getConceptEditorial({...pulse,

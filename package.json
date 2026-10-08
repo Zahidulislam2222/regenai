@@ -2,7 +2,7 @@
   "name": "regenai",
   "private": true,
   "version": "0.0.0",
-  "description": "Shopify-focused recovery commerce demo: live React/Three.js frontend, with Hydrogen, merchant application and Shopify Functions integration in progress.",
+  "description": "Shopify recovery storefront and Python support assistant, with merchant application and Shopify Functions integration in progress.",
   "license": "MIT",
   "author": "Zahidul Islam <muhammadzahidulislam2222@gmail.com>",
   "repository": {
