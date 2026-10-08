@@ -81,7 +81,7 @@ These are enforced in code review and, where possible, in tests. Status per rule
 
 | Tier | Target infrastructure | Type of change from previous tier |
 |---|---|---|
-| **T0 — today** | Hydrogen storefront and Python assistant: two containers on one host behind Cloudflare and Caddy; encrypted SQLite for assistant state | — |
+| **T0 — today** | Hydrogen storefront and Python assistant: two containers on one host behind Cloudflare and Caddy; SQLite with sensitive record payloads encrypted | — |
 | **T1 — 10k** | Hydrogen containers (≥2) behind a load balancer; Cloudflare caching of public pages; external uptime probes | Infrastructure addition; application boundaries from §5 must already exist |
 | **T2 — 100k** | Independent hosts in ≥2 availability zones or a managed container platform with autoscaling; shared session/cache store; queue-backed webhooks; centralised metrics and alerting | Infrastructure addition + configuration |
 | **T3 — 1M+** | Multi-region origin (US + EU) with health-checked load balancing and failover; autoscaling on CPU and request latency; pre-launch cache warming; Shopify Plus with a coordinated capacity review for planned flash sales; distributed load testing before each major event | Infrastructure addition, provider/commercial change; application, storage and regional-consistency changes verified before promotion |

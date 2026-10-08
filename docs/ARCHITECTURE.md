@@ -11,7 +11,7 @@ flowchart LR
   Router --> Web[Hydrogen Node storefront]
   Router --> Support[Python FastAPI assistant]
   Web --> Catalog[Shopify Storefront API]
-  Support --> DB[(Encrypted SQLite and durable jobs)]
+  Support --> DB[(SQLite: encrypted payloads and durable jobs)]
   Support --> AI[Configured OpenRouter model]
   Support --> Inbox[Gmail label-scoped reads]
   Support --> Orders[Shopify support app]

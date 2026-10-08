@@ -4,6 +4,8 @@ Shopify storefront and Python customer support assistant by **Zahidul Islam**.
 
 [Open the storefront](https://regenai.zahidul-islam.com) · [Open Support Studio](https://regenai.zahidul-islam.com/assistant) · [Documentation](docs/README.md)
 
+[Technical overview](my-project-view/technical-overview.md) · [Reviewed PDF](my-project-view/RegenAI%20%E2%80%94%20Build%20Snapshot.pdf)
+
 The live Hydrogen storefront reads six owned Shopify catalog products and retains the original cream, navy and cobalt design, product photography and interactive 3D scenes. Support Studio adds customer chat, persistent memory, policy recommendations, owner approvals, human handoff and durable tasks. Public ordering is closed. Refunds and outbound customer email remain disabled until their complete external workflow is verified.
 
 ## Components and current scope
@@ -11,7 +13,7 @@ The live Hydrogen storefront reads six owned Shopify catalog products and retain
 | Component | Technology | Current state |
 |---|---|---|
 | [Storefront](packages/storefront/README.md) | Hydrogen, React Router 7, React, TypeScript, Three.js | Live Shopify catalog, discovery, product pages, finder and informational routes |
-| [Support assistant](services/assistant/README.md) | Python 3.12, FastAPI, encrypted SQLite | Live chat and owner console; isolated workspaces, approvals, audit and durable worker |
+| [Support assistant](services/assistant/README.md) | Python 3.12, FastAPI, SQLite with encrypted payloads | Live chat and owner console; isolated workspaces, approvals, audit and durable worker |
 | Connections | Shopify Admin API, Gmail API | Installed support app with order read/write scopes; token renewal, Gmail support-label reads and restart persistence verified |
 | AI | Configured model through OpenRouter | Two authorized checks passed: Spanish memory/image understanding and the $89 support recommendation |
 | [Merchant app](packages/app/README.md) | React Router, Cloudflare Workers, D1 | Local authentication/privacy repairs tested; older public Worker routes disabled; remote release remains due |
@@ -70,7 +72,7 @@ npm run lint
 npm run build
 python -m pytest services/assistant/tests -q
 python -m ruff check services/assistant
-python -m mypy services/assistant/regenai_assistant
+(cd services/assistant && python -m mypy --no-incremental regenai_assistant)
 python -m bandit -r services/assistant/regenai_assistant -q
 node --test .github/tests/publication-workflows.test.mjs
 ```

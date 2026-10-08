@@ -28,7 +28,7 @@ Kindred Grove (the author's prior project project) is built on Liquid + Theme Bl
 1. **No shared component system with the future mobile app.** Liquid doesn't serialize to React Native; in Phase 2 we'd rebuild every component twice.
 2. **Complex client-side interactions** (Web Bluetooth posture-sensor pairing, multi-step protocol UI, recommendation-engine query UI) are awkward in Liquid + Web Components vs. React's state + effect primitives.
 3. **Metaobject-driven editorial at scale** (200+ clinical articles Phase 2, biomarker dashboards Phase 3) needs a CMS like Sanity alongside metaobjects; Hydrogen integrates cleanly via `@sanity/client`, Liquid themes need iframe / app-proxy hacks.
-4. **Agency-tier AI workflow demonstration** benefits from TypeScript + React, which is the industry lingua franca for frontend engineering teams. A Liquid-only project signals "Shopify specialist"; Hydrogen broadens the reach without losing Shopify depth.
+4. **AI workflow implementation** benefits from TypeScript + React, which lets frontend teams work within a familiar component and type system. Hydrogen supports that integration alongside Shopify commerce APIs.
 5. **B2B + Markets Catalog segmentation** in Liquid requires more conditional rendering in templates; Hydrogen's loader pattern queries the right market/catalog context and passes typed data to components — cleaner and testable.
 6. **Edge-personalization (Cloudflare Workers middleware for A/B, geo-targeting, PDP variant)** is natural on a headless architecture. Theme stores do A/B via localStorage or external SDKs that add render-blocking JS.
 

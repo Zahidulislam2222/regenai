@@ -15,7 +15,7 @@ Launch from the service directory with `python -m dotenv -f .env run -- regenai-
 ```bash
 python -m pytest -q
 python -m ruff check .
-python -m mypy regenai_assistant
+python -m mypy --no-incremental regenai_assistant
 python -m bandit -r regenai_assistant -q
 python -m pip wheel --no-deps . --wheel-dir dist
 python sync_theme.py --check
