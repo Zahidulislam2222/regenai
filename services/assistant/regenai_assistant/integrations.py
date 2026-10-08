@@ -1,17 +1,18 @@
 """Restricted platform adapters. Credentials stay encrypted and server-side."""
 
 import base64
+import math
 import re
 import time
 from datetime import UTC, datetime
 from decimal import Decimal
 from email.message import EmailMessage
 from email.utils import parseaddr
-from typing import Any
+from typing import Any, Literal
 from urllib.parse import urlsplit
 
 import httpx
-from pydantic import Field, SecretStr
+from pydantic import Field, SecretStr, ValidationError, model_validator
 
 from .config import Settings, content
 from .models import StrictModel, TicketInput
@@ -28,7 +29,21 @@ class ConnectionInput(StrictModel):
     client_id: str = Field(default="", max_length=200)
     client_secret: SecretStr = SecretStr("")
     org_id: str = Field(default="", max_length=100)
-    expires_at: float = 0
+    expires_at: float = Field(default=0, ge=0, allow_inf_nan=False, strict=True)
+    oauth_grant_type: Literal["refresh_token", "client_credentials"] = "refresh_token"
+
+    @model_validator(mode="after")
+    def validate_grant(self) -> "ConnectionInput":
+        if self.oauth_grant_type == "client_credentials" and (
+            self.provider != "shopify"
+            or not self.client_id.strip()
+            or not self.client_secret.get_secret_value().strip()
+            or self.expires_at <= 0
+        ):
+            raise ValueError(
+                "Shopify client credentials require client ID, secret and token expiry"
+            )
+        return self
 
 
 class ConnectionError(Exception):
@@ -41,6 +56,7 @@ class Integrations:
         self.store = store
         self.workflow = workflow
         self.catalog = content("connectors.json")
+        self.oauth = content("oauth.json")
 
     def validate_url(self, provider: str, supplied: str) -> str:
         spec = self.catalog.get(provider)
@@ -101,6 +117,15 @@ class Integrations:
         if not credential:
             raise ConnectionError("This service has no configured credentials")
         self.validate_url(provider, credential["base_url"])
+        if credential.get("oauth_grant_type") == "client_credentials":
+            try:
+                ConnectionInput.model_validate(
+                    {k: v for k, v in credential.items() if k in ConnectionInput.model_fields}
+                )
+            except ValidationError as exc:
+                raise ConnectionError(
+                    "Stored Shopify app credentials or expiry are invalid"
+                ) from exc
         if credential.get("expires_at") and credential["expires_at"] <= time.time():
             credential = await self.refresh(provider, credential)
         return credential
@@ -109,36 +134,50 @@ class Integrations:
         spec = self.catalog[provider]
         token_url = spec.get("oauth_token_url")
         if provider == "shopify":
-            token_url = credential["base_url"] + "/admin/oauth/access_token"
-        if not token_url or not credential.get("refresh_token"):
+            token_url = credential["base_url"] + self.oauth["shopify_token_path"]
+        grant = credential.get("oauth_grant_type", "refresh_token")
+        client_grant = provider == "shopify" and grant == "client_credentials"
+        if not token_url or (not client_grant and not credential.get("refresh_token")):
             raise ConnectionError(
                 "Token expired; check token type, revocation and installation, "
                 "then reconnect using the owner's consent"
             )
+        payload = {
+            "grant_type": grant,
+            "client_id": credential["client_id"],
+            "client_secret": credential["client_secret"],
+        }
+        if not client_grant:
+            payload["refresh_token"] = credential["refresh_token"]
+        elif not payload["client_id"] or not payload["client_secret"]:
+            raise ConnectionError("Shopify token renewal requires the installed app's credentials")
         async with httpx.AsyncClient(
             timeout=self.settings.request_timeout_seconds, follow_redirects=False, trust_env=False
         ) as client:
             response = await client.post(
                 token_url,
-                data={
-                    "grant_type": "refresh_token",
-                    "refresh_token": credential["refresh_token"],
-                    "client_id": credential["client_id"],
-                    "client_secret": credential["client_secret"],
-                },
+                data=payload,
             )
         if response.status_code != 200:
             raise ConnectionError(
                 "Refresh rejected; verify app credentials, consent and revocation"
             )
         body = response.json()
-        if not body.get("access_token"):
+        if not isinstance(body.get("access_token"), str) or not body["access_token"].strip():
             raise ConnectionError("Provider refresh did not return an access token")
+        lifetime = body.get("expires_in")
+        if (
+            isinstance(lifetime, bool)
+            or not isinstance(lifetime, (int, float))
+            or not math.isfinite(lifetime)
+            or lifetime <= 0
+        ):
+            raise ConnectionError("Provider token lifetime is invalid")
         updated = {
             **credential,
             "access_token": body["access_token"],
             "refresh_token": body.get("refresh_token", credential["refresh_token"]),
-            "expires_at": time.time() + body["expires_in"] if body.get("expires_in") else 0,
+            "expires_at": time.time() + lifetime,
         }
         self.store.put("merchant", "connection", provider, updated, credential["version"])
         self.store.audit("merchant", "token_refreshed", {"provider": provider})

@@ -122,6 +122,14 @@ function renderConnections() {
   const form = $('#connection-form');
   const isOwner = workspace.role === 'owner';
   form.hidden = !isOwner; $('#connection-access').hidden = isOwner;
+  if (!form.elements.oauth_grant_type) {
+    const label = node('label', config.ui.connection_auth.label);
+    const select = node('select'); select.name = 'oauth_grant_type';
+    for (const [value, text] of Object.entries(config.ui.connection_auth.grants)) {
+      const option = node('option', text); option.value = value; select.append(option);
+    }
+    label.append(select); form.querySelector('[type=submit]').before(label);
+  }
   form.elements.provider.replaceChildren();
   if (!isOwner) return;
   for (const connection of workspace.connections) {

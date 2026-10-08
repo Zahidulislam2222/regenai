@@ -40,7 +40,7 @@ flowchart LR
 | AI provider | Configured OpenRouter upstream model | Server-only credentials and bounded ledger; two authorized inference checks passed; AI enabled, external actions disabled |
 | Claude client | Recommendation-only stdio-to-HTTPS MCP bridge | Actual handshake, five tools and private rulebook read verified |
 
-Caddy routes support requests to the Python service and commerce requests to Hydrogen. Both containers use read-only filesystems and loopback host ports. The backend has a separate durable writable data directory. Source, image identities and compiled artifacts have verified local/live hashes; [Support Studio](ASSISTANT.md) documents operational boundaries and client prerequisites. No real refund or customer email has been verified; live actions remain disabled.
+Caddy routes support requests to the Python service and commerce requests to Hydrogen. Both containers use read-only filesystems and loopback host ports. The backend has a separate durable writable data directory. Source, image identities and compiled artifacts have verified local/live hashes; [Support Studio](ASSISTANT.md) documents operational boundaries and client prerequisites. The dedicated Shopify support app uses only order read/write scopes; its expiring token renews through an explicitly selected client-credentials grant. Public reads and restart persistence passed. Gmail is selected with a dedicated support label, while server OAuth consent remains in progress. No real refund or customer email has been verified; live actions remain disabled.
 
 ### 2.2 Backend — merchant app (`packages/app`)
 

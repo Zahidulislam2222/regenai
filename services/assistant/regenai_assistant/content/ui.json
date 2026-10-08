@@ -1,4 +1,11 @@
 {
+  "connection_auth": {
+    "label": "Token renewal method",
+    "grants": {
+      "refresh_token": "Refresh token or non-expiring API key",
+      "client_credentials": "Shopify app credentials (own organization)"
+    }
+  },
   "panels": {
     "inbox": "Support inbox",
     "chat": "AI assistant",
