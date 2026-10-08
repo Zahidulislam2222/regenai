@@ -1,0 +1,191 @@
+{
+  "categories": [
+    {
+      "slug": "release",
+      "filter": "Release",
+      "label": "01 / RELEASE",
+      "title": "Slow the pace.",
+      "body": "Explore compact tools shaped for a moment of pause after a demanding day.",
+      "image": "/media/pulse.png",
+      "alt": "Blue Pulse One product design"
+    },
+    {
+      "slug": "move",
+      "filter": "Move",
+      "label": "02 / MOVE",
+      "title": "Keep moving.",
+      "body": "Browse portable forms designed around simple, everyday movement routines.",
+      "image": "/media/bands.png",
+      "alt": "Blue and bone Range Kit product design"
+    },
+    {
+      "slug": "reset",
+      "filter": "Reset",
+      "label": "03 / RESET",
+      "title": "Make space to reset.",
+      "body": "Find objects imagined for a quieter transition between activity and rest.",
+      "image": "/media/wrap.png",
+      "alt": "Restore Wrap product design"
+    }
+  ],
+  "stories": [
+    {
+      "slug": "making-pulse-one",
+      "eyebrow": "DESIGN NOTES / 01",
+      "title": "Making Pulse One",
+      "summary": "From a Blender product design to an object you can inspect on screen.",
+      "image": "/media/pulse.png",
+      "alt": "Original blue Pulse One render",
+      "paragraphs": [
+        "Pulse One began as a study in silhouette: a rounded contact head, a clean cylindrical body and a grip with a distinct visual rhythm. The original model was built in Blender, then prepared as a lightweight web asset.",
+        "An interactive view lets visitors turn the form and notice details that a single photograph might miss. A still image remains available when motion is reduced or 3D rendering is unavailable.",
+        "This is a product design. Performance, materials, manufacturing details and availability need physical validation before they can be described as product facts."
+      ]
+    },
+    {
+      "slug": "a-calmer-product-page",
+      "eyebrow": "DESIGN NOTES / 02",
+      "title": "A calmer way to explore",
+      "summary": "Why the collection puts clear choices and honest details ahead of noise.",
+      "image": "/media/lab.webp",
+      "alt": "Calm interior used in the RegenAI design direction",
+      "paragraphs": [
+        "A useful product page should answer simple questions first: what is the object, what choices are available and what is still unknown. We designed the collection around those decisions rather than urgency or unsupported promises.",
+        "The visual language uses warm neutral space and a strong blue accent so the form stays easy to see. Supporting information is grouped close to the product instead of scattered across the page.",
+        "As real merchandise is finalized, photographs, specifications, prices and availability will come from the product source of truth."
+      ]
+    },
+    {
+      "slug": "how-the-finder-works",
+      "eyebrow": "DESIGN NOTES / 03",
+      "title": "How the finder works",
+      "summary": "A clear way to browse the current collection.",
+      "image": "/media/roller.png",
+      "alt": "Original Form Roller render",
+      "paragraphs": [
+        "The finder starts with three choices: where you want to focus, what your day looks like and the kind of routine you prefer. It then ranks the collection using a fixed set of product attributes.",
+        "Each result explains why it appeared. The answers stay on the page and are not saved as a personal profile or sent to an AI service.",
+        "The finder helps you browse forms and routines. It does not assess a condition or recommend treatment."
+      ],
+      "shopifyParagraphs": [
+        "The published finder groups the six current products by their Shopify product type. Choose a type to narrow the page; the collection also has separate design category links.",
+        "Your selected type stays on this page. It is not saved as a personal profile or sent to an AI service.",
+        "The finder helps you browse forms and routines. It does not assess a condition or recommend treatment."
+      ]
+    }
+  ],
+  "ui": {
+    "categoriesEyebrow": "EXPLORE BY ROUTINE",
+    "categoriesTitle": "Find your way in.",
+    "categoriesIntro": "Three starting points for browsing the collection.",
+    "categoryAction": "Explore",
+    "journalEyebrow": "FROM THE STUDIO",
+    "journalTitle": "The thinking behind the form.",
+    "journalAll": "All design notes",
+    "journalLeadAction": "Read the story",
+    "questionsEyebrow": "GOOD TO KNOW",
+    "questionsTitle": "Questions, answered clearly.",
+    "journalPageEyebrow": "REGENAI / DESIGN NOTES",
+    "journalPageTitle": "Ideas behind the objects.",
+    "journalPageIntro": "A closer look at the product forms, digital craft and decisions shaping the collection.",
+    "journalCardAction": "Read article",
+    "journalMoreAction": "Explore more design notes",
+    "productDesignTitle": "Design direction",
+    "productDesignDetail": "The image shows an original product design. Materials, performance, included items and available options have not been confirmed.",
+    "productAvailability": "In development · Ordering opens after product details and availability are confirmed.",
+    "productDesignAction": "Explore the design notes",
+    "shopifyDesignNoteTitle": "Design note",
+    "shopifySpecsTitle": "design details",
+    "shopifySpecsNotice": "These are design intentions, not verified physical specifications. Materials, dimensions, safety and performance still need validation.",
+    "shopifyPriceLabel": "development-store price",
+    "shopifyRelatedTitle": "More products in this collection",
+    "shopifyViewImage": "View image",
+    "shopifyCompareSelect": "Compare product",
+    "shopifyCompareRemove": "Remove from comparison",
+    "shopifyCompareTitle": "Compare the products",
+    "shopifyCompareEyebrow": "product designs / side by side",
+    "shopifyComparePrompt": "Choose products to see their design intentions side by side.",
+    "shopifyCompareScrollHint": "Scroll sideways to view each product.",
+    "shopifyCompareDisclosure": "designs and development-store prices. Physical specifications and ordering are not confirmed.",
+    "shopifyCompareCategory": "Design category",
+    "shopifyCompareType": "Shopify product type",
+    "shopifyCompareOptions": "Listed options",
+    "shopifyComparePrice": "First listed option price",
+    "shopifyCompareAvailability": "Storefront availability",
+    "shopifyCompareUnknown": "Not verified",
+    "shopifyCompareView": "View product",
+    "shopifyCompareDetail": "Design detail",
+    "shopifyCompareAvailable": "Shopify marks this product available; ordering is closed",
+    "shopifyCompareUnavailable": "Unavailable",
+    "shopifyCartLink": "Cart",
+    "shopifyCartCountLabel": "items",
+    "shopifyCartDecrease": "Decrease quantity of",
+    "shopifyCartIncrease": "Increase quantity of",
+    "shopifyCartQuantity": "Quantity",
+    "shopifyCartRemove": "Remove",
+    "shopifySandboxCollectionNotice": "Original product designs. Local development-store test orders only.",
+    "shopifySandboxCollectionStatus": "CHECKOUT RESTRICTED",
+    "shopifySandboxCompareDisclosure": "designs and development-store prices. Physical specifications remain unverified; local test orders only.",
+    "shopifySandboxCompareAvailable": "Available for local development-store test orders",
+    "shopifyFinderInviteEyebrow": "EXPLORE BY PRODUCT TYPE",
+    "shopifyFinderInviteTitle": "Find a place to begin.",
+    "shopifyFinderInviteBody": "Browse the six published products by Shopify product type. The finder does not assess your body or recommend treatment.",
+    "shopifyFinderInviteAction": "Explore the finder",
+    "cartTitle": "Good things take care.",
+    "cartBody": "Ordering is not open while product details, inventory and fulfillment are being confirmed.",
+    "shopifyStatusDetailsUnavailable": "Details unavailable",
+    "shopifyStatusClosed": "Ordering closed",
+    "shopifyStatusUnavailable": "Unavailable",
+    "shopifyImageAltSuffix": "product render",
+    "shopifyProductFallback": "Recovery object",
+    "shopifyCollectionEmpty": "The collection is being prepared.",
+    "shopifyCollectionEyebrow": "THE EVERYDAY COLLECTION",
+    "shopifyCollectionBody": "Explore the collection. Ordering is currently closed.",
+    "shopifyFinderEyebrow": "THE RECOVERY FINDER",
+    "shopifyProductEyebrow": "PRODUCT DETAILS",
+    "shopifyProductCollection": "THE COLLECTION",
+    "shopifyOrderingClosed": "Ordering is currently closed.",
+    "shopifyRestrictedCheckout": "Checkout is restricted to authorized development-store verification.",
+    "shopifyCartAdd": "Add to cart",
+    "shopifyCartView": "View cart",
+    "shopifyEvidenceAction": "Read product information",
+    "shopifyCartHeading": "Your cart",
+    "shopifyCartDescription": "This cart is connected to the Shopify development store. It cannot place a fulfilled retail order.",
+    "shopifyCartEmpty": "Your cart is empty.",
+    "shopifyCartImageAlt": "Product image",
+    "shopifyCartProductFallback": "Product"
+  },
+  "questions": [
+    {
+      "id": "ordering",
+      "question": "Can I place an order now?",
+      "answer": "Ordering is not open while product specifications, inventory and fulfillment are being finalized. You can explore the collection and design notes in the meantime."
+    },
+    {
+      "id": "medical",
+      "question": "Are these medical devices?",
+      "answer": "No medical purpose, certification or clinical performance is claimed for the current product studies. The finder is a browsing guide, not a diagnosis."
+    },
+    {
+      "id": "finder",
+      "question": "How are finder results chosen?",
+      "answer": "Results follow the preferences you select and the attributes listed for each form. The matching rules are deterministic and your answers stay in this page."
+    }
+  ],
+  "productQuestionIds": [
+    "ordering",
+    "medical"
+  ],
+  "comparisonLimit": 2,
+  "typeLabels": {
+    "Posture companion concept": "Posture companion"
+  },
+  "imageLabels": {
+    "Illustrative render of Pulse One": "Product render of Pulse One",
+    "Illustrative render of Form Roller": "Product render of Form Roller",
+    "Illustrative render of Range Kit": "Product render of Range Kit",
+    "Illustrative render of Restore Wrap": "Product render of Restore Wrap",
+    "Illustrative render of Point Duo": "Product render of Point Duo",
+    "Illustrative render of Align Pebble": "Product render of Align Pebble"
+  }
+}

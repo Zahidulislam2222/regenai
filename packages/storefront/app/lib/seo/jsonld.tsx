@@ -4,42 +4,29 @@
  * React Router meta() doesn't emit script tags, so schemas live in the route component body.
  */
 
-const ORG = {
-  '@type': 'Organization',
-  '@id': 'https://regenai.com/#organization',
-  name: 'RegenAI',
-  url: 'https://regenai.com',
-  logo: {
-    '@type': 'ImageObject',
-    url: 'https://regenai.com/logo.png',
-    width: 512,
-    height: 512,
-  },
-  description:
-    'Science-backed recovery. AI-guided wellness. From injury to everyday resilience — products and protocols built with clinical input and real ML.',
-  sameAs: [
-    'https://instagram.com/regenai',
-    'https://tiktok.com/@regenai',
-    'https://www.linkedin.com/company/regenai',
-  ],
-  contactPoint: [
-    {
-      '@type': 'ContactPoint',
-      contactType: 'customer support',
-      email: 'hello@regenai.com',
-      availableLanguage: ['en', 'es', 'fr', 'de', 'ar'],
-    },
-    {
-      '@type': 'ContactPoint',
-      contactType: 'sales',
-      email: 'b2b@regenai.com',
-      availableLanguage: ['en'],
-    },
-  ],
+export type OrganizationSchemaInput = {
+  name: string;
+  url: string;
+  description?: string;
+  logo?: {url: string; width?: number; height?: number};
+  sameAs?: string[];
+  contactPoints?: Array<{contactType: string; email: string; availableLanguage?: string[]}>;
 };
 
-export function organizationSchema() {
-  return {'@context': 'https://schema.org', ...ORG};
+export function organizationSchema(input: OrganizationSchemaInput) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: input.name,
+    url: input.url,
+    ...(input.description ? {description: input.description} : {}),
+    ...(input.logo ? {logo: {'@type': 'ImageObject', ...input.logo}} : {}),
+    ...(input.sameAs?.length ? {sameAs: input.sameAs} : {}),
+    ...(input.contactPoints?.length ? {contactPoint: input.contactPoints.map((point) => ({
+      '@type': 'ContactPoint', contactType: point.contactType, email: point.email,
+      ...(point.availableLanguage?.length ? {availableLanguage: point.availableLanguage} : {}),
+    }))} : {}),
+  };
 }
 
 export function breadcrumbSchema(items: Array<{name: string; url: string}>) {
@@ -62,9 +49,12 @@ export interface ProductSchemaInput {
   image: string | string[];
   url: string;
   brand?: string;
-  price: string;
-  priceCurrency?: string;
-  availability?: 'InStock' | 'OutOfStock' | 'PreOrder' | 'BackOrder';
+  offer?: {
+    price: string;
+    priceCurrency: string;
+    availability: 'InStock' | 'OutOfStock' | 'PreOrder' | 'BackOrder';
+    url: string;
+  };
   gtin?: string;
   ratingValue?: number;
   reviewCount?: number;
@@ -80,14 +70,14 @@ export function productSchema(p: ProductSchemaInput) {
     sku: p.sku,
     image: p.image,
     url: p.url,
-    brand: {'@type': 'Brand', name: p.brand ?? 'RegenAI'},
-    offers: {
-      '@type': 'Offer',
-      price: p.price,
-      priceCurrency: p.priceCurrency ?? 'USD',
-      availability: `https://schema.org/${p.availability ?? 'InStock'}`,
-      url: p.url,
-    },
+  };
+  if (p.brand) base.brand = {'@type': 'Brand', name: p.brand};
+  if (p.offer) base.offers = {
+    '@type': 'Offer',
+    price: p.offer.price,
+    priceCurrency: p.offer.priceCurrency,
+    availability: `https://schema.org/${p.offer.availability}`,
+    url: p.offer.url,
   };
   if (p.gtin) base.gtin = p.gtin;
   if (p.medicalDeviceClass) {
@@ -183,7 +173,7 @@ export function JsonLd({data}: {data: unknown}) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{__html: JSON.stringify(data)}}
+      dangerouslySetInnerHTML={{__html: JSON.stringify(data).replace(/</g, '\\u003c')}}
     />
   );
 }

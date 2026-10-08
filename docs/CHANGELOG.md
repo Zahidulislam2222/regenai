@@ -4,6 +4,30 @@ All notable changes to RegenAI documented here. Follows [Keep a Changelog](https
 
 ## [Unreleased]
 
+### Changed — 2026-10-08
+
+- Reconciled all repository README files with the live Hydrogen/Python application and connected Shopify/Gmail read boundaries.
+- Extended capacity, reliability, privacy and legal plans for the assistant, shared storage/queues, provider admission and future 1M+ active-user workloads.
+- Added a combined release/recovery procedure and Python source CI. Optional Workers production deployment now requires dispatch, opt-in and confirmation.
+- Fixed full-checkout Python package discovery and added wheel-content verification. Added failing-before workflow regressions; no extra paid inference or new infrastructure is part of publication.
+- Deployed both locally rebuilt services with verified source/image/configuration/routing parity, public HTTP/UI checks and restart recovery. Published source CI records fourteen successful checks and three expected opt-in skips; two reviewed catalog-transfer alerts remain open.
+- Updated the existing Google Doc in place, preserved earlier sections and refreshed its validated16-page PDF and repository overview. Main still requires an approving review.
+
+### Added — 2026-09-24
+- Public documentation set: `docs/ARCHITECTURE.md`, `docs/RELIABILITY.md` (99.9% availability target, 99.0% floor, SLIs, error budget, DR, incident response), `docs/SECURITY-MODEL.md` (threat model, controls, known gaps), `docs/PRIVACY.md`, `docs/COMPLIANCE.md`, `docs/ACCESSIBILITY.md`, `docs/README.md` index.
+- Rewritten `docs/SCALABILITY.md`: capacity model for 10k / 100k / 1M+ concurrent sessions with provider limits verified against official Shopify and Cloudflare documentation.
+- Root `SECURITY.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`; GitHub issue templates and pull-request template.
+- READMEs for the merchant app (`packages/app`) and Shopify Functions (`packages/app/extensions`).
+
+### Changed — 2026-09-24
+- Root, storefront and design-system READMEs rewritten to match the current code and evidence (storefront README previously contained the stock Hydrogen template; design-system README overstated npm publication, Storybook coverage and RTL support).
+- Availability objective raised from 99.0% to a 99.9% target with a 99.0% floor.
+- Roadmap restructured into milestones and phases for public readers.
+
+### Fixed — 2026-09-24
+- `packages/app/Cargo.toml` comment stated a ~1.5 MB Function size cap; Shopify's documented limit is 256 kB.
+- `packages/app/package.json` description no longer lists features that do not exist yet.
+
 ## [0.1.0] — Week 1 foundation (Days 1–7) — 2026-04-20
 
 ### Added

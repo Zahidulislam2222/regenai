@@ -1,0 +1,53 @@
+# Adapted from the installed global security CI template.
+# Public standard-runner compute is free; no paid model review is enabled.
+name: Layered security CI
+on:
+  pull_request:
+  push:
+    branches: [main, staging]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: layered-security-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gitleaks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  semgrep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Install verified registry release
+        run: python -m pip install 'semgrep==1.180.0'
+      - name: Static security audit without account or paid engine
+        run: semgrep scan --error --config p/security-audit --metrics=off .
+
+  bandit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -e './services/assistant[dev]'
+      - run: bandit -q -r services/assistant/regenai_assistant .github/tests
+
+  # Optional paid LLM review from the global template stays disabled.
+  # Do not add an API-backed review job without separate cost authorization.

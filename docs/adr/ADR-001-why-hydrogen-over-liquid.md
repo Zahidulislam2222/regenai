@@ -23,12 +23,12 @@ RegenAI Phase 1 needs a storefront for a regulated-niche DTC wellness brand that
 - WCAG 2.2 AA
 - Phase 2 integration with a React Native / Expo mobile app (shared component model + shared types)
 
-Kindred Grove (the author's prior portfolio project) is built on Liquid + Theme Blocks. That approach demonstrates senior Shopify-theme skill but has known limits that matter for RegenAI:
+Kindred Grove (the author's prior project project) is built on Liquid + Theme Blocks. That approach demonstrates senior Shopify-theme skill but has known limits that matter for RegenAI:
 
 1. **No shared component system with the future mobile app.** Liquid doesn't serialize to React Native; in Phase 2 we'd rebuild every component twice.
 2. **Complex client-side interactions** (Web Bluetooth posture-sensor pairing, multi-step protocol UI, recommendation-engine query UI) are awkward in Liquid + Web Components vs. React's state + effect primitives.
 3. **Metaobject-driven editorial at scale** (200+ clinical articles Phase 2, biomarker dashboards Phase 3) needs a CMS like Sanity alongside metaobjects; Hydrogen integrates cleanly via `@sanity/client`, Liquid themes need iframe / app-proxy hacks.
-4. **Agency-tier AI workflow demonstration** benefits from TypeScript + React, which is the industry lingua franca for frontend engineering teams. A Liquid-only portfolio signals "Shopify specialist"; Hydrogen broadens the reach without losing Shopify depth.
+4. **AI workflow implementation** benefits from TypeScript + React, which lets frontend teams work within a familiar component and type system. Hydrogen supports that integration alongside Shopify commerce APIs.
 5. **B2B + Markets Catalog segmentation** in Liquid requires more conditional rendering in templates; Hydrogen's loader pattern queries the right market/catalog context and passes typed data to components — cleaner and testable.
 6. **Edge-personalization (Cloudflare Workers middleware for A/B, geo-targeting, PDP variant)** is natural on a headless architecture. Theme stores do A/B via localStorage or external SDKs that add render-blocking JS.
 
@@ -41,7 +41,7 @@ Anderson Collaborative's JD explicitly lists Hydrogen / Next.js headless Shopify
 | Liquid theme (Theme Blocks / Horizon style like Kindred Grove) | Already demonstrated in KG. Limits §1–§6 above. Doesn't close the JD headless gap. |
 | Next.js 15 + Storefront API (headless without Hydrogen) | Loses Hydrogen's built-in cart, analytics, customer auth, caching, and Oxygen free hosting. Requires hand-rolling every Shopify integration. |
 | Remix (pre-v7) standalone | Essentially what Hydrogen is built on. Using vanilla Remix vs Hydrogen means giving up Shopify-tuned components + Oxygen free hosting + first-class Shopify CDN. |
-| Shopify Storefront UI Kit / Dawn customization | Merchant-facing, not dev-facing. Not portfolio-grade. |
+| Shopify Storefront UI Kit / Dawn customization | Merchant-facing, not dev-facing. Not project-grade. |
 | Astro + Storefront API | Great for static marketing, thin for cart/checkout-heavy storefronts. No built-in Shopify integration. |
 | Gatsby + Shopify plugin | Deprecated ecosystem; SSG-first is the wrong default for commerce. |
 
@@ -65,7 +65,7 @@ Concrete consequences locked in by this decision:
 - JD nice-to-have (headless) satisfied with real built evidence, not claims.
 - Component library is portable to React Native (Phase 2).
 - TypeScript throughout — catches metafield / Storefront schema drift at build time.
-- Oxygen free tier covers Phase 1 portfolio traffic; Cloudflare Pages + Workers KV / D1 as fallback.
+- Oxygen free tier covers Phase 1 project traffic; Cloudflare Pages + Workers KV / D1 as fallback.
 - Clean mental model: loader / action pattern mirrors server-side data fetching + mutation, testable in isolation.
 - Edge-personalization via Cloudflare Workers middleware is trivial to add.
 

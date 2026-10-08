@@ -1,45 +1,27 @@
-# Hydrogen template: Skeleton
+# RegenAI storefront
 
-Hydrogen is Shopify’s stack for headless commerce. Hydrogen is designed to dovetail with [Remix](https://remix.run/), Shopify’s full stack web framework. This template contains a **minimal setup** of components, queries and tooling to get started with Hydrogen.
+The customer frontend is live at [regenai.zahidul-islam.com](https://regenai.zahidul-islam.com). Hydrogen serves Shopify catalog data through React Router routes while retaining the original recovery collection design, local fonts and Three.js product scenes. Six owned catalog products, search, category views, comparison, finder, journal and policy pages are available. Public ordering and main-site account sign-in remain closed.
 
-[Check out Hydrogen docs](https://shopify.dev/custom-storefronts/hydrogen)
-[Get familiar with Remix](https://remix.run/docs/en/v1)
+Customer chat uses the same storefront design and the same-origin Python support service. The assistant console lives at `/assistant`; its documented action and privacy boundaries apply to chat too.
 
-## What's included
+## Entrypoints and commands
 
-- Remix
-- Hydrogen
-- Oxygen
-- Vite
-- Shopify CLI
-- ESLint
-- Prettier
-- GraphQL generator
-- TypeScript and JavaScript flavors
-- Minimal setup of components and routes
+| Purpose | Entrypoint or root command |
+|---|---|
+| Hydrogen Node runtime | `server.node.ts`; `npm run dev` / `npm run build` |
+| Optional Worker runtime | `server.ts`; separate reviewed deployment |
+| Standalone frontend build | `npm run dev:frontend` / `npm run build:frontend` |
+| Checks | `npm test`, `npm run typecheck`, `npm run lint` |
+| Browser suites | Workspace `test:e2e` and `test:a11y` scripts |
 
-## Getting started
+The standalone frontend remains useful for local design work and retained release recovery. It is a separate build from the deployed Hydrogen server. The repository root lockfile controls dependencies.
 
-**Requirements:**
+## Configuration and layout
 
-- Node.js version 18.0.0 or higher
+Copy `.env.example` to a private environment file. The typed modules under `app/lib/` and `app/config/` own runtime settings; maintained data under `app/content/` owns product and business copy. Credentials remain server-only. `app/features/recovery/` contains the shared experience, `app/routes/` the Hydrogen routes and `tests/` the committed automated suites.
 
-```bash
-npm create @shopify/hydrogen@latest
-```
+Public catalog requests are bounded and private/cart/account responses bypass shared caching. Recovery-finder answers remain in page memory. Normal motion renders the original product model; pause and reduced-motion controls provide a still alternative. Failed WebGL/model loading falls back to an image.
 
-## Building for production
+The enabled loopback development-store cart passed quantity changes; public cart mutations remain gated. Account and checkout integration must pass their complete development-store journeys before public ordering changes. Product publication does not establish fulfillment, clinical performance or eligibility to sell.
 
-```bash
-npm run build
-```
-
-## Local development
-
-```bash
-npm run dev
-```
-
-## Setup for using Customer Account API (`/account` section)
-
-Follow step 1 and 2 of <https://shopify.dev/docs/custom-storefronts/building-with-the-customer-account-api/hydrogen#step-1-set-up-a-public-domain-for-local-development>
+[Architecture](../../docs/ARCHITECTURE.md) · [Deployment](../../docs/FRONTEND-DEPLOYMENT.md) · [Support](../../docs/ASSISTANT.md) · [Accessibility](../../docs/ACCESSIBILITY.md) · [Capacity](../../docs/SCALABILITY.md)

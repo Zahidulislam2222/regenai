@@ -1,0 +1,6 @@
+*
+!pyproject.toml
+!regenai_assistant/
+!regenai_assistant/**
+regenai_assistant/**/__pycache__
+regenai_assistant/**/*.pyc

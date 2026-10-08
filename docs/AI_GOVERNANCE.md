@@ -1,5 +1,8 @@
 # AI Governance — RegenAI
 
+> Current execution notice (2026-09-21): the supervised task protocol and gates in [PROJECT_PLAN.md](../PROJECT_PLAN.md) now govern this project. The older tool roles, 105-day schedule, metrics and instructions below are historical records, not current authorization or verified current capabilities. Owner global rules always apply.
+
+
 Last updated: 2026-04-20 (Day 1)
 
 Records how AI tooling is used on the RegenAI project: what tools are in play, what each is allowed to touch, what it isn't, and how human judgment gates shipping. Complements [`AI-WORKFLOW.md`](./AI-WORKFLOW.md) which is the running log of prompts, velocity, and session notes. Governance = rules. Workflow = what happened.
@@ -17,7 +20,7 @@ Records how AI tooling is used on the RegenAI project: what tools are in play, w
 | **Cursor (Pro)** | Secondary pair — used for Tab-complete on React components, Composer sessions for small multi-file refactors, Agent mode for bounded tasks Claude Code delegates. | IDE-local. No shell access beyond user-invoked commands. | Cursor Pro monthly subscription |
 | **GitHub Copilot** | Inline IDE completion in JSX/TS/Rust. Not used to author full files. | IDE-local. | Copilot Individual subscription |
 | **OpenAI Codex (via ChatGPT)** | Reasoning-heavy prompts where Claude's tokens are better spent elsewhere — schema queries, refactor strategy brainstorming, occasional debug. | Via ChatGPT app. No direct filesystem / shell. User copies + pastes relevant context in and out. | ChatGPT Plus subscription |
-| **Claude Design** (research preview) | Brand-system generation (Day 1 only; output committed to `docs/design-system/brand-tokens.json`). No ongoing role after Day 1 unless brand refresh. | Via Claude.ai app with Design feature enabled. | Included in Max plan |
+| **Claude Design** (research version) | Brand-system generation (Day 1 only; output committed to `docs/design-system/brand-tokens.json`). No ongoing role after Day 1 unless brand refresh. | Via Claude.ai app with Design feature enabled. | Included in Max plan |
 
 **No other AI tools are wired into this repo.** Not v0, not Magic, not Bolt, not Replit Agent, not Cody, not Tabnine, not Mintlify/Inkeep, not any browser-agent. Scope is deliberately bounded to the six above. Adding a seventh requires an ADR.
 
@@ -160,11 +163,11 @@ Example from Day 1: When `rm -rf` got attempted reflexively after the Hydrogen C
 
 ---
 
-## 11. Portfolio honesty
+## 11. project honesty
 
 The Day-45 case-study site documents AI usage concretely:
 
-- Actual prompts (redacted of any real client detail — not applicable since RegenAI is fictional, but the principle holds for future real-client work).
+- Actual prompts (redacted of any real client detail — not applicable since RegenAI is prepared, but the principle holds for future real-client work).
 - Actual velocity comparison — hand-coded Day-1 baselines vs AI-assisted Days 2–45 averages.
 - Failure modes that surfaced (the rm -rf reflex, the GITHUB_ prefix collision, etc.) and how they were handled.
 - Honest multi-assistant framing: which tool did what, measured, not claimed.

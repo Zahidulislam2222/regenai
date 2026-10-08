@@ -1,0 +1,13 @@
+{
+  "client_reference": "test-store-trial",
+  "environment": "test",
+  "steps": [
+    {"step": "Access", "result": "Pending owner consent and delegated staff access"},
+    {"step": "Shopify support app", "result": "Pending dedicated limited-scope app installation"},
+    {"step": "Inbox", "result": "Pending OAuth and read/send trial"},
+    {"step": "Rulebook", "result": "Pending reviewed policy and voice"},
+    {"step": "Claude tools", "result": "Pending device-specific installation and tool listing"},
+    {"step": "Approval trial", "result": "Pending duplicate, rejection and sensitive-case verification"},
+    {"step": "Operations", "result": "Pending backup/restore and escalation owner"}
+  ]
+}

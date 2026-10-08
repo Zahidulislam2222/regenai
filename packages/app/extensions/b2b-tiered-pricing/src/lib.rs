@@ -11,15 +11,20 @@
 //!      two wins so a gold-tier company's premier location can upgrade to
 //!      platinum without having to reassign the whole company.
 //!   3. Volume adder based on the cart subtotal:
-//!        ≥ $500  → +2 pp
-//!        ≥ $1000 → +5 pp   (supersedes the 2 pp)
-//!        ≥ $5000 → +10 pp  (supersedes the 5 pp)
+//!      Thresholds: $500 adds 2 points, $1000 adds 5, and $5000 adds 10.
 //!      Capped at 40% total (PROJECT_PLAN §6 "discount stacking cap").
 //!
 //! Guest / non-B2B carts pass through untouched (no operations returned).
 
 use regenai_extensions_shared::CompanyTier;
 use serde::{Deserialize, Serialize};
+use shopify_function::prelude::*;
+
+#[typegen("schema.graphql")]
+pub mod schema {
+    #[query("src/input.graphql")]
+    pub mod run {}
+}
 
 // ---------------------------------------------------------------------------
 // Input
@@ -285,18 +290,93 @@ fn run_rules(input: &Input) -> Output {
 }
 
 // ---------------------------------------------------------------------------
-// WASM entry point.
+// Shopify Function ABI boundary. Shopify restricts lineUpdate activation to Plus.
 // ---------------------------------------------------------------------------
-#[cfg(target_arch = "wasm32")]
-#[no_mangle]
-pub extern "C" fn _start() {
-    use std::io::{self, Read, Write};
-    let mut buf = String::new();
-    io::stdin().read_to_string(&mut buf).expect("read stdin");
-    let input: Input = serde_json::from_str(&buf).expect("parse input");
-    let output = run_rules(&input);
-    let payload = serde_json::to_string(&output).expect("serialise output");
-    io::stdout().write_all(payload.as_bytes()).expect("write");
+#[shopify_function]
+fn cart_transform_run(
+    input: schema::run::Input,
+) -> shopify_function::Result<schema::CartTransformRunResult> {
+    let cart = input.cart();
+    let purchasing_company = cart
+        .buyer_identity()
+        .and_then(|buyer| buyer.purchasing_company());
+    let subtotal_cents: u64 = cart.lines().iter().fold(0_u64, |total, line| {
+        total.saturating_add(
+            money_to_cents(&line.cost().subtotal_amount().amount().to_string()).unwrap_or(0),
+        )
+    });
+    let source = Input {
+        cart: Cart {
+            cost: Cost {
+                subtotal_amount: Money {
+                    amount: cents_to_money(subtotal_cents),
+                    currency_code: String::new(),
+                },
+            },
+            lines: cart
+                .lines()
+                .iter()
+                .map(|line| CartLine {
+                    id: line.id().to_string(),
+                    cost: LineCost {
+                        amount_per_quantity: Money {
+                            amount: line.cost().amount_per_quantity().amount().to_string(),
+                            currency_code: String::new(),
+                        },
+                    },
+                    merchandise: match line.merchandise() {
+                        schema::run::input::cart::lines::Merchandise::ProductVariant(_) => {
+                            Merchandise::ProductVariant {}
+                        }
+                        _ => Merchandise::Other,
+                    },
+                })
+                .collect(),
+            buyer_identity: Some(BuyerIdentity {
+                purchasing_company: purchasing_company.map(|company| PurchasingCompany {
+                    company: Some(Company {
+                        tier: company.company().tier().as_ref().map(|field| Metafield {
+                            value: field.value().to_string(),
+                        }),
+                    }),
+                    location: Some(Location {
+                        location_tier: company.location().location_tier().as_ref().map(|field| {
+                            Metafield {
+                                value: field.value().to_string(),
+                            }
+                        }),
+                    }),
+                }),
+            }),
+        },
+    };
+    let operations = run_rules(&source)
+        .operations
+        .into_iter()
+        .filter_map(|operation| {
+            let Operation::Update(update) = operation;
+            let amount = update
+                .price
+                .adjustment
+                .fixed_pricing_per_unit
+                .amount
+                .parse()
+                .ok()?;
+            Some(schema::Operation::LineUpdate(schema::LineUpdateOperation {
+                cart_line_id: update.cart_line_id,
+                image: None,
+                price: Some(schema::LineUpdateOperationPriceAdjustment {
+                    adjustment: schema::LineUpdateOperationPriceAdjustmentValue::FixedPricePerUnit(
+                        schema::LineUpdateOperationFixedPricePerUnitAdjustment {
+                            amount: shopify_function::scalars::Decimal(amount),
+                        },
+                    ),
+                }),
+                title: update.title,
+            }))
+        })
+        .collect();
+    Ok(schema::CartTransformRunResult { operations })
 }
 
 // ---------------------------------------------------------------------------

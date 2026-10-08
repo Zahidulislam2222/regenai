@@ -1,21 +1,19 @@
 query Input {
   cart {
-    cost {
-      subtotalAmount {
-        amount
-        currencyCode
-      }
-    }
     lines {
       id
       quantity
       cost {
+        subtotalAmount {
+          amount
+        }
         amountPerQuantity {
           amount
           currencyCode
         }
       }
       merchandise {
+        __typename
         ... on ProductVariant {
           id
           title

@@ -28,7 +28,7 @@ Concrete stack:
 ## Alternatives rejected
 
 1. **OTel + Honeycomb + Sentry** — three vendors for overlapping capability. Trace-context propagation across a single-vendor stack is less error-prone.
-2. **Datadog APM** — paid from day one, overbuilt for portfolio scale.
+2. **Datadog APM** — paid from day one, overbuilt for project scale.
 3. **Grafana Cloud + Tempo + Loki** — free tier is generous but requires agent + collector config overhead that Sentry eliminates.
 4. **Self-hosted Jaeger** — no free-tier concerns but infra overhead I'd have to maintain.
 
@@ -36,9 +36,9 @@ Concrete stack:
 
 **+** One vendor. One secret. One dashboard.
 **+** Error → trace correlation is automatic.
-**+** Sentry free tier: 5k errors + 10k performance events + 50 replays (replays off Phase 1) = sufficient for portfolio traffic.
-**+** 4 projects under the existing `zahidul-islam-7l` org → storefront, app, worker, mobile — consolidates portfolio observability into one org pane.
+**+** Sentry free tier: 5k errors + 10k performance events + 50 replays (replays off Phase 1) = sufficient for project traffic.
+**+** 4 projects under the existing `zahidul-islam-7l` org → storefront, app, worker, mobile — consolidates project observability into one org pane.
 **−** Lock-in. If Sentry changes pricing, migrating to OTel + Honeycomb is a non-trivial swap. Mitigation: keep trace emission via official SDKs (not Sentry-proprietary APIs) so migration is achievable in Phase 2+ if needed.
-**−** Some advanced tracing features (custom sampling by user property) are Sentry paid-tier. Portfolio doesn't need them; flag if requirements grow.
+**−** Some advanced tracing features (custom sampling by user property) are Sentry paid-tier. project doesn't need them; flag if requirements grow.
 
 **Reversibility:** Medium. Error events are harder to migrate than traces (they carry vendor-specific context); traces could re-route to OTel without changing application code.

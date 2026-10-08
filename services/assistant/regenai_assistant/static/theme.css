@@ -1,0 +1,21 @@
+/* Generated from the storefront. Run sync_theme.py to refresh. */
+:root {
+  --paper: #f4f3ed;
+  --surface: #eeeee6;
+  --ink: #172c49;
+  --blue: #1647bc;
+  --blue-dark: #133889;
+  --muted: #596477;
+  --line: #d6d9d2;
+  --sage: #dfe4d8;
+  --white: #fffef9;
+  --font: 'Inter Variable', Arial, sans-serif;
+  --mono: 'Geist Mono Variable', monospace;
+  --gutter: clamp(22px, 4.5vw, 76px);
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --duration: 240ms;
+  --max-width: 1600px;
+}
+@font-face{font-family:'Inter Variable';font-style:normal;font-weight:100 900;font-display:swap;src:url('./inter-latin-wght-normal.woff2') format('woff2')}
+
+@font-face{font-family:'Geist Mono Variable';font-style:normal;font-weight:100 900;font-display:swap;src:url('./geist-mono-latin-wght-normal.woff2') format('woff2')}

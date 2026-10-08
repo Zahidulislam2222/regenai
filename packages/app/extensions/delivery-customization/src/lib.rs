@@ -19,6 +19,13 @@
 //! Guest / plain-product carts pass through untouched.
 
 use serde::{Deserialize, Serialize};
+use shopify_function::prelude::*;
+
+#[typegen("schema.graphql")]
+pub mod schema {
+    #[query("src/input.graphql")]
+    pub mod run {}
+}
 
 // ---------------------------------------------------------------------------
 // Input
@@ -59,7 +66,9 @@ struct CartLine {
 #[derive(Debug, Deserialize)]
 #[serde(tag = "__typename")]
 enum Merchandise {
-    ProductVariant { product: Product },
+    ProductVariant {
+        product: Product,
+    },
     #[serde(other)]
     Other,
 }
@@ -202,18 +211,85 @@ fn run_rules(input: &Input) -> Output {
 }
 
 // ---------------------------------------------------------------------------
-// WASM entry.
+// Shopify Function ABI boundary.
 // ---------------------------------------------------------------------------
-#[cfg(target_arch = "wasm32")]
-#[no_mangle]
-pub extern "C" fn _start() {
-    use std::io::{self, Read, Write};
-    let mut buf = String::new();
-    io::stdin().read_to_string(&mut buf).expect("read stdin");
-    let input: Input = serde_json::from_str(&buf).expect("parse input");
-    let output = run_rules(&input);
-    let payload = serde_json::to_string(&output).expect("serialise output");
-    io::stdout().write_all(payload.as_bytes()).expect("write");
+#[shopify_function]
+fn cart_delivery_options_transform_run(
+    input: schema::run::Input,
+) -> shopify_function::Result<schema::CartDeliveryOptionsTransformRunResult> {
+    let cart = input.cart();
+    let source = Input {
+        cart: Cart {
+            delivery_groups: cart
+                .delivery_groups()
+                .iter()
+                .map(|group| DeliveryGroup {
+                    id: group.id().to_string(),
+                    delivery_options: group
+                        .delivery_options()
+                        .iter()
+                        .map(|option| DeliveryOption {
+                            handle: option.handle().to_string(),
+                            title: option.title().cloned(),
+                            code: option.code().cloned(),
+                        })
+                        .collect(),
+                })
+                .collect(),
+            lines: cart
+                .lines()
+                .iter()
+                .map(|line| CartLine {
+                    merchandise: match line.merchandise() {
+                        schema::run::input::cart::lines::Merchandise::ProductVariant(variant) => {
+                            Merchandise::ProductVariant {
+                                product: Product {
+                                    fda_class: variant.product().fda_class().as_ref().map(
+                                        |field| Metafield {
+                                            value: field.value().to_string(),
+                                        },
+                                    ),
+                                    ships_with_signature: variant
+                                        .product()
+                                        .ships_with_signature()
+                                        .as_ref()
+                                        .map(|field| Metafield {
+                                            value: field.value().to_string(),
+                                        }),
+                                    contraindications: variant
+                                        .product()
+                                        .contraindications()
+                                        .as_ref()
+                                        .map(|field| Metafield {
+                                            value: field.value().to_string(),
+                                        }),
+                                },
+                            }
+                        }
+                        _ => Merchandise::Other,
+                    },
+                })
+                .collect(),
+        },
+    };
+    let operations = run_rules(&source)
+        .operations
+        .into_iter()
+        .map(|operation| match operation {
+            Operation::Hide(hide) => {
+                schema::Operation::DeliveryOptionHide(schema::DeliveryOptionHideOperation {
+                    delivery_option_handle: hide.delivery_option_handle,
+                })
+            }
+            Operation::Rename(rename) => {
+                schema::Operation::DeliveryOptionRename(schema::DeliveryOptionRenameOperation {
+                    delivery_option_handle: rename.delivery_option_handle,
+                    title: rename.title,
+                })
+            }
+        })
+        .collect();
+    Ok(schema::CartDeliveryOptionsTransformRunResult { operations })
 }
 
 // ---------------------------------------------------------------------------
@@ -311,7 +387,10 @@ mod tests {
     fn plain_cart_emits_no_ops() {
         let out = run_rules(&mk_input(
             vec![line_plain()],
-            vec![opt("standard", Some("Standard"), None), opt("express", Some("Express"), None)],
+            vec![
+                opt("standard", Some("Standard"), None),
+                opt("express", Some("Express"), None),
+            ],
         ));
         assert!(out.operations.is_empty());
     }
@@ -414,11 +493,7 @@ mod tests {
     fn rename_does_not_double_suffix() {
         let out = run_rules(&mk_input(
             vec![line_needs_signature_via_flag()],
-            vec![opt(
-                "standard",
-                Some("Ground — Signature required"),
-                None,
-            )],
+            vec![opt("standard", Some("Ground — Signature required"), None)],
         ));
         assert!(out.operations.is_empty());
     }

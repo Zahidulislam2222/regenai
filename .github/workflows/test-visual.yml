@@ -1,4 +1,4 @@
-name: Test — Visual Regression (Percy)
+name: Test — Visual Regression (optional Percy)
 
 on:
   pull_request:
@@ -11,55 +11,46 @@ concurrency:
 
 jobs:
   percy:
-    name: Percy snapshots
+    name: Percy visual diff (opt-in)
+    # Percy may use a metered external service. A missing opt-in is a skipped
+    # check, never a green no-op. Forked PR code must not receive credentials.
+    if: ${{ vars.REGENAI_PERCY_APPROVED == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
       PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
-      SHOPIFY_STORE: ${{ secrets.SHOPIFY_STORE }}
-      SHOPIFY_STORE_PASSWORD: ${{ secrets.SHOPIFY_STORE_PASSWORD }}
-      PREVIEW_URL: https://regenai-storefront-preview.regenai-workers.workers.dev
+      PREVIEW_URL: ${{ vars.REGENAI_VISUAL_BASE_URL }}
       PLAYWRIGHT_TEST_DIR: tests/visual
     steps:
-      - name: Check required secrets + visual specs
-        id: check
-        # Three-way gate: need PERCY_TOKEN + SHOPIFY_STORE + at least one
-        # spec under tests/visual/. Skips cleanly until all three land.
-        run: |
-          HAS_SPECS=false
-          if [ -d packages/storefront/tests/visual ] && [ "$(find packages/storefront/tests/visual -name '*.spec.*' | wc -l)" -gt 0 ]; then
-            HAS_SPECS=true
-          fi
-          if [ -z "${{ secrets.PERCY_TOKEN }}" ] || [ -z "${{ secrets.SHOPIFY_STORE }}" ] || [ "$HAS_SPECS" = "false" ]; then
-            echo "has-secrets=false" >> $GITHUB_OUTPUT
-            echo "reason-specs=$HAS_SPECS" >> $GITHUB_OUTPUT
-          else
-            echo "has-secrets=true" >> $GITHUB_OUTPUT
-          fi
+      - uses: actions/checkout@v6
 
-      - uses: actions/checkout@v4
-        if: steps.check.outputs.has-secrets == 'true'
+      - name: Require visual specs and configured inputs
+        run: |
+          if ! find packages/storefront/tests/visual -name '*.spec.*' -print -quit 2>/dev/null | grep -q .; then
+            echo '::error::No visual specs exist under packages/storefront/tests/visual'
+            exit 1
+          fi
+          if [ -z "$PERCY_TOKEN" ]; then
+            echo '::error::PERCY_TOKEN is unset'
+            exit 1
+          fi
+          if [[ ! "$PREVIEW_URL" =~ ^https://[A-Za-z0-9.-]+(:[0-9]+)?(/.*)?$ ]]; then
+            echo '::error::REGENAI_VISUAL_BASE_URL must be an HTTPS URL with a hostname'
+            exit 1
+          fi
 
       - name: Setup Node
-        if: steps.check.outputs.has-secrets == 'true'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'
 
       - name: Install deps
-        if: steps.check.outputs.has-secrets == 'true'
         run: npm ci
 
       - name: Install Playwright
-        if: steps.check.outputs.has-secrets == 'true'
         run: npx playwright install --with-deps chromium
 
-      - name: Run Percy visual diff against live preview
-        if: steps.check.outputs.has-secrets == 'true'
+      - name: Run Percy visual diff against configured preview
         working-directory: packages/storefront
         run: npx percy exec -- playwright test
-
-      - name: Skip notice
-        if: steps.check.outputs.has-secrets == 'false'
-        run: echo "::notice::Percy skipped — need PERCY_TOKEN + SHOPIFY_STORE + tests/visual/ specs. Activates when first visual spec lands."

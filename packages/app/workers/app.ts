@@ -21,7 +21,6 @@ declare module 'react-router' {
 }
 
 const requestHandler = createRequestHandler(
-  // eslint-disable-next-line import/no-unresolved -- virtual module resolved by @cloudflare/vite-plugin
   () => import('virtual:react-router/server-build'),
   import.meta.env.MODE,
 );
@@ -30,8 +29,8 @@ export default {
   async fetch(request, env, ctx) {
     try {
       return await requestHandler(request, {cloudflare: {env, ctx}});
-    } catch (err) {
-      console.error('[regenai-app] unhandled', err);
+    } catch {
+      console.error('[regenai-app] unhandled request');
       return new Response('Internal server error', {status: 500});
     }
   },

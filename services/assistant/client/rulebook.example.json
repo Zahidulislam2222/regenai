@@ -1,0 +1,10 @@
+{
+  "store_name": "Your store",
+  "voice": "Owner-approved voice from anonymized historical support examples",
+  "refund_window_days": 30,
+  "max_refund_cents": 0,
+  "refund_reasons": [],
+  "handoff_terms": ["medical", "injury", "fraud", "chargeback", "lawyer"],
+  "confidence_threshold": 0.9,
+  "policies": "Owner must enter and approve the actual store policy before live recommendations. No refund is eligible until limits and reasons are configured."
+}

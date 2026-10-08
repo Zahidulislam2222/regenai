@@ -37,6 +37,6 @@ export const IconOnly: Story = {
     size: 'icon',
     'aria-label': 'Favorite',
     children: <Heart className="h-4 w-4" />,
-  } as never,
+  },
 };
 export const FullWidth: Story = {args: {fullWidth: true, children: 'Continue to checkout'}};

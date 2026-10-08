@@ -1,0 +1,36 @@
+name: ${COMPOSE_PROJECT_NAME:?Set a dedicated Compose project name}
+
+services:
+  storefront:
+    build:
+      context: ./context
+      dockerfile: ../Dockerfile
+      args:
+        NODE_IMAGE: ${HYDROGEN_NODE_IMAGE:?Set a verified official image digest}
+    image: ${HYDROGEN_RELEASE_IMAGE:?Set a versioned local image name}
+    env_file:
+      - ${HYDROGEN_RUNTIME_ENV_FILE:?Set a private runtime environment file}
+    environment:
+      NODE_ENV: production
+      NODE_SERVER_HOST: 0.0.0.0
+      NODE_SERVER_PORT: ${HYDROGEN_CONTAINER_PORT:?Set the container listener port}
+    user: "1000:1000"
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=${HYDROGEN_TMPFS_SIZE:?Set tmpfs size},mode=1777
+    mem_limit: ${HYDROGEN_MEMORY_LIMIT:?Set memory limit}
+    cpus: ${HYDROGEN_CPU_LIMIT:?Set CPU limit}
+    pids_limit: ${HYDROGEN_PIDS_LIMIT:?Set PID limit}
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${HYDROGEN_BIND_PORT:?Set a loopback host port}:${HYDROGEN_CONTAINER_PORT:?Set the container listener port}"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:'+process.env.NODE_SERVER_PORT+'/readyz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s

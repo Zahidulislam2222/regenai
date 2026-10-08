@@ -13,14 +13,14 @@
 **Option 3 — public npm package, `@regenai/ui@0.1.0+` on `npmjs.com/@regenai`.**
 
 Rationale:
-- **Portfolio signal**: a published, versioned npm package with Storybook docs is a senior-staff signal an agency reviewer can browse in under 60 seconds.
+- **project signal**: a published, versioned npm package with Storybook docs is a senior-staff signal an agency reviewer can browse in under 60 seconds.
 - **Agency-tier pattern**: shared design systems ship as npm packages so any new team / repo / client project can `npm install @regenai/ui` without access-gating setup.
 - **Phase 2 mobile app path**: React Native app will be in a separate repo eventually; workspace-only forces a monorepo forever.
 - **Version history = change log**: npm's version history doubles as an audit trail for component API changes.
 - Free tier covers unlimited public packages under the `@regenai` org.
 
 ## Alternatives rejected
-- **Workspace-only** — loses portfolio signal + Phase 2 mobile path. Reconsidered + confirmed no.
+- **Workspace-only** — loses project signal + Phase 2 mobile path. Reconsidered + confirmed no.
 - **Private package** — $7/month for npm Teams + restricts reviewer access. Pays nothing to go public.
 - **GitHub Packages** — works, but npmjs.com is where reviewers look. Same-effort, worse discoverability.
 

@@ -13,4 +13,4 @@ type Story = StoryObj<typeof Input>;
 export const Default: Story = {args: {placeholder: 'email@example.com'}};
 export const WithValue: Story = {args: {defaultValue: 'zahidul@example.com'}};
 export const Disabled: Story = {args: {disabled: true, placeholder: 'Disabled'}};
-export const Error: Story = {args: {error: true, defaultValue: 'invalid-email', 'aria-describedby': 'err'} as never};
+export const Error: Story = {args: {error: true, defaultValue: 'invalid-email', 'aria-describedby': 'err'}};

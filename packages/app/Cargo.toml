@@ -1,9 +1,8 @@
 # Cargo workspace for @regenai/app Shopify Function extensions.
 #
-# Each extension compiles independently via `cargo build --release --target
-# wasm32-wasip1 -p <crate>`. The `shopify app deploy` command bundles + ships
-# all of them together as extensions on the packages/app Custom App
-# (ADR-021).
+# Three deployable extensions compile to wasm32-unknown-unknown. The discount
+# stacking rule crate remains in experimental until Shopify exposes enough
+# trusted input to enforce its code-combination policy.
 
 [workspace]
 resolver = "2"
@@ -12,7 +11,7 @@ members = [
     "extensions/cart-contraindication",
     "extensions/b2b-tiered-pricing",
     "extensions/delivery-customization",
-    "extensions/discount-stacking",
+    "experimental/discount-stacking",
 ]
 
 [workspace.package]
@@ -25,9 +24,10 @@ publish = false
 [workspace.dependencies]
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+shopify_function = "2.2.0"
 
 [profile.release]
-# Shopify enforces a WASM size cap per extension (~1.5 MB). Optimise
+# Shopify caps each compiled Function binary at 256 kB. Optimise
 # aggressively for code size, not speed — Function runs are short-lived.
 opt-level = "z"
 lto = true

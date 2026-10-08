@@ -1,0 +1,29 @@
+# Security pre-commit template — copy to any repo root, then run: pre-commit install
+# Layer 4 of the AI-code security pipeline: agent-agnostic (catches Claude Code,
+# Codex, Cursor, and manual edits alike, because everything funnels through git).
+#
+# Requirements on this machine (already installed):
+#   gitleaks (winget), bandit + pre-commit (pip), semgrep (WSL Ubuntu)
+
+repos:
+  - repo: local
+    hooks:
+      - id: gitleaks-staged
+        name: gitleaks (secrets in staged diff)
+        entry: gitleaks git --pre-commit --staged --redact --no-banner --verbose
+        language: system
+        pass_filenames: false
+
+      - id: bandit
+        name: bandit (Python SAST, medium+ severity)
+        entry: bandit -q -ll
+        language: system
+        types: [python]
+
+      - id: semgrep-wsl
+        name: semgrep p/security-audit (via WSL)
+        entry: python C:/Users/muham/.security-hooks/semgrep_wsl.py
+        language: system
+        types: [text]
+        # Semgrep is the slowest layer (seconds per commit). If it annoys you,
+        # comment this hook out here and keep Semgrep in CI only.

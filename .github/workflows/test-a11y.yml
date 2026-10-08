@@ -13,60 +13,32 @@ jobs:
   axe:
     name: axe-core via Playwright
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-    env:
-      SHOPIFY_STORE: ${{ secrets.SHOPIFY_STORE }}
-      SHOPIFY_STORE_PASSWORD: ${{ secrets.SHOPIFY_STORE_PASSWORD }}
-      PREVIEW_URL: https://regenai-storefront-preview.regenai-workers.workers.dev
-      PLAYWRIGHT_TEST_DIR: tests/a11y
+    timeout-minutes: 20
     steps:
-      - name: Check required secrets
-        id: check
-        run: |
-          if [ -z "${{ secrets.SHOPIFY_STORE }}" ] || [ -z "${{ secrets.SHOPIFY_STOREFRONT_PUBLIC_TOKEN }}" ]; then
-            echo "has-secrets=false" >> $GITHUB_OUTPUT
-          else
-            echo "has-secrets=true" >> $GITHUB_OUTPUT
-          fi
-
-      - uses: actions/checkout@v4
-        if: steps.check.outputs.has-secrets == 'true'
+      - uses: actions/checkout@v6
 
       - name: Setup Node
-        if: steps.check.outputs.has-secrets == 'true'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'
 
       - name: Install deps
-        if: steps.check.outputs.has-secrets == 'true'
         run: npm ci
 
-      - name: Install Playwright
-        if: steps.check.outputs.has-secrets == 'true'
+      - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
-      - name: Run axe suite against live preview
-        if: steps.check.outputs.has-secrets == 'true'
-        working-directory: packages/storefront
-        # PLAYWRIGHT_TEST_DIR env overrides testDir in playwright.config.ts
-        run: npx playwright test
-        # Known color-contrast violations on the live storefront —
-        # PROJECT_PLAN Day 36 is the dedicated accessibility audit pass.
-        # Until then the axe run reports violations but doesn't block
-        # the pipeline. Remove this masking after D36 lands.
-        continue-on-error: true
+      - name: Build and test checked-out storefront
+        run: bash .github/scripts/run-storefront-browser-check.sh a11y
 
       - name: Upload axe report
-        if: always() && steps.check.outputs.has-secrets == 'true'
-        uses: actions/upload-artifact@v4
+        if: always()
+        uses: actions/upload-artifact@v6
         with:
           name: axe-report
-          path: packages/storefront/test-results/
+          path: |
+            packages/storefront/playwright-report/
+            packages/storefront/test-results/
           if-no-files-found: ignore
           retention-days: 7
-
-      - name: Skip notice
-        if: steps.check.outputs.has-secrets == 'false'
-        run: echo "::notice::a11y skipped — SHOPIFY_STORE or SHOPIFY_STOREFRONT_PUBLIC_TOKEN missing"

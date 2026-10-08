@@ -1,44 +1,37 @@
-name: Test — Load (k6)
+name: Test — Load (manual opt-in k6)
 
 on:
-  schedule:
-    - cron: '0 3 * * *'  # nightly 03:00 UTC
   workflow_dispatch: {}
 
 jobs:
   k6:
-    name: k6 load — quiz + ML recommendation endpoints
+    name: k6 load scenarios (opt-in)
+    # Secret presence is not approval for traffic against a remote service.
+    if: ${{ vars.REGENAI_LOAD_TEST_APPROVED == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      SHOPIFY_STORE: ${{ secrets.SHOPIFY_STORE }}
+      K6_TARGET_URL: ${{ vars.REGENAI_LOAD_BASE_URL }}
     steps:
-      - name: Check required secrets
-        id: check
+      - uses: actions/checkout@v6
+
+      - name: Require scenarios and approved target
         run: |
-          if [ -z "${{ secrets.SHOPIFY_STORE }}" ]; then
-            echo "has-secrets=false" >> $GITHUB_OUTPUT
-          else
-            echo "has-secrets=true" >> $GITHUB_OUTPUT
+          for scenario in tests/load/quiz.js tests/load/recommendation.js; do
+            if [ ! -f "$scenario" ]; then
+              echo "::error::Missing k6 scenario: $scenario"
+              exit 1
+            fi
+          done
+          if [[ ! "$K6_TARGET_URL" =~ ^https://[A-Za-z0-9.-]+(:[0-9]+)?(/.*)?$ ]]; then
+            echo '::error::REGENAI_LOAD_BASE_URL must be an HTTPS URL with a hostname'
+            exit 1
           fi
 
-      - uses: actions/checkout@v4
-        if: steps.check.outputs.has-secrets == 'true'
-
       - name: Install k6
-        if: steps.check.outputs.has-secrets == 'true'
         uses: grafana/setup-k6-action@v1
 
       - name: Run load scenarios
-        if: steps.check.outputs.has-secrets == 'true'
         run: |
-          if [ -d tests/load ]; then
-            k6 run tests/load/quiz.js || true
-            k6 run tests/load/recommendation.js || true
-          else
-            echo "::notice::tests/load scenarios not yet written — Day 14 activates this"
-          fi
-
-      - name: Skip notice
-        if: steps.check.outputs.has-secrets == 'false'
-        run: echo "::notice::SHOPIFY_STORE secret missing — k6 load test skipped"
+          k6 run tests/load/quiz.js
+          k6 run tests/load/recommendation.js

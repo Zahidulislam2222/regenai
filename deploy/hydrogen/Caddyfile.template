@@ -1,0 +1,4 @@
+{$HYDROGEN_HOSTNAME} {
+	header X-Robots-Tag "noindex, nofollow"
+	reverse_proxy 127.0.0.1:{$HYDROGEN_BIND_PORT}
+}

@@ -1,15 +1,31 @@
 # Secrets & env
 .env
+.dev.vars*
 .env.*
 !.env.example
 *.pem
 *.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+.npmrc
+.aws/
+.credentials/
+.secrets/
 
 # Node
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+*.egg-info/
 node_modules/
 .pnpm-store/
 dist/
 build/
+.build-verify/
 .next/
 .remix/
 .cache/
@@ -20,6 +36,8 @@ build/
 
 # Hydrogen / Oxygen
 .shopify/
+packages/app/shopify.app*.toml
+!packages/app/shopify.app.example.toml
 .wrangler/
 .mf/
 .hydrogen/
@@ -59,3 +77,26 @@ docs/RESUME.md
 tmp/
 temp/
 *.tmp
+
+# Private recovery and project memory
+memory/
+CREDENTIALS.md
+deploy/hydrogen/.env*
+!deploy/hydrogen/.env.example
+deploy/hydrogen/*.runtime.env
+deploy/hydrogen/context/
+PROJECT-DOSSIER.md
+tests/manual/
+assets/source/
+
+# Local browser review tooling and evidence
+**/tests/manual/
+.playwright-mcp/
+
+# Machine-local agent configuration and document linkage
+.claude/
+.codex/
+my-project-view/.doc-id
+
+# Local connector setup
+.mcp.json

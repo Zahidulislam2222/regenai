@@ -1,0 +1,45 @@
+name: Python assistant CI
+
+on:
+  pull_request:
+  push:
+    branches: [main, staging]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: assistant-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  assistant:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: services/assistant
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: services/assistant/pyproject.toml
+      - name: Install pinned application and development dependencies
+        run: python -m pip install -e '.[dev]'
+      - name: Tests, including configuration and secret regressions
+        run: python -m pytest -q
+      - name: Lint
+        run: python -m ruff check .
+      - name: Type check
+        run: python -m mypy --no-incremental regenai_assistant
+      - name: Security scan
+        run: python -m bandit -r regenai_assistant -q
+      - name: Build distributable
+        run: python -m pip wheel --no-deps . --wheel-dir dist
+      - name: Verify installed artifact scope and required package data
+        run: python ../../.github/tests/assistant-wheel-check.py dist
+      - name: Publication workflow regression tests
+        working-directory: .
+        run: node --test .github/tests/publication-workflows.test.mjs

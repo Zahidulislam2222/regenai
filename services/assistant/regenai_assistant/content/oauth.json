@@ -1,0 +1,8 @@
+{
+  "state_seconds": 600,
+  "shopify_authorize_path": "/admin/oauth/authorize",
+  "shopify_token_path": "/admin/oauth/access_token",
+  "google_authorize_url": "https://accounts.google.com/o/oauth2/v2/auth",
+  "gmail": {"scopes": ["https://www.googleapis.com/auth/gmail.readonly", "https://www.googleapis.com/auth/gmail.send"]},
+  "calendar": {"scopes": ["https://www.googleapis.com/auth/calendar.events.readonly"]}
+}

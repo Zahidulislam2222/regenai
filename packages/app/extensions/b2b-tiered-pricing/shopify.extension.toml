@@ -3,14 +3,15 @@ api_version = "2026-01"
 [[extensions]]
 name = "b2b-tiered-pricing"
 handle = "b2b-tiered-pricing"
+uid = "8743a170-48ed-ca91-08f5-f68690054b27d569be0d"
 type = "function"
 
 [[extensions.targeting]]
 target = "cart.transform.run"
 input_query = "src/input.graphql"
-export = "cart-transform"
+export = "cart_transform_run"
 
 [extensions.build]
-command = "cargo build --release --target=wasm32-wasip1"
-path = "target/wasm32-wasip1/release/b2b_tiered_pricing.wasm"
+command = "cargo build --release --target=wasm32-unknown-unknown"
+path = "../../target/wasm32-unknown-unknown/release/b2b_tiered_pricing.wasm"
 watch = ["src/**/*.rs", "Cargo.toml", "../../Cargo.toml"]

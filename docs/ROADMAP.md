@@ -1,48 +1,35 @@
-# RegenAI Roadmap
+# Roadmap
 
-Phase structure at a glance. Master build plan: [`PROJECT_PLAN.md`](../PROJECT_PLAN.md) (20 sections, 105 days).
+Updated 2026-10-08. Phases are dependency ordered; dates and capacity are not promised. [Build status](BUILD-STATUS.md) owns dated evidence and the [master plan](../PROJECT_PLAN.md) retains task contracts.
 
-## Phase 1 — Storefront + custom app + Functions + ML (Days 1–45)
+## Current delivery
 
-| Milestone | Status | Tag |
+| Area | Verified now | Next exit gate |
 |---|---|---|
-| Foundation scaffold | ✅ | `v0.1-week1-foundation` (Day 7) |
-| Discovery (PLP + PDP + cart) | 🚧 Days 8–14 | `v0.2-week2-discovery` |
-| Plus features (B2B + Markets + Checkout Extensibility) | 📅 Days 15–21 | `v0.3-week3-plus-features` |
-| Custom subscription engine + B2B portal + affiliate | 📅 Days 22–28 | `v0.4-week4-subscriptions` |
-| Data pipeline + ML recommendations + observability | 📅 Days 29–35 | `v0.5-week5-ml-observability` |
-| Quality / security / i18n / SEO / compliance-as-code | 📅 Days 36–42 | `v0.6-week6-quality` |
-| Docs + case-study site + Loom + release | 📅 Days 43–45 | `v1.0-phase1-complete` |
+| Storefront | Live Shopify catalog and original 3D design, category/search/product/finder/editorial routes, closed-ordering gates | Full buyer account and development-store order journeys; broader manual accessibility |
+| Python assistant | Live chat/console, encrypted memory, policies, approvals, handoff and durable jobs; two model checks passed | Real test-store refund plus designated inbox reply, receipt/reconciliation proof, then controlled write activation |
+| Shopify support connection | Dedicated installed app, least-privilege scope readback, renewal, repeated reads and restart | Client-specific protected-data permissions and matching/refund proof |
+| Gmail | Installed-client offline grant, dedicated label, actual refresh/read, bounded empty-label import and restart | Durable consent strategy, representative ticket import/reply proof, owner-reviewed recurring schedules |
+| Merchant app | Local authentication and privacy repairs; older public endpoints disabled | Isolated remote data/secrets, six migrations, install/OAuth, subscriptions and real webhook delivery |
+| Functions | Three compiled/inactive draft Functions with local runtime evidence | Eligible store activation and restricted checkout behavior; redesign unsupported discount rules |
+| Client handoff | Installation guide, skill/rulebook inputs, setup log and recommendation-only MCP | Actual client-computer installation, owner-led first sessions, policy acceptance and handover |
 
-## Phase 2 — Sleep / Mental / Stress / Meditation + mobile + community (Days 46–75)
+The implementation role's Loom, hourly rate, availability, NDA and communication assessment are personal deliverables. Software cannot establish them.
 
-- React Native / Expo companion app
-- BLE multi-device pairing + Apple HealthKit / Google Fit OAuth
-- Community platform (Supabase) + OpenAI Moderation + crisis flagging
-- Cross-vertical ML v2 (cohort recommendations)
-- +40 SKUs across sleep / mental wellness / stress relief / smart fitness / meditation
-- `v2.0-phase2-complete` (Day 75)
+## Reliability and capacity milestones
 
-## Phase 3 — Nutrition / AI monitoring / Home gym / Women's health / Anti-aging / Platform layer (Days 76–105)
+| Phase | Required change | Evidence required to exit |
+|---|---|---|
+| T0 — establish operations | External monitoring, redacted metrics, backup/restore, credential-expiry handling, scoped incident ownership | Complete 30-day journey SLI window; restore and rollback measurements; current limitations retained |
+| T1 — model 10k active users | Validate route/session mix, warm/cold cache and isolated provider workloads; measure single-instance ceilings | Reproducible workload report with latency, errors, dropped work, resources and costs; no tier claim from functional checks |
+| Assistant storage migration | Tenant authorization, managed shared database, lease/queue semantics, encryption/key rotation and per-tenant budgets | Cross-tenant negative tests; migration/recovery and idempotency/concurrency proofs; external execution reconciliation |
+| T2 — model 100k active users | Independent failure domains, shared storage/cache/queues, bounded admission and autoscaling | Approved staging workload plus host-loss/dependency-outage tests; provider quota agreements |
+| T3 — model 1M+ active users | Region/routing/failover design, controlled cache warming, regional data policy and model-capacity procurement | Coordinated workload on named infrastructure; regional failure/restore drills; quota, cost and staffing review |
 
-- DSHEA-compliant supplement catalog + custom cadence engine
-- Biomarker lab integrations (Quest / InsideTracker / Function Health — scaffolded, contracts out-of-scope)
-- CGM-adjacent + smart rings + at-home biomarker kits
-- Home gym smart equipment (mirror / cables / bike)
-- Women's health track with US state-by-state data residency (post-Dobbs)
-- Anti-aging / longevity protocols (DSHEA-compliant, no Rx peptides)
-- Multi-tenant B2B SaaS admin (white-label recommendation engine for clinics)
-- Shopify POS integration for physical retail
-- Telehealth partner scaffolds (Ro / Hims-adjacent)
-- `v3.0-phase3-complete` (Day 105)
+AI inference concurrency, browsing concurrency and logged-in users are separate workloads. [SCALABILITY.md](SCALABILITY.md) supplies equations and costs; [WORKLOAD-CONTRACT.md](WORKLOAD-CONTRACT.md) supplies test boundaries. No high-volume live-provider testing is authorized by this roadmap.
 
-## Post-105 (out of Phase 1 scope)
+## Launch controls
 
-- Convert Partner Plus Dev Store to real Plus ($2,500/mo)
-- Real customer acquisition + paid ads
-- Real supplier / manufacturing / 3PL partnerships
-- Real clinical partnerships + telehealth contracts
-- Real FDA 510(k) filings for RegenAI-branded devices
-- Real EU MDR authorized representative
-- Real App Store / Google Play public releases (Apple Dev $99/year + Google Play $25 one-time)
-- Real Statsig / paid Snowflake / paid Segment upgrade
+Resolve applicable privacy/AI/product/consumer-law decisions, vendor agreements, retention and rights handling. Finish the remaining development-tool advisory review, independent security assessment, accessibility journeys, operational staffing and monitoring. Keep the 99.9% target and 99.0% floor as SLOs until measured; contractual promises require separate business approval.
+
+Future commerce, subscriptions, Markets, messaging providers, server voice/media and other integrations each need a scoped specification, provider-capability check, cost authorization, tests and client privacy review. The earlier feature backlog remains in the master plan; this publication does not mark it complete.

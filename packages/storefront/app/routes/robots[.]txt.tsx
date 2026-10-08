@@ -1,20 +1,20 @@
 /**
  * /robots.txt route. Served at domain root.
- * Allows all search engines + points at sitemap.
- * /pages/styleguide is noindex via meta tag (see route).
+ * Lets crawlers fetch noindex pages and points at the sitemap.
+ * Private account and checkout paths remain disallowed.
  */
 
-export const loader = () => {
+import type {Route} from './+types/robots[.]txt';
+
+export const loader = ({context}: Route.LoaderArgs) => {
   const body = [
     'User-agent: *',
     'Allow: /',
-    'Disallow: /cart',
     'Disallow: /checkouts/',
     'Disallow: /account',
     'Disallow: /account/',
-    'Disallow: /pages/styleguide',
     '',
-    'Sitemap: https://regenai.com/sitemap.xml',
+    `Sitemap: ${new URL('/sitemap.xml', context.settings.canonicalOrigin).toString()}`,
     '',
   ].join('\n');
 

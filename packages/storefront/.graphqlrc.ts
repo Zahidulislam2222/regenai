@@ -17,12 +17,8 @@ const graphqlConfig: IGraphQLConfig = {
       ],
     },
 
-    customer: {
-      schema: getSchema('customer-account'),
-      documents: ['./app/graphql/customer-account/*.{ts,tsx,js,jsx}'],
-    },
-
-    // Add your own GraphQL projects here for CMS, Shopify Admin API, etc.
+    // Add a customer-account project with real operation documents when
+    // account queries are implemented. An empty document glob makes codegen fail.
   },
 };
 

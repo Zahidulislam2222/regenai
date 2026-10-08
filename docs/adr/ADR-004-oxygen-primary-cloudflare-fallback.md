@@ -6,7 +6,7 @@
 
 RegenAI storefront needs global-edge hosting with:
 - Sub-100ms TTFB from major metros (US / CA / UK / EU / AU — our 5 markets)
-- Zero-cost for Phase 1 portfolio traffic
+- Zero-cost for Phase 1 project traffic
 - Deploy-from-git pipeline (PR preview URLs required)
 - Integration with Shopify CDN (product images, checkout domain)
 - Hydrogen-native caching + stale-while-revalidate
@@ -31,6 +31,6 @@ RegenAI storefront needs global-edge hosting with:
 **+** Oxygen auto-handles Shopify CDN, checkout domain routing, cart cookies.
 **+** CF Pages fallback means a Shopify Oxygen outage isn't an existential risk — redeploy via `wrangler pages` from the same build artifact.
 **−** Oxygen requires a Shopify "Hydrogen Storefront" resource, created via Partners Dashboard (browser, interactive). First-time setup is a user-handoff step (tracked in BUILD-LOG D1.5).
-**−** Oxygen free tier has traffic caps at "some undocumented amount" — per Shopify docs, sufficient for development + portfolio demo. For a real launch with real traffic, we'd convert the Partner dev store to a paid Plus plan (out-of-scope Phase 1).
+**−** Oxygen free tier has traffic caps at "some undocumented amount" — per Shopify docs, sufficient for development + application. For a real launch with real traffic, we'd convert the Partner dev store to a paid Plus plan (out-of-scope Phase 1).
 
 **Reversibility:** High. Swapping to CF Pages as primary is a `wrangler.toml` + GH Actions workflow change; no code changes.

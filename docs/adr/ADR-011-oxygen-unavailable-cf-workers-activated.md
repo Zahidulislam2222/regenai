@@ -1,5 +1,8 @@
 # ADR-011 — Oxygen unavailable on dev stores; Cloudflare Workers fallback activated
 
+> Planning update (2026-09-21): historical decision preserved. Current hosting, eligibility, runtime, cost and security assumptions must be checked against [PROJECT_PLAN.md](../../PROJECT_PLAN.md). Its audited findings supersede conflicting blanket claims here; no infrastructure migration has been performed.
+
+
 **Status:** Accepted
 **Date:** 2026-04-20 (Day 10 remediation)
 **Amends:** ADR-004 (Oxygen primary + Cloudflare Pages fallback documented)
@@ -29,7 +32,7 @@ The Plus-preview flag on a dev store grants B2B, Markets, Functions, Checkout Ex
 
 **Activate the fallback that ADR-004 pre-authorised.** Specifically:
 
-1. **Hosting platform** — Cloudflare Workers. Wrangler authenticated via OAuth at Day 0 with `workers (write)` scope; account id `f523a94f3089b05b1943314df3fd2624`. Free tier — 100k requests/day, 10 ms CPU time/req — comfortably sufficient for Phase 1 portfolio traffic.
+1. **Hosting platform** — Cloudflare Workers. Wrangler authenticated via OAuth at Day 0 with `workers (write)` scope; account id `f523a94f3089b05b1943314df3fd2624`. Free tier — 100k requests/day, 10 ms CPU time/req — comfortably sufficient for Phase 1 project traffic.
 2. **Storefront API tokens** — install the Shopify **Headless** sales channel (not Hydrogen) on `regenai.myshopify.com`. Creates a storefront resource that mints the public + private Storefront API tokens Hydrogen needs. Free. Same tokens work from any hosting target.
 3. **Build pipeline** — unchanged. `shopify hydrogen build` produces a Worker-compatible bundle (`dist/server/index.js` + `dist/client/` assets). `wrangler deploy` ships that bundle to CF Workers. No code changes to the Hydrogen app.
 4. **Deploy workflows** — `deploy-preview.yml`, `deploy-staging.yml`, `deploy-production.yml` target Workers via `cloudflare/wrangler-action@v3` instead of Oxygen's `shopify/hydrogen-deploy` action.
@@ -40,9 +43,9 @@ The Plus-preview flag on a dev store grants B2B, Markets, Functions, Checkout Ex
 
 1. **Convert `regenai.myshopify.com` to a paid Plus subscription.** Costs $2,000+/month. Violates the $0 infrastructure constraint. Rejected.
 2. **Create a new production Plus store.** Same paywall. Rejected.
-3. **Vercel** — free tier TOS forbids commercial use; Hydrogen on Vercel for a commerce demo is marginal. Rejected.
+3. **Vercel** — free tier TOS forbids commercial use; Hydrogen on Vercel for a commerce application is marginal. Rejected.
 4. **Netlify** — same Vercel-style commercial restrictions. Rejected.
-5. **Stay on mini-Oxygen for local dev only, skip public hosting entirely.** Works for code review but kills any browser-accessible demo, Lighthouse-CI against a real URL, or shareable portfolio link. Rejected.
+5. **Stay on mini-Oxygen for local dev only, skip public hosting entirely.** Works for code review but kills any browser-accessible application, Lighthouse-CI against a real URL, or shareable project link. Rejected.
 6. **GitHub Pages** — static only, no SSR, no edge loaders. Incompatible with Hydrogen SSR. Rejected.
 
 Cloudflare Workers wins on: free tier sufficiency, already-authenticated Wrangler, Hydrogen bundle compatibility, global edge, commercial-use-allowed TOS.

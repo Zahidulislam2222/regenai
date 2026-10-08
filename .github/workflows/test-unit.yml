@@ -15,10 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'
@@ -26,14 +26,8 @@ jobs:
       - name: Install deps
         run: npm ci
 
-      - name: Vitest — storefront
-        # Run the explicit test:unit script (non-watch, no coverage).
-        # Coverage-v8 dep isn't installed yet; re-enable when @vitest/coverage-v8
-        # is added (D16 test expansion).
-        run: npm --workspace packages/storefront run test:unit
+      - name: Complete JavaScript suite
+        run: npm test
 
-      - name: Vitest — @regenai/ui
-        # UI workspace has no tests yet (components get Storybook-only
-        # coverage until D13 publish gate). --passWithNoTests lets the job
-        # pass cleanly; will tighten once ui specs land.
-        run: npm --workspace packages/ui run test -- --passWithNoTests
+      - name: Publication workflow contracts
+        run: node --test .github/tests/publication-workflows.test.mjs

@@ -1,0 +1,24 @@
+name: ${ASSISTANT_COMPOSE_PROJECT:?Use a project-specific name}
+services:
+  assistant:
+    image: ${ASSISTANT_RELEASE_IMAGE:?Use a versioned image}
+    env_file: ${ASSISTANT_ENV_FILE:?Use a private environment file}
+    user: "10001:10001"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+    mem_limit: ${ASSISTANT_MEMORY_LIMIT:?Set a memory limit}
+    cpus: ${ASSISTANT_CPU_LIMIT:?Set a CPU limit}
+    pids_limit: ${ASSISTANT_PIDS_LIMIT:?Set a process limit}
+    tmpfs: ["/tmp:rw,noexec,nosuid,nodev,size=32m,mode=1777"]
+    volumes:
+      - "${ASSISTANT_DATA_DIRECTORY:?Use a private durable directory}:/data"
+    ports:
+      - "127.0.0.1:${ASSISTANT_HOST_PORT:?Choose a free loopback port}:${ASSISTANT_CONTAINER_PORT:?Set the configured container port}"
+    healthcheck:
+      test: [CMD, python, -c, "from regenai_assistant.config import load_settings; import urllib.request; s=load_settings(); urllib.request.urlopen('http://127.0.0.1:'+str(s.bind_port)+s.base_path+'/health',timeout=s.request_timeout_seconds)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s

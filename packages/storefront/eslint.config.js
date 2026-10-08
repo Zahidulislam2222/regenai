@@ -250,4 +250,8 @@ export default [
       'react-hooks/rules-of-hooks': 'off',
     },
   },
+  {
+    files: ['preview/**/*.{ts,tsx}', 'app/features/recovery/**/*.{ts,tsx}', 'app/content/**/*.{ts,tsx}', 'app/config/**/*.{ts,tsx}', 'vite.frontend.config.ts'],
+    languageOptions: {parserOptions: {project: './tsconfig.frontend.json'}},
+  },
 ];
