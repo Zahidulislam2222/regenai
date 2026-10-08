@@ -2,7 +2,7 @@
 
 The assistant adds customer chat to the existing storefront and a Python support console at `/assistant`. The collection remains a collection with ordering closed. Public workspaces contain workspace orders; an approved resolution updates only that workspace's encrypted records.
 
-Verified release (2026-10-08): real Claude responses passed Spanish memory/image understanding and the damaged $89 recommendation. The two authorized checks cost $0.01051. AI is active under the configured service budgets; external refunds and email sending remain disabled pending dedicated client connections and end-to-end verification.
+Verified release (2026-10-08): real Claude responses passed Spanish memory/image understanding and the damaged $89 recommendation. The two authorized checks cost $0.01051. AI is active under the configured service budgets; external refunds and email sending remain disabled pending real test-order and inbox end-to-end verification.
 
 ## What operates
 
@@ -25,18 +25,20 @@ Sensitive or uncertain recommendations create an internal human-review queue ent
 | Service | Implemented capability | Client prerequisite |
 | --- | --- | --- |
 | Shopify | OAuth installation, read diagnostics, order lookup, approved refund adapter | Dedicated support app, appropriate order access and protected-customer-data permission |
-| Gmail | OAuth, refresh, bounded inbox import, verified approved reply | Google client configured for the exact HTTPS callback; Gmail read/send consent |
+| Gmail | OAuth, refresh, bounded inbox import, verified approved reply | Google Gmail read/send offline grant; installed-app loopback or correctly registered web callback |
 | Zendesk | Read diagnostics, verified requester and approved public reply | Correct account URL and suitable OAuth token |
 | Gorgias, Help Scout, Front, Zoho Desk | Bounded read and connection checks | Own provider credentials; outbound execution remains disabled |
 | Google Calendar | OAuth, refresh, recent events read | Calendar read consent |
 | GitHub | Repository read | Restricted token for required repositories |
 | Slack | Authentication read check | Restricted bot token; message delivery is not enabled |
 
-A separate support app is now installed on the owned Shopify development store. Native scope readback confirms only `read_orders` and `write_orders`; the public assistant renewed its expiring client-credentials token and passed repeated read diagnostics, including after restart. The older merchant token remains separate. An empty order list does not verify protected customer data or refund execution. Client-specific permissions, historical-order access where required, Gmail consent and the actual refund/reply workflow still need verification. Keep `ASSISTANT_LIVE_ACTIONS_ENABLED=false` until those checks pass.
+A separate support app is now installed on the owned Shopify development store. Native scope readback confirms only `read_orders` and `write_orders`; the public assistant renewed its expiring client-credentials token and passed repeated read diagnostics, including after restart. The older merchant token remains separate. An empty order list does not verify protected customer data or refund execution. Client-specific permissions, historical-order access where required, the actual refund/reply workflow still needs verification. Keep `ASSISTANT_LIVE_ACTIONS_ENABLED=false` until those checks pass.
 
-Gmail is the selected inbox, using the current account and a dedicated RegenAI Support label. The label is created; server OAuth consent and label-only import remain in progress. Zendesk offers a trial and requires an ongoing paid plan, so it is not selected. The existing Google consent project is in Testing: Gmail refresh tokens can expire after seven days. This setup does not establish indefinite unattended inbox access.
+Gmail is the selected inbox, using the current account and a dedicated RegenAI Support label. The supplied existing desktop client completed local loopback consent. Its encrypted server grant passed actual refresh, repeated label-only reads, bounded zero-import background sync and restart persistence. Gmail API was enabled in the selected existing Google project; no billing or quota adjustments were made. Zendesk offers a trial and requires an ongoing paid plan, so it is not selected. The existing Google consent project is in Testing: Gmail refresh tokens can expire after seven days. This setup does not establish indefinite unattended inbox access.
 
-The owner console provides encrypted manual token setup. Browser OAuth routes are `/assistant/oauth/shopify/start?shop=<canonical-shop-domain>`, `/assistant/oauth/gmail/start` and `/assistant/oauth/calendar/start`; each requires an owner browser session. Register their matching `/callback` URLs in the provider console. State is browser-bound, expiring and single-use; Shopify callbacks additionally require the app's HMAC signature. Configuration alone is not evidence of completed consent.
+The selected Gmail installation uses the owner console’s encrypted manual connection with client ID, client secret, access token, refresh token and expiry obtained through official installed-app loopback consent. Re-consent after Testing expiry, then replace the connection through owner access and run diagnostics. Keep global Google web-start credentials empty for this desktop-client path. Do not register an HTTPS callback on an installed-app client or change another app’s callbacks.
+
+The owner console also provides encrypted manual token setup. Browser OAuth routes are `/assistant/oauth/shopify/start?shop=<canonical-shop-domain>`, `/assistant/oauth/gmail/start` and `/assistant/oauth/calendar/start`; each requires an owner browser session. Register their matching `/callback` URLs in the provider console. State is browser-bound, expiring and single-use; Shopify callbacks additionally require the app's HMAC signature. Configuration alone is not evidence of completed consent.
 
 If a connection says “token expired,” identify the provider and token type first. Check expiry metadata, clock, current app installation/revocation and scopes; use the configured grant: Shopify client credentials renew without a refresh token; existing Google connections use their refresh token. Expired or revoked Google Testing grants require fresh consent. A 401 on a refund/send never prompts an automatic repeat. Check execution receipts and provider history before reconnecting or retrying. Do not ask clients to disclose their store password: use delegated staff access, official consent and a dedicated secret store.
 
