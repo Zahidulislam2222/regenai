@@ -19,6 +19,12 @@ The main storefront has ordering closed and collects no payment. The same domain
 
 Public workspaces are removed under the configured retention policy by scheduled maintenance. The current default is seven days; sessions share that default lifetime. Merchant operational records require an owner-managed retention/export process. Encryption covers record payloads, while categories, identifiers and timestamps remain structural database metadata. No multi-client isolation claim is made: each client needs a separate database and deployment.
 
+### Connected inbox and support orders
+
+Gmail uses the selected account’s delegated read/send grant and a maintained query restricted to the RegenAI Support label, with bounded reads. Connection records are encrypted. Current import proof used an empty label; it does not prove customer-ticket delivery or outbound email. The installed-client grant remains subject to Google Testing expiry after seven days. Revoke/replace grants through the account owner; do not collect client passwords.
+
+Shopify support reads use a dedicated installed app with order read/write scopes. Protected customer data, historical orders and actual refund behavior require client-specific access review. Sender/order matching does not authorize a model to spend. The configured approval/reconciliation flow remains mandatory.
+
 ### Processors and delivery
 
 Cloudflare and Caddy deliver the site and process network metadata. Hydrogen reads the Shopify catalog. The Python service stores support records. When enabled, model requests go through OpenRouter to the explicitly configured upstream model. Requesting restricted provider data collection is not proof of a provider's retention behavior; review the applicable processor terms before handling client data. Browser voice processing depends on the browser's service.
@@ -63,3 +69,20 @@ When the Hydrogen storefront connects to a real Shopify store, personal data wil
 | Shopify mandatory privacy webhooks | **Locally built and HTTP-tested**; remote D1 migrations, subscriptions, real delivery and operational response are unverified, so merchant release remains blocked |
 | Consent management | **Planned** (only needed if optional tracking is added) |
 | Processor register and legal review | **Planned** — required before real customers |
+
+## Part C — client privacy launch checklist
+
+The client/store owner must determine controller/processor roles, purposes and lawful bases, approved vendors/model routing, international transfers, data location and retention. Publish a notice that describes actual chat, inbox, attachments, memory and human review. Do not silently reuse support content for marketing or model training.
+
+| Record class | Required client decision |
+|---|---|
+| Chat and saved memory | Retention days, erase behavior, authorized retrieval and export |
+| Email and order details | Minimum fields, label/folder restrictions, identity match and protected-data eligibility |
+| Policy/rulebook/history | Who approves and can edit; handling of personal details in historical emails |
+| Audit and financial receipts | Legal retention, restricted access and reconciliation records |
+| Backups and derived indexes | Retention, key access, erasure propagation and documented exceptions |
+| Browser voice and images | Clear optional processing/disclosure; vendor and sensitive-data assessment |
+
+Conversation erasure removes chat/preferences/retrieved context; it does not remove operational ticket audit. Record that distinction in rights responses. Deletion of encrypted content must extend to any future retrieval index and expire in backups under a documented retention policy. Legal holds and statutory financial retention require a specific reviewed rationale rather than indefinite storage.
+
+Before processing live customer data, verify the processor register/agreements, grant scopes, client permissions, support-data handling and incident process. Restricted model data-collection settings are a request to a provider, not proof of zero retention. [GDPR official text](https://eur-lex.europa.eu/eli/reg/2016/679/oj/eng), [Google OAuth expiry](https://developers.google.com/identity/protocols/oauth2#expiration).

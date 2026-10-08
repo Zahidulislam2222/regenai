@@ -22,7 +22,7 @@ jobs:
       PREVIEW_URL: ${{ vars.REGENAI_VISUAL_BASE_URL }}
       PLAYWRIGHT_TEST_DIR: tests/visual
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Require visual specs and configured inputs
         run: |
@@ -40,7 +40,7 @@ jobs:
           fi
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'

@@ -1,4 +1,8 @@
-# Live frontend review
+# Frontend and assistant deployment history
+
+## Current combined release — 2026-10-08
+
+The main application serves the Shopify-backed Hydrogen storefront and same-origin Python Support Studio. The assistant release adds matching chat/console styling, encrypted memory, owner approvals, handoff, durable jobs, Shopify renewal and Gmail support-label reads. The latest verified release matched 179 packaged source files, 30 Python runtime files, 97 frontend artifacts, three private environment files and two image identities. Public HTTP checks and restart/read persistence passed. AI is bounded; real refund/email remains disabled. [Build status](BUILD-STATUS.md) records the evidence; [RELEASE.md](RELEASE.md) describes both services’ release and recovery. Earlier sections below are dated historical checkpoints.
 
 ## Current release — 2026-10-04
 
@@ -14,7 +18,7 @@ The session-key rotation changed only ignored runtime environment files in versi
 
 ## Animated hero repair — 2026-10-03
 
-The public design-study site at **https://regenai.zahidul-islam.com** now serves the restored Pulse One 3D hero. The 991,864-byte original model had loaded too slowly and revalidated on each visit. A source-pinned replacement keeps the same visible form and moving part, reduces the model to 321,652 bytes, and transfers 144,192 bytes when gzip is accepted. Only the content-versioned model receives a long immutable browser cache header; HTML stays `no-store` and the store remains read-only.
+The public storefront at **https://regenai.zahidul-islam.com** now serves the restored Pulse One 3D hero. The 991,864-byte original model had loaded too slowly and revalidated on each visit. A source-pinned replacement keeps the same visible form and moving part, reduces the model to 321,652 bytes, and transfers 144,192 bytes when gzip is accepted. Only the content-versioned model receives a long immutable browser cache header; HTML stays `no-store` and the store remains read-only.
 
 Before activation, the actual public release was snapshotted and matched its saved 29-file manifest. The new versioned static release passed local browser checks, exact remote Nginx-image validation and **31/31** remote file hashes; its container became healthy after activation. Public HTTPS returned the compressed model and noindex headers. Fresh mobile and desktop browsers reached the 3D scene, and canvas frames changed over time; reduced motion retained the still image. All three public views had no page errors or horizontal overflow. The prior release remains available for rollback. Cloudflare currently reports `DYNAMIC` for the model, so this evidence does not establish edge caching or a fixed first-load time. The separate Hydrogen staging site received the same model optimization in a later source-pinned release; its public animated browser and parity evidence is in [build status](BUILD-STATUS.md).
 

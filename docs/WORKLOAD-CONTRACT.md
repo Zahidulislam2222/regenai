@@ -1,6 +1,6 @@
 # Workload contract — candidate baseline
 
-Updated: 2026-09-21
+Updated: 2026-10-08
 Status: design assumptions only. No load test was run and no capacity was measured.
 
 This contract gives future S01/S04 work a reproducible starting point. It describes candidate scenarios, input ownership, acceptance evidence and a local safety proposal. The maintainer has approved a conservative local-only smoke envelope below; that is not authorization for remote or third-party testing. The master plan owns product workload goals; the reviewed machine-readable profile/config is to own executable smoke limits and thresholds when implemented. Markdown is explanatory and must never be parsed at runtime. Keep its prose synchronized with the validated profile and master plan.
@@ -90,3 +90,11 @@ Test distinct cases: warm public browse, cold cache, hot product, personalized c
 ## Current evidence
 
 No workload profile, k6 scenario, generator run, performance result, or capacity evidence was created by this document. Current status: **contract drafted; profile and executable tests planned; capacity unverified**. Candidate route assumptions are explicitly and should be revised from the actual feature routes, asset/dependency inventory and observed flows when those are inspected; they are not a forecast and do not need approval as business facts.
+
+## Assistant workload extension
+
+Retain the local smoke envelope above. Add separate profiles for chat sessions, owner review, policy/memory reads, inbox imports, scheduled jobs and approval contention. Use isolated deterministic provider adapters and reserved test identities; live paid models and customer inbox/store data are outside baseline load runs.
+
+Each profile records active sessions, admitted/rejected starts, message cadence, in-flight model calls, token/image/context distributions, queue age, database contention, provider fan-out and error/cost limits. Test budget exhaustion, stalled worker leases, concurrent changed-policy approval, ambiguous external results, deletion and hot-tenant isolation. Measure provider-adapter throughput separately from real model latency/quota results.
+
+The 10k/100k/1M tiers require source/config/profile provenance and independently named frontend, assistant and provider workloads. A static-page benchmark or two real model checks cannot prove shared system capacity. No new load run is performed by this documentation update.

@@ -22,6 +22,9 @@ regenai-assistant-mcp = "regenai_assistant.bridge:main"
 [tool.setuptools.package-data]
 regenai_assistant = ["content/*.json", "content/*.txt", "static/*"]
 
+[tool.setuptools.packages.find]
+include = ["regenai_assistant*"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"

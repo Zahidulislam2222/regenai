@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for your interest in RegenAI. This is a project project maintained by one developer; issues and focused pull requests are welcome.
+Thanks for your interest in RegenAI. The project is maintained by Zahidul Islam; issues and focused pull requests are welcome.
 
 ## Before you start
 
@@ -17,11 +17,15 @@ npm install
 # Visual storefront, no credentials required
 npm run dev:frontend
 
-# Shopify Functions (Rust stable + wasm32-wasip1 target)
+# Shopify Functions (Rust stable + wasm32-unknown-unknown target)
 cd packages/app && cargo test --workspace
 ```
 
 The root `package-lock.json` owns all npm workspaces. Do not add per-package lockfiles.
+
+## Python support service
+
+Install `services/assistant` in a Python 3.12+ virtual environment and configure its private environment from `.env.example`. Run pytest, Ruff, mypy, Bandit and the wheel build described in its README. Automated tests require no live provider credentials; paid inference and external action checks are separately authorized.
 
 ## Branches and commits
 

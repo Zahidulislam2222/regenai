@@ -1,23 +1,45 @@
-name: Test Python assistant
+name: Python assistant CI
+
 on:
   pull_request:
-    paths: ['services/assistant/**', 'packages/storefront/app/features/recovery/**', '.github/workflows/test-assistant.yml']
   push:
     branches: [main, staging]
+
 permissions:
   contents: read
+
+concurrency:
+  group: assistant-ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  python:
+  assistant:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: services/assistant
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
-      - run: pip install -e './services/assistant[dev]'
-      - run: pytest services/assistant/tests -q
-      - run: mypy services/assistant/regenai_assistant
-      - run: ruff check services/assistant
-      - run: bandit -r services/assistant/regenai_assistant -ll
-      - run: pip wheel --no-deps --wheel-dir /tmp/assistant-wheel ./services/assistant
+          cache: pip
+          cache-dependency-path: services/assistant/pyproject.toml
+      - name: Install pinned application and development dependencies
+        run: python -m pip install -e '.[dev]'
+      - name: Tests, including configuration and secret regressions
+        run: python -m pytest -q
+      - name: Lint
+        run: python -m ruff check .
+      - name: Type check
+        run: python -m mypy regenai_assistant
+      - name: Security scan
+        run: python -m bandit -r regenai_assistant -q
+      - name: Build distributable
+        run: python -m pip wheel --no-deps . --wheel-dir dist
+      - name: Verify installed artifact scope and required package data
+        run: python ../../.github/tests/assistant-wheel-check.py dist
+      - name: Publication workflow regression tests
+        working-directory: .
+        run: node --test .github/tests/publication-workflows.test.mjs

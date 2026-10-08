@@ -1,6 +1,6 @@
 # Shopify Functions
 
-Three deployable Rust Functions are compiled to WebAssembly for Shopify's cart and checkout runtime. Shared helpers live in [`../extensions-shared`](../extensions-shared). The discount stacking prototype is retained in [`../experimental/discount-stacking`](../experimental/discount-stacking/README.md) because the current validation schema does not expose applied codes.
+Three deployable Rust Functions are compiled to WebAssembly for Shopify's cart and checkout runtime. Shared helpers live in [`../extensions-shared`](../extensions-shared). The discount stacking rule implementation is retained in [`../experimental/discount-stacking`](../experimental/discount-stacking/README.md) because the current validation schema does not expose applied codes.
 
 | Function | Target | Behaviour | Unit tests |
 |---|---|---|---:|
@@ -8,7 +8,7 @@ Three deployable Rust Functions are compiled to WebAssembly for Shopify's cart a
 | [`b2b-tiered-pricing`](b2b-tiered-pricing/) | `cart.transform.run` | Generates line updates for company-tier and volume pricing; Shopify restricts line updates to Plus stores | 12 |
 | [`delivery-customization`](delivery-customization/) | `cart.delivery-options.transform.run` | Hides express/same-day options for carts containing items flagged as FDA Class II devices; adds "Signature required" to options when any line requires signature delivery | 9 |
 
-Verified 2026-10-03: workspace Rust tests passed, including the experimental rule crate. Three deployable Functions passed 2026-01 schema type generation, `wasm32-unknown-unknown` release builds (39–68 KiB), and Shopify CLI local runtime tests with empty and positive prepared inputs. Shopify accepted them in inactive draft app version `regenai-merchant-sandbox-4`; no version release, install or store-level activation has occurred.
+Verified 2026-10-03: workspace Rust tests passed, including the separate rule crate. Three deployable Functions passed 2026-01 schema type generation, `wasm32-unknown-unknown` release builds (39–68 KiB), and Shopify CLI local runtime tests with empty and positive prepared inputs. Shopify accepted them in inactive draft app version the existing draft; no version release, install or store-level activation has occurred.
 
 ## Build
 
@@ -23,6 +23,10 @@ Release profile optimises for size (`opt-level = "z"`, LTO, stripped, `panic = "
 ## Shopify limits that apply
 
 Shopify's [Rust Function guide](https://shopify.dev/docs/apps/build/functions/programming-languages/rust-for-functions) requires `wasm32-unknown-unknown` and names a 256 kB module limit. [Cart Transform](https://shopify.dev/docs/api/functions/2026-01/cart-transform) restricts `lineUpdate` operations to Plus stores. Custom apps containing Functions are available on Plus live stores; a public App Store distribution is the documented all-plan path.
+
+## Release boundary
+
+Public ordering remains closed. Do not infer merchant-app installation, Function eligibility or checkout success from a compiled module or inactive draft. Recheck the selected API schema and store capabilities before activation.
 
 ## Before release
 

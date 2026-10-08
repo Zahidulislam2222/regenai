@@ -1,6 +1,6 @@
 # Merchant app — `packages/app`
 
-The backend of RegenAI: a standalone Shopify merchant app on Cloudflare Workers, plus three deployable Shopify Functions written in Rust. A fourth discount-stacking crate remains experimental.
+The backend of RegenAI: a standalone Shopify merchant app on Cloudflare Workers, plus three deployable Shopify Functions written in Rust. The separate discount-stacking rule crate requires a supported API redesign before deployment.
 
 > **Status: local security and privacy repair, not redeployed.** The prior development Worker's production and preview `workers.dev` URLs were disabled and verified on 2026-10-04. Authentication, uninstall and privacy webhook paths passed local tests and loopback HTTP checks. Isolated remote data, secrets, migrations, Shopify subscriptions, full review and release checks remain required before merchant use.
 
@@ -22,7 +22,7 @@ The backend of RegenAI: a standalone Shopify merchant app on Cloudflare Workers,
 - React Router 7 (framework mode) on Cloudflare Workers via `@cloudflare/vite-plugin`
 - Shopify Polaris for the admin UI
 - Cloudflare D1 (SQLite) for app data, single-use OAuth state and browser sessions
-- Rust → WebAssembly (`wasm32-wasip1`) for Functions
+- Rust → WebAssembly (`wasm32-unknown-unknown`) for Functions
 
 ## Data model
 
@@ -52,7 +52,7 @@ From `packages/app`:
 | Typecheck | `npm run typecheck` |
 | Apply migrations locally | `npm run migrate:local` |
 | Function unit tests | `cargo test --workspace` |
-| Build one Function to WASM | `cargo build --release --target wasm32-wasip1 -p cart-contraindication` |
+| Build one Function to WASM | `cargo build --release --target wasm32-unknown-unknown -p cart-contraindication` |
 
 `npm run deploy` and `npm run migrate:remote` change live Cloudflare resources. Do not run them until environments are isolated (SEC-04) and the release is approved.
 
@@ -63,7 +63,11 @@ The tracked [`shopify.app.example.toml`](shopify.app.example.toml) documents the
 
 ## Scaling notes
 
-Workers scale automatically. D1 is single-threaded per database; a durable queue and burst handling remain planned for higher webhook volume. See [SCALABILITY.md](../../docs/SCALABILITY.md).
+The Worker platform scales request execution within its documented limits; application storage and dependency quotas still constrain throughput. D1 is single-threaded per database; a durable queue and burst handling remain planned for higher webhook volume. See [SCALABILITY.md](../../docs/SCALABILITY.md).
+
+## Publication boundary
+
+The deployed Python support backend is a separate service. Publishing this repository does not activate this merchant Worker, its draft Functions, subscriptions or remote migrations. The optional Workers workflow requires manual dispatch and explicit repository opt-in.
 
 ## Related
 

@@ -31,6 +31,10 @@ Run from the repository root:
 
 Storybook is not currently published online.
 
+## Release scope
+
+The live storefront and Support Studio share their maintained storefront tokens and fonts; this reusable package has a separate component API. Validate keyboard, focus, motion and screen-reader behavior in each consuming application. Component examples alone do not establish application accessibility.
+
 ## Related
 
 [Architecture](../../docs/ARCHITECTURE.md) · [Accessibility](../../docs/ACCESSIBILITY.md) · [ADR-002 — Tailwind + shadcn ownership](../../docs/adr/ADR-002-why-tailwind-shadcn-ownership.md) · [ADR-005 — design-system package](../../docs/adr/ADR-005-regenai-ui-published-package.md)

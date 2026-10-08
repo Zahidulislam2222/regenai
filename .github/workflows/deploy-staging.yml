@@ -1,18 +1,20 @@
-name: Deploy — Staging
+name: Deploy — Optional Workers staging
 
 on:
-  push:
-    branches: [staging]
+  workflow_dispatch:
 
 concurrency:
   group: deploy-staging
   cancel-in-progress: false
 
-# Post-ADR-011 pivot: all deploys go to Cloudflare Workers (Oxygen blocked
-# on dev stores). Storefront uses tokens from the Headless sales channel.
+# Existing container releases are managed separately. Ordinary publication
+# must not activate this optional Workers deployment.
+permissions:
+  contents: read
 
 jobs:
   storefront-staging:
+    if: github.event_name == 'workflow_dispatch' && vars.REGENAI_WORKERS_STAGING_APPROVED == 'true'
     name: Storefront staging (CF Workers)
     runs-on: ubuntu-latest
     environment: staging
@@ -27,12 +29,12 @@ jobs:
             echo "has-secrets=true" >> $GITHUB_OUTPUT
           fi
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         if: steps.check.outputs.has-secrets == 'true'
 
       - name: Setup Node
         if: steps.check.outputs.has-secrets == 'true'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'

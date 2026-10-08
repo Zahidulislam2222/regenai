@@ -1,89 +1,80 @@
 # RegenAI
 
-Python Support Studio and the matching storefront assistant are deployed. Verified local/public flows include approvals, handoff, memory, durable tasks and Shopify reads and renewal of the installed support app’s expiring token. The dedicated app grants only order read/write access on the owned development store. Gmail is connected using the supplied desktop client; actual refresh, support-label reads, background sync and restart passed. Google Testing consent can expire after seven days. Two real Claude checks passed for Spanish memory/image understanding and the $89 recommendation, costing $0.01051. AI is enabled with bounded budgets; real refund/email integration remains pending and external actions are disabled. Current verification details are in [build status](docs/BUILD-STATUS.md) and the [operator guide](docs/ASSISTANT.md).
+Shopify storefront and Python customer support assistant by **Zahidul Islam**.
 
-**Headless Shopify commerce platform for recovery and wellness products** — a live 3D visual storefront with Hydrogen integration in progress, a merchant app on Cloudflare Workers, and Shopify Functions written in Rust.
+[Open the storefront](https://regenai.zahidul-islam.com) · [Open Support Studio](https://regenai.zahidul-islam.com/assistant) · [Documentation](docs/README.md)
 
-**Live application:** https://regenai.zahidul-islam.com
+The live Hydrogen storefront reads six owned Shopify catalog products and retains the original cream, navy and cobalt design, product photography and interactive 3D scenes. Support Studio adds customer chat, persistent memory, policy recommendations, owner approvals, human handoff and durable tasks. Public ordering is closed. Refunds and outbound customer email remain disabled until their complete external workflow is verified.
 
-> RegenAI is a client-facing application. Ordering is closed, no payment is collected, and no clinical claim is made. The visual storefront is live; Shopify integration is in progress. See [build status](docs/BUILD-STATUS.md) for exactly what is verified.
+## Components and current scope
 
-## What is in this repository
-
-| Part | Package | Stack | Status |
-|---|---|---|---|
-| **Frontend** — customer storefront | [`packages/storefront`](packages/storefront/README.md) | React 18, TypeScript, Three.js, Vite; Hydrogen 2026.4 + React Router 7 | Visual storefront **live**; Hydrogen integration **in progress** |
-| **Support assistant** | [`services/assistant`](services/assistant/README.md) | Python, FastAPI, encrypted SQLite, Claude MCP | Live support workflow; real refunds/email disabled |
-| **Backend** — merchant app | [`packages/app`](packages/app/README.md) | React Router 7 on Cloudflare Workers, D1, KV, Polaris | Scaffold built; security release blockers open |
-| **Backend** — Shopify Functions | [`packages/app/extensions`](packages/app/extensions/README.md) | Rust → WebAssembly | 4 Functions built; 47/47 unit tests pass |
-| Design system | [`packages/ui`](packages/ui/README.md) | React, Radix, Tailwind v4, Storybook | 15 components built |
-| Deployment | [`deploy/frontend`](deploy/frontend/README.md) | Docker, Nginx, Caddy, Cloudflare | Live frontend release |
-
-## Architecture at a glance
-
-Target architecture (the visual storefront is live; the Hydrogen, merchant-app and Function paths are being integrated):
+| Component | Technology | Current state |
+|---|---|---|
+| [Storefront](packages/storefront/README.md) | Hydrogen, React Router 7, React, TypeScript, Three.js | Live Shopify catalog, discovery, product pages, finder and informational routes |
+| [Support assistant](services/assistant/README.md) | Python 3.12, FastAPI, encrypted SQLite | Live chat and owner console; isolated workspaces, approvals, audit and durable worker |
+| Connections | Shopify Admin API, Gmail API | Installed support app with order read/write scopes; token renewal, Gmail support-label reads and restart persistence verified |
+| AI | Configured model through OpenRouter | Two authorized checks passed: Spanish memory/image understanding and the $89 support recommendation |
+| [Merchant app](packages/app/README.md) | React Router, Cloudflare Workers, D1 | Local authentication/privacy repairs tested; older public Worker routes disabled; remote release remains due |
+| [Shopify Functions](packages/app/extensions/README.md) | Rust and WebAssembly | Three compiled Functions in an inactive draft; store activation remains due |
+| [Design system](packages/ui/README.md) | React, Radix, Tailwind | Shared workspace package; separate from the current storefront theme |
 
 ```mermaid
 flowchart LR
-  Buyer[Buyer] --> CF[Cloudflare edge]
-  CF --> SF[Storefront - Hydrogen / React]
-  SF --> SAPI[Shopify Storefront API]
-  Buyer --> CO[Shopify checkout]
-  CO --> FN[Shopify Functions - Rust/WASM]
-  Merchant[Merchant] --> APP[Merchant app - Workers + D1]
-  APP --> ADMIN[Shopify Admin API]
+  Visitor[Visitor] --> Edge[Cloudflare and Caddy]
+  Edge --> Storefront[Hydrogen storefront]
+  Edge --> Assistant[Python Support Studio]
+  Storefront --> Catalog[Shopify catalog]
+  Assistant --> Records[(Encrypted records and durable jobs)]
+  Assistant --> Model[Configured AI provider]
+  Assistant --> Connections[Shopify and Gmail reads]
+  Assistant --> Owner[Owner approval and human handoff]
 ```
 
-Shopify owns catalog, cart, checkout, orders and payments; RegenAI never touches card data. Storefront servers are designed to be stateless so they scale horizontally behind a CDN. Full detail: [ARCHITECTURE.md](docs/ARCHITECTURE.md).
+Both services use immutable containers on the existing host. Local/live source, runtime artifacts, environment files and image identities have been compared. That evidence establishes release parity; it does not establish a million-user capacity result or continuous uptime. [Build status](docs/BUILD-STATUS.md) records the dated checks and remaining work.
 
-## Engineering targets
+## Engineering roadmap
 
-| Target | Design | Evidence today |
-|---|---|---|
-| **Scale:** 1M+ concurrent shoppers | CDN-first caching, stateless storefront, checkout on Shopify, queue-backed webhooks — [SCALABILITY.md](docs/SCALABILITY.md) | Capacity model documented; load tests not yet run |
-| **Availability:** 99.9% target, 99.0% floor | Redundant origin, SLOs, error budgets, rollback, DR — [RELIABILITY.md](docs/RELIABILITY.md) | Release-archive restore verified; rollback not yet drilled; uptime not yet measured |
-| **Security** | Threat model, strict CSP, hardened containers, secret scanning — [SECURITY-MODEL.md](docs/SECURITY-MODEL.md) | Frontend controls verified; merchant-app blockers listed openly |
-| **Privacy & law** | Data minimisation; PCI, GDPR, US state privacy, health-product rules mapped — [COMPLIANCE.md](docs/COMPLIANCE.md) | Assistant messages and preferences are retained with explicit erase controls; legal review required before real sales |
-| **Accessibility** | WCAG 2.2 AA target — [ACCESSIBILITY.md](docs/ACCESSIBILITY.md) | Automated axe: 0 violations; keyboard and reduced-motion checks pass |
+| Objective | Design and acceptance |
+|---|---|
+| 1M+ simultaneous active users | [Capacity plan](docs/SCALABILITY.md) defines request rates, warm/cold caches, AI concurrency, quotas, storage migration, queues and phased measurement |
+| 99.9% availability target; 99.0% floor | [Reliability plan](docs/RELIABILITY.md) defines journey SLIs, error budgets, independent failure domains, monitoring and restore drills; observed uptime is not yet measured |
+| Security and privacy | [Threat model](docs/SECURITY-MODEL.md), [data inventory](docs/PRIVACY.md), least privilege, encrypted records, explicit approvals and source scans; remaining release gates are stated |
+| Applicable law | [Compliance map](docs/COMPLIANCE.md) and [applicability register](docs/PRODUCTION-APPLICABILITY.md) cover privacy, AI transparency, consumer rights, product claims, accessibility and payment responsibilities |
+| Accessible interaction | [WCAG 2.2 AA target](docs/ACCESSIBILITY.md); bounded axe, keyboard, responsive and reduced-motion checks exist; broader manual review remains due |
 
-These are engineering targets with an explicit evidence trail. Nothing here claims capacity, uptime or legal compliance that has not been measured or reviewed.
+These are future objectives with measurable exit criteria. Current infrastructure is one host and one assistant database. A shared multi-client service and distributed deployment require further implementation and testing.
 
-## Quick start
+## Local setup
 
-Requirements: Node 24 LTS (see `.nvmrc`), npm 12. Rust stable with the `wasm32-wasip1` target for Functions.
+Use Node 24 LTS and npm 12 from the repository runtime files. The root lockfile owns the npm workspaces. Python requires 3.12 or newer. Functions use Rust and the documented WebAssembly target.
 
 ```bash
-npm install
+npm ci
+npm run dev:frontend
 
-# Run the visual storefront locally — no Shopify credentials needed
-npm run dev:frontend          # http://127.0.0.1:3000
+# Full Hydrogen server: configure the private storefront environment first
+npm run dev
 
-# Frontend-only checks (these gate the live release)
-npm run typecheck:frontend
-npm run build:frontend
-
-# Shopify Function unit tests
-cd packages/app && cargo test --workspace
+# Python service: install in your own virtual environment
+python -m pip install -e 'services/assistant[dev]'
 ```
 
-`npm run dev` starts the Hydrogen integration environment and needs Shopify configuration; copy `packages/storefront/.env.example` to `.env` and fill values locally. Never commit real secrets.
+Copy each service's `.env.example` into its private environment file and configure it as described in the [assistant operator guide](docs/ASSISTANT.md) and [Hydrogen deployment guide](deploy/hydrogen/README.md). Generate distinct encryption, owner, operator and MCP credentials. Select provider/model/pricing through typed configuration before enabling paid AI. Never put real credentials in code, command arguments or Git.
 
-Whole-workspace `npm run typecheck`, `npm run lint` and `npm run build` currently fail on the unfinished Hydrogen integration — this is tracked in [BUILD-STATUS.md](docs/BUILD-STATUS.md).
+## Verification and release
 
-## Documentation
+```bash
+npm test
+npm run typecheck
+npm run lint
+npm run build
+python -m pytest services/assistant/tests -q
+python -m ruff check services/assistant
+python -m mypy services/assistant/regenai_assistant
+python -m bandit -r services/assistant/regenai_assistant -q
+node --test .github/tests/publication-workflows.test.mjs
+```
 
-Full index: [docs/README.md](docs/README.md). Most useful:
+The [release guide](docs/RELEASE.md) covers local-first changes, drift detection, immutable packages, smoke checks, rollback and parity. Main requires an independent approving review. Optional Workers deployment and paid visual/load integrations require separate explicit opt-ins; pushing source alone must not activate them. Public standard-runner CI performs no paid inference.
 
-- [Architecture](docs/ARCHITECTURE.md) · [Build status](docs/BUILD-STATUS.md) · [Roadmap](docs/ROADMAP.md)
-- [Scalability](docs/SCALABILITY.md) · [Reliability](docs/RELIABILITY.md)
-- [Security model](docs/SECURITY-MODEL.md) · [Privacy](docs/PRIVACY.md) · [Compliance](docs/COMPLIANCE.md) · [Accessibility](docs/ACCESSIBILITY.md)
-- [Architecture decision records](docs/adr/) · [Master plan](PROJECT_PLAN.md)
-- [Client overview](my-project-view/technical-overview.md) (dated snapshot; the current availability target is in [RELIABILITY.md](docs/RELIABILITY.md))
-
-## Contributing and security
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md). Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md) — not in public issues.
-
-## License
-
-Code is MIT licensed — see [LICENSE](LICENSE). Brand assets, 3D models, imagery and written content are not covered by the MIT license.
+See [contributing](CONTRIBUTING.md), [vulnerability reporting](SECURITY.md) and the [code of conduct](CODE_OF_CONDUCT.md). Code is MIT licensed; brand assets, product imagery, models and written content retain their separate rights. See [LICENSE](LICENSE).

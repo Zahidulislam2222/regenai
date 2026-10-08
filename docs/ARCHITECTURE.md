@@ -1,116 +1,61 @@
 # Architecture
 
-Updated 2026-10-08. This document describes how RegenAI is built today and the architecture it is being built toward. Every component carries a status label so a reader can tell what exists from what is planned.
+Updated 2026-10-08. RegenAI combines a Shopify-backed storefront with a Python support assistant. Public ordering is closed. Components described as planned or locally tested have their own release gates.
 
-| Label | Meaning |
-|---|---|
-| **Live** | Deployed and publicly reachable; verification evidence recorded |
-| **Built** | Source exists in this repository and has local test evidence, but is not integrated or released |
-| **Partial** | Source exists with known gaps or failing gates |
-| **Planned** | Designed and documented; no implementation yet |
-
-## 1. System context
-
-RegenAI is a headless Shopify storefront and support assistant for a recovery-and-wellness catalog. Public ordering is closed. Shopify supplies the catalog and is the intended system of record for commerce; RegenAI never handles card data. The diagram includes planned commerce and merchant flows; component status is recorded below.
+## Current application
 
 ```mermaid
 flowchart LR
-  Buyer[Buyer browser] --> Edge[Cloudflare DNS, TLS and proxy]
-  Edge --> Origin[Storefront origin]
-  Origin --> SFAPI[Shopify Storefront API]
-  Origin --> CAAPI[Shopify Customer Account API]
-  Buyer --> Checkout[Shopify-hosted checkout]
-  Checkout --> Functions[Shopify Functions - Rust/WASM]
-  Merchant[Merchant staff] --> App[Merchant app on Cloudflare Workers]
-  App --> D1[(Cloudflare D1)]
-  App --> KV[(Workers KV)]
-  App --> Admin[Shopify Admin API]
-  Shopify[Shopify platform] -. webhooks .-> App
+  Browser[Customer or owner browser] --> Edge[Cloudflare]
+  Edge --> Router[Caddy]
+  Router --> Web[Hydrogen Node storefront]
+  Router --> Support[Python FastAPI assistant]
+  Web --> Catalog[Shopify Storefront API]
+  Support --> DB[(Encrypted SQLite and durable jobs)]
+  Support --> AI[Configured OpenRouter model]
+  Support --> Inbox[Gmail label-scoped reads]
+  Support --> Orders[Shopify support app]
+  Claude[Claude client] --> Bridge[Recommendation-only MCP bridge]
+  Bridge --> Support
 ```
 
-## 2. Components
+| Layer | Current behavior and boundary |
+|---|---|
+| Frontend | React/Hydrogen, React Router, TypeScript and Three.js; six owned Shopify catalog products and maintained content; same-origin customer chat |
+| Routing | Caddy selects the support service for its path and Hydrogen for storefront routes; host ports bind to loopback |
+| Assistant API | Public workspace sessions plus distinct owner, operator and recommendation-only MCP access; explicit origin and mutation checks |
+| Memory | Encrypted messages/preferences/context; erase controls; structured database identifiers and timestamps remain unencrypted metadata |
+| Durable work | Leased jobs with bounded attempts, expiry and quarantine; retention maintenance and owner-scheduled tasks |
+| AI | Configured provider URL/model/pricing; reservations and daily/total/session budgets; image analysis and multilingual responses tested in two authorized calls |
+| External integrations | Shopify installed support app renewal/read and Gmail installed-client refresh/label reads verified; outbound actions remain disabled |
+| Human handoff | Internal review state and complete conversation/audit bundle; external staff notification and staffing remain client responsibilities |
 
-### 2.1 Customer storefront and support
+The worker is active, but this release does not activate recurring inbox review/import schedules. An empty-label one-shot import passed. Browser voice uses browser services and installed voices; it is not a server media-generation service. HTTPS retrieval is allowlisted and its content is untrusted model context.
 
-| Component | Technology | Verified state |
-| --- | --- | --- |
-| Customer storefront | Hydrogen, React Router, React, TypeScript and Three.js | Source-pinned live container with Shopify catalog reads; ordering closed |
-| Python assistant | FastAPI, encrypted SQLite, durable worker | Live same-origin service at `/assistant`; isolated workspaces, approvals and audit |
-| Customer chat | Accessible React dialog; storefront fonts and palette | Local and public HTTP/browser interaction checks pass |
-| AI provider | Configured OpenRouter upstream model | Server-only credentials and bounded ledger; two authorized inference checks passed; AI enabled, external actions disabled |
-| Claude client | Recommendation-only stdio-to-HTTPS MCP bridge | Actual handshake, five tools and private rulebook read verified |
+## Approval and action boundary
 
-Caddy routes support requests to the Python service and commerce requests to Hydrogen. Both containers use read-only filesystems and loopback host ports. The backend has a separate durable writable data directory. Source, image identities and compiled artifacts have verified local/live hashes; [Support Studio](ASSISTANT.md) documents operational boundaries and client prerequisites. The dedicated Shopify support app uses only order read/write scopes; its expiring token renews through an explicitly selected client-credentials grant. Public reads and restart persistence passed. Gmail uses the supplied installed-app client’s offline grant in the encrypted server connection. Actual refresh, support-label reads, zero-import worker sync and restart persistence passed. The maintained query bounds imports to the dedicated support label. Google Testing grants can expire after seven days. No real refund or customer email has been verified; live actions remain disabled.
+The support app grants only order read/write scopes on the owned development store. An empty order read does not establish protected-customer-data permission or a successful refund. The current Gmail grant is encrypted and scoped to read/send with a maintained dedicated-label import query. The Google project remains in Testing, so the seven-day grant expiry must be addressed before unattended client operation.
 
-### 2.2 Backend — merchant app (`packages/app`)
+Real actions require owner approval bound to the exact ticket version, reply, recipient, amount and active policy. Execution locks the order, records the refund receipt before replying and holds ambiguous outcomes for reconciliation. Workspace approval changes workspace records only. A model recommendation never grants permission to spend or send.
 
-| Part | Technology | Status |
-|---|---|---|
-| Merchant app shell and OAuth install/callback | React Router 7 on Cloudflare Workers, Polaris | **Partial** — legacy scaffold remains stored but its known public URLs are disabled; repaired source is local only and release blockers remain (see [SECURITY-MODEL.md](SECURITY-MODEL.md)) |
-| Claim-review queue for product copy (`/admin/reviews`) | D1 table `clinician_review_queue` | **Partial** — read-only listing; no authentication or shop scoping yet; submission and approval flow planned |
-| Persistence | Cloudflare D1 (SQLite semantics), Workers KV for OAuth state | **Built** — schema in `migrations/0001_initial.sql`; environments not yet isolated |
-| Webhook intake | Shopify HMAC-verified webhooks → durable queue → idempotent workers | **Planned** |
+## Additional project components
 
-### 2.3 Backend — Shopify Functions (`packages/app/extensions`)
+| Component | Source and verified state |
+|---|---|
+| Merchant app | `packages/app`: standalone React Router/Workers/D1 app. Local opaque sessions, shop-bound AES-GCM tokens, atomic OAuth state, authenticated shop-scoped review reads, uninstall and three privacy webhook topics tested. Remote isolation, migrations, subscriptions and delivery remain due. Older public Worker routes are disabled. |
+| Shopify Functions | Three Rust Functions compiled against the 2026-01 schema and uploaded in an inactive draft. Store-level activation is unverified; B2B line updates require eligible Shopify capabilities. Discount rules need a supported API redesign. |
+| Shared UI package | Fifteen Radix/Tailwind components for workspace reuse; four Storybook examples. It is not the source of the storefront's current design tokens. |
 
-Three deployable Rust Function crates are built for Shopify's current WebAssembly runtime. The discount stacking rule crate is retained as a local experiment because Shopify's 2026-01 validation input does not expose applied codes.
+## Configuration and trust boundaries
 
-| Function | Shopify target | Purpose | Status |
-|---|---|---|---|
-| `cart-contraindication` | `cart.validations.generate.run` | Block checkout when a product's contraindication conflicts with a health flag on the signed-in customer (guests pass) | **Draft uploaded; not activated** |
-| `b2b-tiered-pricing` | `cart.transform.run` | Company-tier discount plus subtotal-based volume adder for B2B buyers, capped at 40%; line updates require Shopify Plus | **Draft uploaded; not activated** |
-| `delivery-customization` | `cart.delivery-options.transform.run` | Hide/rename delivery options by cart content | **Draft uploaded; not activated** |
-| `discount-stacking` | Experimental source only | Intended discount-code combinations are not enforceable from the current validation input | **Not deployed** |
+Secrets enter through private runtime environments or encrypted connection records. Frontend and assistant each have a typed configuration boundary; maintained product content and prompts live in data/template files. Examples contain safe values only. Images, ports, database paths, timeouts, budgets, models and API versions are release configuration.
 
-Verified 2026-10-03: native Rust workspace tests passed; all three deployable Functions passed schema type generation, release compilation and local Shopify CLI execution, including positive prepared cases. Shopify created inactive draft version `regenai-merchant-sandbox-4`. No store-level activation or checkout proof exists. `cart-contraindication` reads a customer health-flag metafield; any real-customer use requires the privacy review in [PRIVACY.md](PRIVACY.md). Shopify permits custom-app Functions on Plus live stores; a non-Plus live store needs the public-app distribution route.
+Browser sessions use secure HttpOnly cookies, private responses bypass shared caches, and per-workspace records stay isolated. Assistant containers run as a non-root user with a read-only filesystem; only their durable data mount is writable. Merchant authorization must use the authenticated shop on every query, with webhook HMAC verification before payload processing. External URLs and OAuth grants require provider-specific validation.
 
-### 2.4 Design system (`packages/ui`)
+## Deployment and future growth
 
-`@regenai/ui` — 15 React components, most built on Radix primitives, styled with Tailwind v4; Storybook stories for four of them so far. **Built**, used locally; not published to npm and not used by the live application.
+Two immutable service images run on one existing host. Release manifests prove uploaded source, image/runtime artifacts, private environment and routing parity. Historical static storefront artifacts are retained. Local source is authoritative; live-ahead drift must be reconciled before deployment.
 
-## 3. Trust boundaries and data flow
+The [capacity plan](SCALABILITY.md) proposes independent storefront hosts, distributed assistant storage, tenant-aware authorization, durable shared queues, provider admission control and eventually multi-region recovery. Those changes require implementation and workload evidence. The present SQLite deployment must not be advertised as a shared multi-client service or million-user system.
 
-| Boundary | What crosses it | Control |
-|---|---|---|
-| Browser → Cloudflare edge | HTTPS requests | TLS at edge; Cloudflare proxy; origin certificate trust and hostname verified during release |
-| Edge → origin | Proxied requests | Origin listens on loopback behind Caddy; only GET/HEAD accepted by the static frontend |
-| Origin → Shopify Storefront API | Public catalog queries, cart mutations | Public/private token separation; buyer IP forwarded with `Shopify-Storefront-Buyer-IP` (planned for the Hydrogen server) |
-| Browser → Shopify checkout | Payment and address data | Entirely on Shopify-hosted checkout; never touches RegenAI servers |
-| Shopify → merchant app | OAuth callbacks, webhooks | HMAC verification; state parameter; per-shop authorization (repair in progress) |
-| Merchant app → D1/KV | Sessions, tokens, review queue | Encryption-at-rest for tokens and per-shop query scoping are release gates |
-
-Full threat model: [SECURITY-MODEL.md](SECURITY-MODEL.md). Data inventory: [PRIVACY.md](PRIVACY.md).
-
-## 4. Hosting and deployment
-
-| Layer | Current | Target |
-|---|---|---|
-| Static frontend | One Docker container on a single VPS, Caddy reverse proxy, Cloudflare proxy | Replaced by the Hydrogen server once integrated |
-| Hydrogen storefront | Not deployed | Stateless Node containers behind a load balancer; public-page CDN caching; scales horizontally (see [SCALABILITY.md](SCALABILITY.md)) |
-| Merchant app | Legacy scaffold stored with production and preview `workers.dev` routes disabled; isolated remote environments and repaired source are not deployed | Isolated preview/staging/production data stores; authenticated routes; Cloudflare Workers auto-scaling |
-| Functions | Built locally | Released through Shopify CLI (`shopify app deploy`) |
-
-Releases are immutable: each frontend build goes to a new release directory, the previous release is retained, and rollback re-selects the previous release. Deploys follow a local-first rule — local is the source of truth, and every deployment ends with a byte-parity check between local artifact and live server.
-
-## 5. Key decisions
-
-Architecture decision records live in [`docs/adr/`](adr/). The most consequential:
-
-- [ADR-001](adr/ADR-001-why-hydrogen-over-liquid.md) — Hydrogen headless instead of a Liquid theme
-- [ADR-008](adr/ADR-008-shopify-functions-over-scripts.md) — Shopify Functions instead of deprecated Scripts
-- [ADR-011](adr/ADR-011-oxygen-unavailable-cf-workers-activated.md) — Oxygen unavailable, Cloudflare Workers fallback (historical; hosting target has since moved to self-hosted Hydrogen)
-- [ADR-021](adr/ADR-021-custom-app-cf-workers-d1.md) — merchant app on Workers + D1 (historical; its KV-for-OAuth-state assumption is superseded — KV is eventually consistent and not suitable for one-time state)
-
-## 6. Repository map
-
-```
-regenai/
-├── packages/
-│   ├── storefront/        Frontend: live visual storefront + Hydrogen integration
-│   ├── app/               Backend: merchant app (Workers + D1) and Shopify Functions (Rust)
-│   └── ui/                Design system (@regenai/ui) + Storybook
-├── deploy/frontend/       Container, Nginx and Caddy templates for the live frontend
-├── docs/                  Architecture, security, reliability, scale, compliance, roadmap, ADRs
-├── scripts/               Workspace helpers (native-binding rebuild, storefront runner)
-└── .github/               CI workflows, Dependabot, issue/PR templates
-```
+[Release](RELEASE.md) · [Reliability](RELIABILITY.md) · [Security](SECURITY-MODEL.md) · [Privacy](PRIVACY.md) · [Architecture decisions](adr/)

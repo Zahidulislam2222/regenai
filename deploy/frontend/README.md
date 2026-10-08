@@ -1,21 +1,17 @@
-# Standalone recovery storefront — deployment
+# Standalone frontend release recovery
 
-This deployment has served the public storefront at https://regenai.zahidul-islam.com since 2026-09-22 ([release evidence](../../docs/FRONTEND-DEPLOYMENT.md)). It serves a static React Router build. Hydrogen SSR, Shopify account/cart APIs, checkout, payments and backend routes are not deployed here. Product data are local design records; ordering is closed until real merchandise and fulfillment are verified. The site makes no medical claims.
+This directory describes the retained static React storefront deployment. The main public application now uses [Hydrogen](../hydrogen/README.md) and the Python assistant. Keep the earlier immutable static artifacts and release records as a recovery option.
 
-## Build and local configuration
+## Build and routing
 
-From the repository root, run `npm run build:frontend`. Vite writes `packages/storefront/dist/frontend`. Copy `.env.example` to the ignored `deploy/frontend/.env` and set `FRONTEND_NGINX_IMAGE` to the release owner's approved immutable `image@sha256:...` reference, `FRONTEND_BIND_PORT` to the allocated loopback port, and `FRONTEND_HOSTNAME` to the allocated site name. On a host, set `FRONTEND_DIST_PATH` to the absolute path of the versioned release artifact. `FRONTEND_BIND_ADDRESS` must remain loopback because Caddy is the public listener. Compose fails when required release values are missing.
+From the root, `npm run build:frontend` writes the standalone artifact. Copy `.env.example` to private `.env` and supply the approved immutable Nginx image, artifact directory, hostname and unused loopback port. Validate with `docker compose --env-file deploy/frontend/.env -f deploy/frontend/compose.yaml config`.
 
-Validate configuration with `docker compose --env-file deploy/frontend/.env -f deploy/frontend/compose.yaml config` from the repository root. Before promotion, the release owner confirms the built artifact and a local Docker check verifies the Nginx config, non-root/read-only/capability settings, health endpoint, route/status matrix, assets and browser rendering.
+The checked-in Nginx route allowlist serves the supported collection, product, finder, journal and policy paths. Unknown extensionless routes render the application not-found view with HTTP 404. Missing assets, dotfiles and unsupported methods do not fall through to a successful page. Only GET and HEAD are accepted.
 
-## Routing and headers
+HTML uses no-store/no-transform and noindex headers. Hashed assets have immutable browser caching; other media revalidates. CSP permits the local application and Three.js scene. Logs retain method/status without query strings or referrers. Use non-root, read-only, capability-restricted containers.
 
-The recognized preview paths are `/`, `/collections/all`, `/search`, `/products/pulse`, `/products/roller`, `/products/bands`, `/products/wrap`, `/products/balls`, `/products/sensor`, `/quiz`, `/cart`, `/about`, `/evidence`, `/journal`, `/journal/making-pulse-one`, `/journal/a-calmer-product-page`, `/journal/how-the-finder-works`, `/policies/privacy`, and `/policies/delivery`. Each serves `index.html` with HTTP 200 so the client router can render its page. Other extensionless client paths internally receive `index.html` with HTTP 404, allowing the app's not-found screen while keeping the HTTP status truthful. Unknown product IDs therefore receive the app's not-found screen with status 404. Missing asset paths, dotfiles and unsupported methods do not fall back to the SPA. Only GET and HEAD are accepted.
+## Controlled restoration
 
-All responses include `X-Robots-Tag: noindex`; HTML uses `no-store, no-transform`; hashed Vite assets and the content-hashed Pulse GLB use immutable one-year browser caching, while other public media revalidates. The GLB has a checked-in gzip sidecar for browsers that accept gzip. CSP permits same-origin scripts/assets and local Three.js rendering, including React's inline style attributes; it does not permit inline scripts or external connections. Nginx logs only status and method, and suppresses routine missing-file details so query strings and referrers are not written to logs.
+Keep the artifact, image digest, private environment and matching manifest together. A static restoration is a frontend-only recovery and does not itself replace the assistant. Prepare and validate a local route diff, prove current-live parity before promotion, preserve the shared Caddy configuration, and check the public application after selecting the retained artifact. Old credentials may need rotation before use.
 
-## Versioned release and rollback
-
-Build each candidate into a unique release directory and set that release's private `FRONTEND_DIST_PATH` to its artifact. Keep the prior artifact, private environment file, image digest and test record intact. Promote by selecting the candidate release values and recreating only the frontend Compose service; validate health and public HTTP/browser behavior through the already-managed Caddy site. Roll back by restoring the previous release's private environment values and Compose service, then repeat the same health and public checks. Do not change the shared Caddy main configuration; `Caddyfile.template` is a site snippet with Caddy environment substitutions. Render/adapt the final site locally with the release owner's private environment before it is reviewed or loaded by the shared Caddy process.
-
-Do not delete old releases or perform global Docker cleanup as part of promotion or rollback. The release owner performs live drift checks before every deploy and a byte-parity check after it, and owns shared Caddy integration, DNS, credentials, remote mutation and approval.
+Do not delete previous releases or perform global Docker cleanup during a deployment. [Release guide](../../docs/RELEASE.md) · [Release history](../../docs/FRONTEND-DEPLOYMENT.md)

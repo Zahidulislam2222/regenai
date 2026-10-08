@@ -13,7 +13,7 @@ jobs:
     env:
       K6_TARGET_URL: ${{ vars.REGENAI_LOAD_BASE_URL }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Require scenarios and approved target
         run: |

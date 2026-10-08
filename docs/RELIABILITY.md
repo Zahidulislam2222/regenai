@@ -1,6 +1,6 @@
 # Reliability, uptime and disaster recovery
 
-Updated 2026-09-24. Related: [SCALABILITY.md](SCALABILITY.md), [ARCHITECTURE.md](ARCHITECTURE.md), [SECURITY-MODEL.md](SECURITY-MODEL.md).
+Updated 2026-10-08. Related: [SCALABILITY.md](SCALABILITY.md), [ARCHITECTURE.md](ARCHITECTURE.md), [SECURITY-MODEL.md](SECURITY-MODEL.md).
 
 > **Status: objectives defined; not yet measured.** The targets below are engineering objectives (SLOs), not a contractual SLA and not observed uptime. An uptime figure will be published only after a full 30-day window of external monitoring.
 
@@ -21,9 +21,9 @@ Downtime allowed per rolling 30-day window (43,200 minutes) and per 365-day year
 
 Why 99.9% and not 99%: 99% allows over seven hours of downtime per month, which is too much for an online store where downtime is lost revenue. 99.9% is a common target for e-commerce storefronts and is achievable without multi-region active-active complexity. Higher targets (99.95%+) are reserved for Tier T3 in [SCALABILITY.md](SCALABILITY.md).
 
-### Why a single server cannot meet 99.9%
+### Single-host failure remains an availability risk
 
-Availability of components in series multiplies. *Illustration:* a single origin host at 99.5%, a CDN at 99.99% and an upstream API at 99.95% combine to roughly 99.44% — below target. Reaching 99.9% requires removing single points of failure at the origin: at least two independent instances behind a health-checked load balancer, so one host failure does not take the store down. The current live frontend runs on one host and is therefore **not** expected to meet 99.9%; this is a known T0 limitation.
+Availability of components in series multiplies. *Illustration:* a single origin host at 99.5%, a CDN at 99.99% and an upstream API at 99.95% combine to roughly 99.44% — below target. Reaching 99.9% requires removing single points of failure at the origin: at least two independent instances behind a health-checked load balancer, so one host failure does not take the store down. The current live frontend and assistant run on one host and is therefore **not** expected to meet 99.9%; this is a known T0 limitation.
 
 ## 2. Service level indicators (SLIs)
 
@@ -103,7 +103,7 @@ Security incidents additionally follow [SECURITY.md](../SECURITY.md) and applica
 | Traces | Request correlation ID from edge through origin to upstream calls |
 | Alerts | Burn-rate SLO alerts; certificate, secret and backup expiry alerts |
 
-Today: the live frontend logs only HTTP status and method; no metrics platform, external probe or alerting is connected yet.
+Today: the Hydrogen logger redacts private values, and the assistant retains bounded operational audit records and worker health. Independent external SLO monitoring and a centralized metrics/alerting platform are not connected; no observed uptime figure is available.
 
 ## 8. Current status
 
@@ -116,3 +116,41 @@ Today: the live frontend logs only HTTP status and method; no metrics platform, 
 | D1 point-in-time recovery | **Available from provider**; restore drill not yet run |
 | Incident runbooks | **Planned** |
 | Observed 30-day availability | **Not yet measured** |
+
+## 9. Assistant journeys and measurement policy
+
+The 99.9% target and 99.0% floor extend to assistant service availability. Measure public chat, owner-console access, connection health, scheduled work and human handoff independently. Until schedules are enabled, their service-level result is unavailable. Model answer usefulness/safety is an evaluation result separate from HTTP availability.
+
+| Journey | Proposed good event | Measurement boundary |
+|---|---|---|
+| Customer chat | Valid allowed message completes with usable response or documented service state within the configured deadline | Browser → API → model; dependency failures count when users cannot complete the journey |
+| Owner console | Authenticated operator can read a ticket/policy and save an authorized decision | UI/API/storage; prohibited unauthenticated requests excluded as expected denials |
+| Inbox synchronization | Enabled scheduled run completes inside its configured freshness objective | Grant health, label-only import, queue age and provider quota; no current recurrence claim |
+| Human handoff | Sensitive case is retained with full context and appears in the review queue | Internal record creation; staff acknowledgement has a separately agreed staffing target |
+| Approved refund/reply | One approved action has authoritative receipt or visible reconciliation hold | Future verified write workflow; never count an uncertain action as a success |
+
+Choose the actual observation window, sampling interval, success predicate and latency threshold in versioned monitoring configuration. Report permitted rate-limit responses and budget denials separately; if admitted demand cannot complete, count it as failed service rather than removing it to improve the SLI. Track missing observations as unknown. Publish request-based success ratio and time-based probe availability separately: the 43m12s and 7h12m monthly allowances above apply to time-based 30-day availability, not to a request-count SLI.
+
+## 10. Recovery objectives for support state
+
+| Asset | Proposed objective | Current evidence / next step |
+|---|---|---|
+| Encrypted messages, tickets, policies and audit | RPO ≤15 minutes; RTO ≤1 hour | Host-side consistent SQLite backup integrity checked; encrypted off-host recovery and timed restore remain due |
+| Job/action and spending ledgers | Preserve completed/ambiguous actions and prior spending; reconcile any recovery gap before execution | Restart persistence tested; provider reconciliation and disaster restore still need end-to-end proof |
+| Encryption keys and delegated grants | Recover compatible keys per change; diagnose/re-consent before reconnecting | Private recovery records exist; verify access separately from backup content |
+| Service/routing artifacts | RTO ≤30 minutes | Immutable frontend/backend release and routing manifests; timed live rollback drill remains due |
+
+Budget reservations and uncertain financial claims must survive recovery. Never restore a stale ledger and resume spending/actions without reconciliation. A host-local backup cannot protect against losing that host.
+
+## 11. Failure runbooks
+
+| Trigger | First response | Verification before recovery |
+|---|---|---|
+| Worker heartbeat stale | Check bounded logs/queue; let service restart policy recover; preserve leases | Readiness and one safe read/scheduled operation after restart |
+| Token expired / revoked | Identify grant and scopes, clock and installation; refresh or re-consent | Repeated bounded provider reads; never repeat an ambiguous refund/send |
+| AI provider unavailable or budget exhausted | Stop new paid calls; preserve ticket/handoff; expose a clear status | Provider health and remaining verified budget, then bounded owner-approved check if required |
+| Queue old or storage near quota | Pause new admission, preserve records, diagnose retry/dead-letter cause | Age/throughput recover without lost or duplicated jobs |
+| Incorrect release | Restore compatible previous route/services | Public journey smoke and exact source/image/env/routing parity |
+| Suspected exposure | Restrict affected access, preserve bounded evidence, rotate affected credentials | Security-owner investigation and applicable incident/notification process |
+
+Google Testing Gmail grants may expire after seven days; this prevents an indefinite unattended inbox claim. A production consent/verification strategy and provider-compliant access are client-launch prerequisites. The system supports continuous operation, while a staffed rota, redundant hosts and observed SLOs remain future requirements. [Google token expiry](https://developers.google.com/identity/protocols/oauth2#expiration), [SRE SLO implementation](https://sre.google/workbook/implementing-slos/).

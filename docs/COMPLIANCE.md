@@ -1,60 +1,46 @@
 # Legal and compliance overview
 
-Updated 2026-10-04. Detailed register with sources, owners and evidence requirements: [PRODUCTION-APPLICABILITY.md](PRODUCTION-APPLICABILITY.md).
+Updated 2026-10-08. RegenAI currently provides a Shopify-backed catalog and AI support service with public ordering closed. Chat and connected support information can contain personal data regardless of whether sales are enabled. This engineering map identifies review requirements; a qualified reviewer must determine applicability for the actual business, markets, products, data and contractual roles.
 
-> **This is not legal advice and not a compliance certificate.** RegenAI is currently an application with ordering closed, no real sales and no payment processing. This document maps the laws and standards a real merchant launch on this platform would have to address, and how the architecture supports them. Which rules actually apply depends on the real seller, products, customers, locations and data — and must be decided with qualified counsel before launch.
+## Applicable-law map
 
-## 1. Summary
+| Area | Review required | Current engineering support / launch gate |
+|---|---|---|
+| EU/EEA privacy | GDPR: purposes/lawful basis, transparency, rights, processors, transfers, security and applicable breach handling | Encrypted records, bounded context, erase/export controls; actual role/lawful-basis/DPA/retention review remains due |
+| US privacy | State privacy rules depend on business/data thresholds and jurisdiction; consumer health data can have separate rules | Data inventory and client isolation; current applicability decisions and opt-out/consent implementation where required remain due |
+| Health information | GDPR special-category conditions; HIPAA where covered-entity/business-associate roles apply; FTC health breach rules where in scope | Finder answers are ephemeral; sensitive support requires human review; no general HIPAA assertion |
+| AI transparency/governance | Determine provider/deployer roles and applicable EU AI Act classification/transparency obligations | AI assistance is disclosed, policy checks and human approval remain separate; risk assessment and vendor obligations require review |
+| Product claims and safety | FTC substantiation, FDA intended-use/device classification, applicable EU product/device rules | Ordering closed, no clinical evidence claims; actual products and claims require qualified approval |
+| Consumer transactions | Seller identity, accurate prices, delivery/returns, withdrawal/renewal rights and refund obligations by market | Public policy pages describe present limits; commercial policies must reflect the actual merchant before sales |
+| Payments | Hosted payment architecture narrows PCI scope; merchant/payment-provider responsibilities remain | No card collection in RegenAI; public checkout closed; merchant scope assessment before activation |
+| Accessibility | Applicable commerce accessibility duties and exemptions require jurisdiction/business review | WCAG 2.2 AA engineering target, bounded automated/manual checks; complete conformance review remains due |
+| Marketing | CAN-SPAM/TCPA and applicable consent/opt-out laws depend on channel and purpose | Current release sends no marketing; customer support permission does not establish marketing consent |
+| Tax and seller operations | Sales tax/VAT, shipping destinations, product restrictions and contractual terms | Merchant-specific configuration and qualified tax/legal review before sales |
 
-| Area | Key rules (US / EU) | How the platform supports it | Launch status |
-|---|---|---|---|
-| Payments | PCI DSS | Card data handled only by Shopify-hosted checkout (Shopify is certified PCI DSS Level 1) | Architecture ready; merchant's own PCI self-assessment still required |
-| Privacy | GDPR, ePrivacy/cookie rules; CCPA/CPRA and other US state laws | Data minimisation, no tracking by default, Shopify privacy tools — see [PRIVACY.md](PRIVACY.md) | Assistant inputs are processed and retained; privacy/legal review remains required |
-| Consumer health data | GDPR Article 9; Washington My Health My Data Act; FTC Health Breach Notification Rule; HIPAA only if the business is a covered entity or business associate | Finder answers not persisted; health flags opt-in only; never in telemetry | Legal review required before any health data is stored |
-| Health product claims | FTC Act (substantiation); FDA device rules; EU MDR/GPSR and CE marking where applicable | Claim-review queue in the merchant app (partial); ordering closed; physical performance claims withheld | application makes no clinical claims. Real products need per-product classification |
-| Consumer protection | EU distance-selling and withdrawal rights; FTC endorsement rules; US state auto-renewal laws | Clear pricing, shipping, returns and subscription terms in the storefront | Planned — required before real sales |
-| Accessibility | EU European Accessibility Act; ADA (US) | WCAG 2.2 AA engineering target — see [ACCESSIBILITY.md](ACCESSIBILITY.md) | Partially tested |
-| Marketing | CAN-SPAM, TCPA (US); GDPR/ePrivacy consent (EU) | No marketing messages sent by the application | Planned |
-| AI features | EU AI Act transparency duties where applicable | Optional Claude assistance is disclosed; deterministic policy checks remain separate | Model controls built; applicable legal review remains due |
-| Tax | US sales tax, EU VAT | Shopify tax settings; tax advice required per market | Merchant responsibility |
+## Privacy and incident review
 
-## 2. Payments — PCI DSS
+Assess each purpose: chat response, saved memory, order matching, email import, human handoff, audit, backups and optional voice/image processing. Determine who controls the data, who processes it, vendor/subprocessor locations, transfer mechanisms, retention and rights exceptions. Client installation requires delegated access and consent with minimum scopes. Conversation erasure and financial/audit retention have different effects and must be disclosed.
 
-- RegenAI never receives, stores or transmits card numbers. Payment happens on Shopify's hosted checkout.
-- Shopify states it is certified Level 1 PCI DSS compliant and publishes compliance reports ([Shopify PCI](https://www.shopify.com/security/pci-compliant), [compliance reports](https://www.shopify.com/legal/compliance/reports)).
-- A real merchant still completes its own self-assessment with its payment provider. Using hosted checkout narrows scope; it does not remove every merchant obligation.
-- The storefront's strict Content Security Policy and absence of third-party scripts reduce the risk of script-based skimming on pages that lead to checkout.
+GDPR Article 33 uses a 72-hour supervisory-authority notification requirement where applicable and feasible; applicability, awareness, risk and processor/controller responsibilities need incident-specific assessment. Other laws have different recipients/timelines. The incident plan must preserve evidence and involve the privacy/legal owner rather than assume one deadline for all users. [GDPR official text](https://eur-lex.europa.eu/eli/reg/2016/679/oj/eng), [California Attorney General guidance](https://oag.ca.gov/privacy/ccpa).
 
-## 3. Privacy — EU (GDPR) and US state laws
+HIPAA applies to defined covered entities and business associates; wellness branding alone does not decide it. Separately assess consumer health and health-app breach rules before storing health-related support content. [HHS role guidance](https://www.hhs.gov/hipaa/for-professionals/covered-entities/index.html), [FTC Health Breach Notification Rule](https://www.ftc.gov/legal-library/browse/rules/health-breach-notification-rule).
 
-**EU / EEA (GDPR):** a lawful basis for each processing purpose; transparent notices; data-subject rights (access, deletion, portability, objection); processor agreements; records of processing; international transfer mechanisms; breach notification to the supervisory authority within 72 hours where required (Article 33). Fines can reach €20 million or 4% of worldwide annual turnover, whichever is higher (Article 83). Cookie consent under ePrivacy rules applies before non-essential storage — the application's only storage is the functional application bag.
+## AI and support automation
 
-**United States:** comprehensive state privacy laws (California CCPA/CPRA and others) apply based on revenue and data-volume thresholds; they grant access, deletion and opt-out rights and in several states require honouring Global Privacy Control. Consumer health data laws (notably Washington's My Health My Data Act) apply to wellness data even where HIPAA does not.
+The assistant generates recommendations with configured provider budgets and human approval for external actions. Record model routing, retention terms, evaluation limitations, policy ownership and escalation responsibilities. Assess automated-decision consequences separately from ordinary support drafting; an AI feature should not silently make consequential customer decisions.
 
-**Platform approach:** see [PRIVACY.md](PRIVACY.md) — minimisation, no default tracking, Shopify mandatory privacy webhooks, a processor register and redacted telemetry.
+European Commission guidance states Article 50 transparency obligations apply from 2 August 2026. Determine the actual system/role/content obligations and applicable exceptions; a support chatbot is not automatically a high-risk system merely because it uses AI. [Official transparency guidance](https://digital-strategy.ec.europa.eu/en/library/guidelines-transparency-obligations-providers-and-deployers-ai-systems). Maintain risk/evaluation records using the voluntary [NIST AI RMF](https://www.nist.gov/itl/ai-risk-management-framework) as an engineering reference.
 
-## 4. Health and wellness products
+Google inbox access additionally requires compliance with selected scopes, OAuth consent/verification and provider user-data policies. The current Testing grant can expire after seven days; no shared project audience change is implied by this publication. Protected Shopify customer data requires client-specific permission review.
 
-Recovery and wellness products sit close to medical-device rules:
+## Product, payment and consumer boundaries
 
-- **US — FDA:** whether a product is a medical device depends on its intended use and the claims made about it ([FDA guidance](https://www.fda.gov/medical-devices/classify-your-medical-device/how-determine-if-your-product-medical-device)). Claims can turn a general-wellness product into a regulated device.
-- **US — FTC:** health claims need competent and reliable scientific evidence; reviews and endorsements must be genuine and disclosed ([FTC Health Products Compliance Guidance](https://www.ftc.gov/business-guidance/resources/health-products-compliance-guidance)).
-- **EU:** the Medical Device Regulation, General Product Safety Regulation and CE marking may apply depending on the product.
+FTC guidance requires evidence for expressed and implied health-product claims; FDA device analysis considers intended use. A catalog record, 3D model or local claim guard cannot establish clinical performance, approval, certification, stock or fulfillment. Actual products need per-product evidence and market review. [FTC claims guidance](https://www.ftc.gov/business-guidance/resources/health-products-compliance-guidance), [FDA intended-use guidance](https://www.fda.gov/medical-devices/classify-your-medical-device/how-determine-if-your-product-medical-device).
 
-**Platform approach:** the merchant app includes a claim-review queue scaffold (read-only listing today; submission and approval flow planned) designed to route product-copy changes for review before publication; its schema records evidence level and device classification. The application uses visibly prepared products and states that it gives no diagnosis or treatment advice.
+The checked-in product-copy guard checks maintained JSON for a narrow set of explicit unsupported promises and publication notices. It does not inspect Shopify edits, implied claims, scientific evidence or product classifications. Keep a qualified review outside that code gate.
 
-The CI **application-copy guard** checks five maintained JSON sources for a short list of explicit unsupported approval, evidence and disease/pain promises. It also requires the prepared catalog's publication notice to say the products are illustrative, unavailable for sale and unvalidated. Its failure tests introduce a claim and remove the notice. It does not inspect later edits made directly in Shopify, assess implied claims or net impression, review scientific evidence, classify a real product, validate dietary-supplement labeling, or check contraindication logic. Those are separate pre-sale reviews; a passing guard is not a regulatory approval. This boundary follows the [FDA's intended-use guidance](https://www.fda.gov/medical-devices/classify-your-medical-device/how-determine-if-your-product-medical-device), the [FTC's substantiation guidance](https://www.ftc.gov/business-guidance/resources/health-products-compliance-guidance), and the [FDA's dietary-supplement claim rules](https://www.fda.gov/food/food-labeling-nutrition/structurefunction-claims).
+Shopify states its platform is PCI DSS Level 1 compliant; using hosted checkout does not settle every merchant obligation. Public ordering remains closed, and development-store checkout evidence must never be presented as a real sale. [Shopify payment security](https://www.shopify.com/security/pci-compliant). For EU sales, assess actual distance-selling terms and consumer rights. [European Commission consumer contract guidance](https://commission.europa.eu/law/law-topic/consumer-protection-law/consumer-contract-law_en).
 
-## 5. Accessibility
+## Launch decision
 
-The EU European Accessibility Act applies to many e-commerce services from 28 June 2025, subject to exemptions (for example, for micro-enterprises). In the US, courts have applied the ADA to online stores. RegenAI targets WCAG 2.2 Level AA as its engineering standard. See [ACCESSIBILITY.md](ACCESSIBILITY.md) for tested scope and gaps.
-
-## 6. What a real launch requires
-
-1. Identify the seller, markets, products and data flows.
-2. Complete the applicability register ([PRODUCTION-APPLICABILITY.md](PRODUCTION-APPLICABILITY.md)) with a decision and owner for every row.
-3. Qualified legal review of privacy notices, terms of sale, health claims and product classification.
-4. Close security release blockers ([SECURITY-MODEL.md](SECURITY-MODEL.md)).
-5. Publish real policies (privacy, terms, shipping, returns, accessibility statement) that describe the actual business. Policy pages in the application are placeholders for a prepared store.
-
-No badge, template or tool result in this repository should be read as a claim of GDPR, CCPA, HIPAA, PCI, ADA or FDA compliance.
+Resolve each row in [PRODUCTION-APPLICABILITY.md](PRODUCTION-APPLICABILITY.md) with an accountable owner, current source, applicability rationale and evidence. Publish accurate business policies, contracts and data notices; close security and recovery gates; review accessibility and operational staffing. Applicable unresolved requirements block the corresponding customer-data or sales feature. This map makes no legal certification claim.

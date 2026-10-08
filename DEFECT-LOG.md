@@ -2,6 +2,7 @@
 
 | Escaped defect | Gate that should have caught it | Gate added? |
 |---|---|---|
+| Python installation from a full checkout failed because automatic package discovery included the client-instructions directory. The filtered Docker context hid the failure. | Actual wheel/editable build from the full committed service tree. | Yes — explicit package discovery, full-checkout CI installation/wheel build and artifact content verification; the original wheel command failed before the fix. |
 | Direct page load focused main before the first Tab, skipping the skip link in desktop and mobile browsers. | Keyboard browser check on the built Hydrogen route, including first Tab and focus after client navigation. | Yes — both assertions now run in Playwright; 12/12 local E2E passed on 2026-10-03. |
 | E2E and accessibility CI could skip for absent Shopify secrets, target an older preview, or allow axe failures. | CI must build and test the checked-out candidate and propagate browser-test failures. | Local runner and workflows updated; fake-settings E2E 12/12 and axe 22/22 passed on 2026-10-03. PR #20 proved both Linux jobs fail on a real build defect, then pass 12/12 E2E and 22/22 accessibility after repair. |
 | Reduced-motion visitors saw an Enable motion button that could not override their system preference. | Built-browser check with reduced motion enabled and control visibility asserted. | Yes — local browser check confirms animation stays paused and the misleading button is absent. |

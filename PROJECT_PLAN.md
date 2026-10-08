@@ -1,6 +1,6 @@
 # RegenAI — master build and completion plan
 
-Updated: 2026-10-04. Status: **ACTIVE — F2 review release live; B1/B2 development environment work in progress.** The selected bone/blue Shopify-backed Hydrogen design is live on main and staging with six products, three design categories, search, product detail, help/contact/policies and a gated cart. Source commit `21e2f0e` was released with matching tested image and local/live file hashes; both public homepages still show moving Pulse One 3D in fresh normal-motion browsers. Cart POST returns HTTP 501 on both hosts and real sales remain closed. Staging alone now exposes the Shopify Account login entry; main Account remains closed. A hosted development-store checkout form and test gateway were verified, but no test order was submitted. The legacy merchant Worker's known public routes were disabled and independently read back; the modern development environment app remains an inactive draft. Manual screen-reader shopping, full buyer login/order, merchant activation, production controls, independent release review and live rollback remain due. See [build status](docs/BUILD-STATUS.md). No full-commerce readiness, traffic capacity, uptime or legal certification is claimed.
+Updated: 2026-10-08. Current publication scope: live Hydrogen and Python assistant, comprehensive public documentation, safe GitHub publication and release parity. The assistant and Shopify/Gmail read connections are deployed; refund/email execution and full commerce remain separate incomplete gates. See [ROADMAP](docs/ROADMAP.md), [ASSISTANT](docs/ASSISTANT.md) and [RELEASE](docs/RELEASE.md). The following detailed commerce contracts retain historical phase evidence. Status: **ACTIVE — F2 review release live; B1/B2 development environment work in progress.** The selected bone/blue Shopify-backed Hydrogen design is live on main and staging with six products, three design categories, search, product detail, help/contact/policies and a gated cart. Source commit `21e2f0e` was released with matching tested image and local/live file hashes; both public homepages still show moving Pulse One 3D in fresh normal-motion browsers. Cart POST returns HTTP 501 on both hosts and real sales remain closed. Staging alone now exposes the Shopify Account login entry; main Account remains closed. A hosted development-store checkout form and test gateway were verified, but no test order was submitted. The legacy merchant Worker's known public routes were disabled and independently read back; the modern development environment app remains an inactive draft. Manual screen-reader shopping, full buyer login/order, merchant activation, production controls, independent release review and live rollback remain due. See [build status](docs/BUILD-STATUS.md). No full-commerce readiness, traffic capacity, uptime or legal certification is claimed.
 
 ## Frontend-first delivery phases — active 2026-10-03
 
@@ -21,7 +21,7 @@ Phase updates state done, due, evidence and blockers. F1's local shopping journe
 
 ## 1. Delivery contract and definition of completion
 
-RegenAI remains a **Shopify headless-commerce project**, using Hydrogen for the customer storefront. The visual React/Vite preview is a design milestone, not the finished Shopify storefront. Preserve the current bone/blue design, original Blender product assets, Three.js inspection and accessible shopping flow while connecting real Shopify data.
+RegenAI remains a **Shopify headless-commerce project**, using Hydrogen for the customer storefront. The standalone React/Vite build is retained for local design and recovery; the current main application serves Shopify-backed Hydrogen. Preserve the current bone/blue design, original Blender product assets, Three.js inspection and accessible shopping flow while connecting real Shopify data.
 
 ### Current owner scope — 2026-10-08
 The owner requests a polished storefront and always-on Python support assistant matching the homepage design. Remove placeholder labels from customer-facing text and public project documentation. State actual operational limits directly: ordering is closed and external refunds/email remain disabled until dedicated integrations pass verification. Paid AI usage is reserved for essential final checks; preserve the provider cap. Retain verified product, safety and performance facts without invented claims.
@@ -36,7 +36,7 @@ Three separately reported milestones prevent partial work being called the whole
 
 The plan includes all established project layers. Capability-gated work stays **blocked or awaiting owner scope decision**, never silently marked done. Owner-approved deferrals must be named in the final scope ledger; completing M2 alone must not be reported as finishing every historical feature proposal.
 
-Current authorization: the owner has now instructed full supervised implementation, with Luna low as implementer and frequent recoverable project records. Local Docker/Kubernetes configuration is authorized. Supervisor updates `memory/implementation-checkpoint.md` before and after bounded tasks and during long operations. Preserve existing dirty work. Paid actions, concrete deployment approval, external communications and locked public-document updates retain their separate gates.
+Current authorization: the owner approved the researched documentation/publication scope on 2026-10-08, with frequent recoverable project records. Earlier implementation staffing is historical. Local Docker/Kubernetes configuration is authorized. Supervisor updates `memory/implementation-checkpoint.md` before and after bounded tasks and during long operations. Preserve existing dirty work. Paid actions, concrete deployment approval, external communications and locked public-document updates retain their separate gates.
 
 ## 2. Evidence baseline — facts, not assumptions
 
@@ -376,7 +376,7 @@ Mostly-free baseline: use existing infrastructure and locally runnable/open-sour
 | Production controls | Applicable P01–P10, engineering/legal-review evidence and known limitations | Planned; no blanket compliance claim |
 | Scale architecture | S01–S06 implemented/local proof; S07 separately authorized capacity testing | 10k–1M+ targets unverified |
 | Availability | P09/SLO monitoring, then actual rolling 30-day observation | 99.9% target / 99.0% floor; no achieved uptime claim |
-| VPS/domain deployment | F08, authorized release and parity/restore | Static design-study frontend deployed with 29/29 file parity; integrated Hydrogen commerce release pending |
+| VPS/domain deployment | F08, authorized release and parity/restore | Static standalone frontend deployed with 29/29 file parity; integrated Hydrogen commerce release pending |
 | Mobile/sleep/community/BLE/biomarkers/supplements/white-label/telehealth | Separate future product spec, data/clinical/provider/cost review | Historical expansion backlog; outside this release unless owner explicitly adds it |
 
 Historical expansion ideas stay recorded, not silently “implemented” through placeholders. No real patient information is authorized. Any scope change updates this ledger and the dossier before public claims.
@@ -457,3 +457,11 @@ Obtain genuine RegenAI merchandise and seller details, then validate the Shopify
 ## Live visual-review checkpoint — 2026-09-22
 
 Owner-authorized standalone frontend published at **https://regenai.zahidul-islam.com**. Selected new design, 3D and browser fixture commerce are available for review. Dedicated frontend gates and local/public Chrome/HTTP checks passed; evidence summary: `docs/FRONTEND-DEPLOYMENT.md`. Full integration remains paused; do not mark B05, genuine Shopify commerce, production controls or scale verification complete because this frontend is public.
+
+## Publication and assistant continuation — 2026-10-08
+
+Maintain complete source/docs under the maintainer's verified identity, candidate CI and independent review. Publish through the existing protected-branch PR. Redeploy locally verified frontend/backend artifacts only after active-release drift checks; preserve encrypted data, budgets and rollback. Compare source, runtime artifacts, environment, routing and effective settings afterward.
+
+After GitHub publication succeeds, inspect/update the same existing Google Doc in place, preserving unique content and structure, then validate a fresh PDF before replacing its canonical local file. No new document version or prior-content deletion is part of that scope.
+
+Future capacity acceptance includes distributed assistant persistence, shared queues/leases, tenant authorization, model-request/token quotas, per-tenant costs and defined active-user workloads. Future availability acceptance includes independent hosts, external journey monitoring, incident staffing and measured restore/rollback. No high-volume paid-provider test or new service procurement is authorized by those plans.
